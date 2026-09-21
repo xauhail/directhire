@@ -1,0 +1,324 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout
+  title="Free AI Ghost Job Detector | Career Hound"
+  description="Audit job postings instantly with Career Hound AI. Identify evergreen postings, fake listings, and recruiter ghost jobs before wasting hours applying."
+>
+  <!-- Hero Section -->
+  <section class="py-16 md:py-24 bg-gradient-to-b from-blue-50/60 via-white to-slate-50 border-b border-slate-200/80">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold mb-6 shadow-sm">
+        <svg class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        Over 40% of public job listings are ghost jobs
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        Free AI <span class="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 bg-clip-text text-transparent">Ghost Job</span> Detector
+      </h1>
+      <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
+        Don't waste 45 minutes applying to evergreen listings companies never intend to fill. Paste any job posting to detect ghost risk in seconds.
+      </p>
+    </div>
+  </section>
+
+  <!-- Main Detector Workspace -->
+  <section class="py-12 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Input Card -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 sm:p-8">
+        <form id="ghostForm" class="space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="jobTitle" class="block text-sm font-semibold text-slate-800 mb-1">Job Title *</label>
+              <input
+                type="text"
+                id="jobTitle"
+                placeholder="e.g. Senior Full Stack Engineer"
+                required
+                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 placeholder-slate-400 shadow-sm"
+              />
+            </div>
+            <div>
+              <label for="company" class="block text-sm font-semibold text-slate-800 mb-1">Company Name *</label>
+              <input
+                type="text"
+                id="company"
+                placeholder="e.g. Acme Corp"
+                required
+                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 placeholder-slate-400 shadow-sm"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="jobUrl" class="block text-sm font-semibold text-slate-800 mb-1">Job Listing URL (Optional)</label>
+              <input
+                type="url"
+                id="jobUrl"
+                placeholder="https://boards.greenhouse.io/..."
+                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 placeholder-slate-400 shadow-sm"
+              />
+            </div>
+            <div>
+              <label for="daysPosted" class="block text-sm font-semibold text-slate-800 mb-1">
+                Estimated Days Active: <span id="daysDisplay" class="text-blue-600 font-bold">14</span> days
+              </label>
+              <input
+                type="range"
+                id="daysPosted"
+                min="1"
+                max="120"
+                value="14"
+                class="w-full accent-blue-600 mt-2"
+              />
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label for="description" class="block text-sm font-semibold text-slate-800">Job Description Text *</label>
+              <button
+                type="button"
+                id="pasteSampleBtn"
+                class="text-xs text-blue-600 hover:text-blue-700 font-medium underline"
+              >
+                Paste Sample Listing
+              </button>
+            </div>
+            <textarea
+              id="description"
+              rows="7"
+              required
+              placeholder="Paste the full job posting requirements, responsibilities, and about company section here..."
+              class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 placeholder-slate-400 shadow-sm font-mono leading-relaxed"
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            id="submitBtn"
+            class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-base shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2"
+          >
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            Audit Job Posting for Ghost Risk
+          </button>
+        </form>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="hidden py-12 text-center">
+          <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mb-4"></div>
+          <p class="text-base font-semibold text-slate-800">Career Hound AI is analyzing posting signals...</p>
+          <p class="text-sm text-slate-500 mt-1">Cross-referencing requisition tone, evergreen patterns, and role specificity.</p>
+        </div>
+
+        <!-- Results Card -->
+        <div id="resultsCard" class="hidden mt-8 pt-8 border-t border-slate-200 animate-fade-in">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 rounded-2xl bg-slate-50 border border-slate-200 mb-6">
+            <div class="text-center sm:text-left">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Detector Verdict</span>
+              <div id="verdictText" class="text-2xl font-black text-slate-900 mt-1">Likely Real Job</div>
+              <p id="recommendationText" class="text-sm text-slate-600 mt-1"></p>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="text-right">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Ghost Risk Score</span>
+                <div id="scoreNumber" class="text-3xl font-extrabold text-blue-600">18%</div>
+              </div>
+              <div id="scoreBadge" class="w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg bg-emerald-100 text-emerald-700">
+                Low
+              </div>
+            </div>
+          </div>
+
+          <!-- Risk Analysis -->
+          <div class="space-y-4 mb-6">
+            <h4 class="text-base font-bold text-slate-900">AI Deep-Dive Analysis</h4>
+            <p id="analysisText" class="text-sm text-slate-700 leading-relaxed bg-white p-4 rounded-xl border border-slate-200"></p>
+          </div>
+
+          <!-- Red Flags Found -->
+          <div class="space-y-3 mb-8">
+            <h4 class="text-base font-bold text-slate-900">Signals & Red Flags Detected</h4>
+            <ul id="flagsList" class="space-y-2 text-sm text-slate-700">
+              <!-- Dynamically populated -->
+            </ul>
+          </div>
+
+          <!-- In-Page High-Converting Bridge CTA -->
+          <div class="p-6 rounded-2xl bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-950 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="space-y-2 text-center sm:text-left">
+              <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-800/80 text-blue-200 text-xs font-medium">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                100% Verified Direct Postings
+              </div>
+              <h3 class="text-lg sm:text-xl font-bold">Tired of applying into black holes?</h3>
+              <p class="text-blue-200 text-xs sm:text-sm max-w-md">
+                Career Hound indexes jobs straight from Greenhouse, Lever, and Ashby careers pages—no ghost jobs, no recruiter reposts.
+              </p>
+            </div>
+            <a
+              href="/search"
+              class="shrink-0 px-6 py-3 rounded-xl bg-white text-blue-900 hover:bg-blue-50 font-bold text-sm shadow-md transition-all flex items-center gap-2"
+            >
+              Browse 5,000+ Direct Jobs
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Educational Guide -->
+  <section class="py-16 bg-slate-50 border-t border-slate-200">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold text-slate-900 mb-8 text-center">What is a Ghost Job & Why Do Companies Post Them?</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+          <div class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center font-bold mb-4">
+            1
+          </div>
+          <h3 class="font-bold text-slate-900 mb-2">Talent Pooling</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Companies keep generic postings up year-round to build a database of passive applicants without an active opening or budget.
+          </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+          <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center font-bold mb-4">
+            2
+          </div>
+          <h3 class="font-bold text-slate-900 mb-2">Signaling Growth</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Startups and public firms leave openings listed to project financial health and aggressive expansion to investors and competitors.
+          </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+          <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold mb-4">
+            3
+          </div>
+          <h3 class="font-bold text-slate-900 mb-2">Pacifying Overworked Teams</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Management posts listings to placate burnt-out employees by claiming "help is on the way," even when hiring has been unofficially frozen.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const daysSlider = document.getElementById('daysPosted') as HTMLInputElement;
+  const daysDisplay = document.getElementById('daysDisplay') as HTMLElement;
+  const ghostForm = document.getElementById('ghostForm') as HTMLFormElement;
+  const pasteSampleBtn = document.getElementById('pasteSampleBtn') as HTMLButtonElement;
+  const loadingState = document.getElementById('loadingState') as HTMLElement;
+  const resultsCard = document.getElementById('resultsCard') as HTMLElement;
+
+  if (daysSlider && daysDisplay) {
+    daysSlider.addEventListener('input', () => {
+      daysDisplay.textContent = daysSlider.value;
+    });
+  }
+
+  if (pasteSampleBtn) {
+    pasteSampleBtn.addEventListener('click', () => {
+      (document.getElementById('jobTitle') as HTMLInputElement).value = 'Senior Growth Product Manager';
+      (document.getElementById('company') as HTMLInputElement).value = 'HyperScale Analytics';
+      (document.getElementById('daysPosted') as HTMLInputElement).value = '45';
+      if (daysDisplay) daysDisplay.textContent = '45';
+      (document.getElementById('description') as HTMLTextAreaElement).value = 
+        'HyperScale Analytics is continuously scouting exceptional product leaders to join our growing talent pipeline. In this evergreen leadership role, you will define high-level roadmap hypotheses across multiple cross-functional workstreams. Requirements: 5-8+ years of product management, MBA preferred, experience wearing many hats in fast-paced startup environments. Compensation competitive and dependent on team allocation.';
+    });
+  }
+
+  if (ghostForm) {
+    ghostForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const jobTitle = (document.getElementById('jobTitle') as HTMLInputElement).value.trim();
+      const company = (document.getElementById('company') as HTMLInputElement).value.trim();
+      const jobUrl = (document.getElementById('jobUrl') as HTMLInputElement).value.trim();
+      const daysPosted = parseInt(daysSlider?.value || '14', 10);
+      const description = (document.getElementById('description') as HTMLTextAreaElement).value.trim();
+
+      if (!jobTitle || !company || !description) return;
+
+      loadingState.classList.remove('hidden');
+      resultsCard.classList.add('hidden');
+
+      try {
+        const response = await fetch('http://localhost:4000/api/tools/ghost-detector', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jobTitle, company, jobUrl, daysPosted, description }),
+        });
+
+        const data = await response.json();
+        
+        loadingState.classList.add('hidden');
+        resultsCard.classList.remove('hidden');
+
+        // Populate results
+        const score = data.ghostScore ?? 35;
+        const verdict = data.verdict ?? 'Moderate Risk';
+        const recommendation = data.recommendation ?? 'Proceed with caution and verify on company career board.';
+        const analysis = data.analysis ?? 'Analysis completed.';
+        const flags = data.flags || [];
+
+        const scoreNumber = document.getElementById('scoreNumber');
+        const verdictText = document.getElementById('verdictText');
+        const recommendationText = document.getElementById('recommendationText');
+        const scoreBadge = document.getElementById('scoreBadge');
+        const analysisText = document.getElementById('analysisText');
+        const flagsList = document.getElementById('flagsList');
+
+        if (scoreNumber) scoreNumber.textContent = `${score}%`;
+        if (verdictText) verdictText.textContent = verdict;
+        if (recommendationText) recommendationText.textContent = recommendation;
+        if (analysisText) analysisText.textContent = analysis;
+
+        if (scoreBadge) {
+          if (score < 30) {
+            scoreBadge.className = 'w-14 h-14 rounded-full flex items-center justify-center font-bold text-base bg-emerald-100 text-emerald-700';
+            scoreBadge.textContent = 'Low';
+          } else if (score < 65) {
+            scoreBadge.className = 'w-14 h-14 rounded-full flex items-center justify-center font-bold text-base bg-amber-100 text-amber-700';
+            scoreBadge.textContent = 'Med';
+          } else {
+            scoreBadge.className = 'w-14 h-14 rounded-full flex items-center justify-center font-bold text-base bg-red-100 text-red-700';
+            scoreBadge.textContent = 'High';
+          }
+        }
+
+        if (flagsList) {
+          flagsList.innerHTML = flags.map((flag: string) => `
+            <li class="flex items-start gap-2 p-2.5 rounded-lg bg-slate-50 border border-slate-100">
+              <svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <span>${flag}</span>
+            </li>
+          `).join('');
+        }
+
+        resultsCard.scrollIntoView({ behavior: 'smooth' });
+      } catch (err) {
+        loadingState.classList.add('hidden');
+        alert('Failed to analyze job listing. Please check backend connection.');
+      }
+    });
+  }
+</script>

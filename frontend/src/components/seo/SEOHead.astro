@@ -1,0 +1,70 @@
+---
+export interface Props {
+  title?: string;
+  description?: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+  type?: string;
+  jsonLd?: Record<string, any> | Array<Record<string, any>>;
+}
+
+const {
+  title = "Career Hound: Find jobs not on LinkedIn/Indeed",
+  description = "Career Hound is a job search tool that finds jobs by scraping company websites directly. Skip the 200+ applicant queues and recruiter middle-men.",
+  canonicalUrl = Astro.url.href,
+  ogImage = "/logo-blue.png",
+  type = "website",
+  jsonLd,
+} = Astro.props;
+
+// Base organization schema
+const orgSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Career Hound",
+  "url": "https://careerhound.io",
+  "logo": "https://careerhound.io/logo-blue.png",
+  "sameAs": [
+    "https://x.com/careerhoundio",
+    "https://www.facebook.com/profile.php?id=61558625172134"
+  ]
+};
+
+const schemasToRender = Array.isArray(jsonLd) 
+  ? [orgSchema, ...jsonLd] 
+  : jsonLd 
+    ? [orgSchema, jsonLd] 
+    : [orgSchema];
+---
+
+<!-- Core Meta Tags -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalUrl} />
+<meta name="robots" content="index, follow" />
+
+<!-- OpenGraph / Facebook -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:site_name" content="Career Hound" />
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonicalUrl} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+<!-- Favicon & Icons -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/png" href="/favicon.ico" />
+
+<!-- Structured Data (JSON-LD) for Rich Google Snippets -->
+{schemasToRender.map(schema => (
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+))}

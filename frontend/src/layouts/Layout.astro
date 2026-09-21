@@ -1,0 +1,128 @@
+---
+import SEOHead from '../components/seo/SEOHead.astro';
+import Header from '../components/common/Header.astro';
+import Footer from '../components/common/Footer.astro';
+import StickyCTA from '../components/common/StickyCTA.astro';
+import '../styles/global.css';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  canonicalUrl?: string;
+  jsonLd?: Record<string, any> | Array<Record<string, any>>;
+  headerVariant?: 'light' | 'transparent';
+  hideStickyCTA?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonicalUrl,
+  jsonLd,
+  headerVariant = 'light',
+  hideStickyCTA = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth bg-canvas">
+  <head>
+    <SEOHead 
+      title={title}
+      description={description}
+      canonicalUrl={canonicalUrl}
+      jsonLd={jsonLd}
+    />
+  </head>
+  <body class="min-h-screen flex flex-col antialiased text-slate-900 bg-canvas selection:bg-blue-600 selection:text-white">
+    
+    <!-- Global Sticky Top Conversion Banner -->
+    {!hideStickyCTA && <StickyCTA />}
+
+    <!-- Header Navigation -->
+    <Header variant={headerVariant} />
+
+    <!-- Main Content Body -->
+    <main class="flex-1">
+      <slot />
+    </main>
+
+    <!-- Global Footer -->
+    <Footer />
+
+    <!-- Direct Dodo Payments Checkout Redirection (No Popup Modal) -->
+    <script>
+      function resetCheckoutButtons() {
+        document.querySelectorAll('[data-trigger-checkout]').forEach(el => {
+          const btn = el as HTMLButtonElement;
+          const orig = btn.getAttribute('data-original-html');
+          if (orig) {
+            btn.innerHTML = orig;
+            btn.removeAttribute('disabled');
+          }
+        });
+      }
+
+      // Restore button state whenever the user navigates back from Dodo Checkout
+      window.addEventListener('pageshow', () => resetCheckoutButtons());
+      window.addEventListener('focus', () => resetCheckoutButtons());
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') resetCheckoutButtons();
+      });
+
+      // Save initial button HTML on load
+      document.querySelectorAll('[data-trigger-checkout]').forEach(el => {
+        const btn = el as HTMLButtonElement;
+        if (!btn.getAttribute('data-original-html')) {
+          btn.setAttribute('data-original-html', btn.innerHTML);
+        }
+      });
+
+      (window as any).triggerCheckout = async function(planTier = 'monthly', clickedBtn?: HTMLButtonElement | null) {
+        const activeBtn = clickedBtn || (document.activeElement as HTMLButtonElement | null);
+        const originalContent = activeBtn ? (activeBtn.getAttribute('data-original-html') || activeBtn.innerHTML) : '';
+        if (activeBtn) {
+          activeBtn.setAttribute('disabled', 'true');
+          activeBtn.innerHTML = '<span class="inline-flex items-center justify-center gap-2"><svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg><span>Loading Dodo Checkout...</span></span>';
+        }
+
+        try {
+          let email = '';
+          try {
+            const userStr = localStorage.getItem('ch_user');
+            if (userStr) {
+              const u = JSON.parse(userStr);
+              if (u?.email) email = u.email;
+            }
+          } catch (_) {}
+
+          const res = await fetch('http://localhost:4000/api/checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ planTier, email }),
+          });
+
+          const data = await res.json();
+          if (data?.checkoutUrl) {
+            // Give brief delay before redirect so if user hits Back, pageshow will restore
+            setTimeout(() => resetCheckoutButtons(), 1500);
+            window.location.href = data.checkoutUrl;
+          } else {
+            throw new Error(data?.error || 'Failed to initialize Dodo Payments session.');
+          }
+        } catch (err: any) {
+          resetCheckoutButtons();
+          alert(err.message || 'Unable to open Dodo Payments checkout.');
+        }
+      };
+
+      document.querySelectorAll('[data-trigger-checkout]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          const tier = el.getAttribute('data-tier') || 'monthly';
+          (window as any).triggerCheckout(tier, el as HTMLButtonElement);
+        });
+      });
+    </script>
+  </body>
+</html>

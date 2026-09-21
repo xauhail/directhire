@@ -1,0 +1,59 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Privacy Policy | Career Hound"
+  description="Career Hound Privacy Policy. Learn how we handle your resume data, job search preferences, and protect your privacy."
+>
+  <div class="py-16 md:py-24 bg-white">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-slate">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-2">Privacy Policy</h1>
+      <p class="text-sm text-slate-500 mb-8">Last updated: September 19, 2026</p>
+
+      <section class="space-y-6 text-sm text-slate-700 leading-relaxed">
+        <h2 class="text-xl font-bold text-slate-900">1. Information We Collect</h2>
+        <p>
+          Career Hound collects information to provide verified direct-to-company job opportunities and automated AI application assistance.
+          This includes:
+        </p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><strong>Contact Information:</strong> Name, email address, phone number, and location.</li>
+          <li><strong>Professional Profile & Resume:</strong> Work history, skills, portfolio links, GitHub, LinkedIn URLs, and resumes you upload.</li>
+          <li><strong>Payment Information:</strong> Processed directly and securely by our Merchant of Record, <strong>Dodo Payments</strong>. We do not store raw credit card numbers on our servers.</li>
+        </ul>
+
+        <h2 class="text-xl font-bold text-slate-900">2. How We Use Your Data</h2>
+        <p>
+          We use your data strictly to:
+        </p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Match your background with active direct company ATS listings (Greenhouse, Lever, Ashby, Workday).</li>
+          <li>Execute automated job applications via our AI Auto-Apply engine at your explicit direction.</li>
+          <li>Synthesize customized cover letters and screening responses using Career Hound AI.</li>
+          <li>Process billing transactions and subscription passes through Dodo Payments.</li>
+        </ul>
+
+        <h2 class="text-xl font-bold text-slate-900">3. AI Processing & Matching Architecture</h2>
+        <p>
+          Career Hound leverages enterprise neural NLP algorithms to analyze resume compatibility and formulate screening responses. Your resumes and profile data are processed within secure, enterprise-grade cloud environments and are <em>never used to train public third-party foundation models</em>.
+        </p>
+
+        <h2 class="text-xl font-bold text-slate-900">4. Third-Party Integrations</h2>
+        <p>
+          We partner with leading providers to power our platform:
+        </p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><strong>Dodo Payments:</strong> Handles global merchant of record billing, sales tax, VAT, and customer subscription management.</li>
+          <li><strong>Career Hound AI Engine:</strong> Powers semantic resume extraction, match score computation, and cover letter generation.</li>
+          <li><strong>Direct Company ATS Boards:</strong> When auto-apply is enabled, our automated engine submits application data directly to employer career forms.</li>
+        </ul>
+
+        <h2 class="text-xl font-bold text-slate-900">5. Data Retention & Deletion</h2>
+        <p>
+          You may request complete deletion of your resume, account history, and application logs at any time by contacting our support team at <a href="mailto:support@careerhound.io" class="text-blue-600 underline">support@careerhound.io</a>.
+        </p>
+      </section>
+    </div>
+  </div>
+</Layout>

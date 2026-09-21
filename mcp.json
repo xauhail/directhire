@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "astro-docs": {
+      "serverUrl": "https://mcp.docs.astro.build/mcp"
+    },
+    "better-auth": {
+      "url": "https://mcp.inkeep.com/better-auth/mcp",
+      "serverUrl": "https://mcp.better-auth.com/mcp"
+    }
+  }
+}

@@ -1,0 +1,146 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const toolsHubSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Free Job Search & AI Career Tools | Career Hound",
+  "description": "Suite of free career tools powered by Career Hound AI: ATS Resume Scanner, Ghost Job Detector, Cold DM Pitch Generator, and Remote Salary Benchmark."
+};
+---
+
+<Layout 
+  title="Free AI Career Tools | Career Hound"
+  description="Free tools to bypass gatekeepers: ATS resume scanner, ghost job detector, cold recruiter DM generator, and remote salary calculator."
+  jsonLd={toolsHubSchema}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-12">
+    
+    <!-- Hero Header -->
+    <div class="text-center max-w-2xl mx-auto space-y-3">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-wider">
+        <span>100% Free • No Credit Card Required</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
+        Free AI Job Search Tools
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+        Everything you need to audit your resume, detect fake ghost listings, and pitch hiring managers directly.
+      </p>
+    </div>
+
+    <!-- Tools Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      
+      <!-- Tool 1: ATS Checker -->
+      <a href="/tools/ats-checker" class="p-8 rounded-3xl bg-white border-2 border-slate-200 hover:border-blue-500 hover:shadow-card-hover transition-all group flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold group-hover:scale-105 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+            Free ATS Resume Scanner & Keyword Matcher
+          </h2>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Upload your resume and paste any target job description. Career Hound AI calculates your compatibility score, missing hard skills, and gives tailored bullet rewrites.
+          </p>
+        </div>
+        <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-400">Used by 45,000+ applicants</span>
+          <span class="text-xs font-bold text-blue-600 inline-flex items-center gap-1">Open ATS Checker →</span>
+        </div>
+      </a>
+
+      <!-- Tool 2: Ghost Job Detector -->
+      <a href="/tools/ghost-job-detector" class="p-8 rounded-3xl bg-white border-2 border-slate-200 hover:border-blue-500 hover:shadow-card-hover transition-all group flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold group-hover:scale-105 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+            Ghost Job & Stale Listing Detector
+          </h2>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Paste any LinkedIn or Indeed job URL or text. Detect evergreen talent pipelines, compliance reposts, and fake listings before spending 45 minutes applying.
+          </p>
+        </div>
+        <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-400">Detects 95%+ stale postings</span>
+          <span class="text-xs font-bold text-blue-600 inline-flex items-center gap-1">Scan Any Job →</span>
+        </div>
+      </a>
+
+      <!-- Tool 3: Recruiter Outreach -->
+      <a href="/tools/recruiter-outreach" class="p-8 rounded-3xl bg-white border-2 border-slate-200 hover:border-blue-500 hover:shadow-card-hover transition-all group flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold group-hover:scale-105 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+            Cold Recruiter & Hiring Manager Pitch Generator
+          </h2>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Generate 3 high-converting cold pitches: a short LinkedIn connection note (under 300 characters), a direct InMail, and a cold email with proven high open rates.
+          </p>
+        </div>
+        <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-400">4.2x higher interview reply rate</span>
+          <span class="text-xs font-bold text-blue-600 inline-flex items-center gap-1">Write Cold DMs →</span>
+        </div>
+      </a>
+
+      <!-- Tool 4: Salary Benchmark -->
+      <a href="/tools/salary-calculator" class="p-8 rounded-3xl bg-white border-2 border-slate-200 hover:border-blue-500 hover:shadow-card-hover transition-all group flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold group-hover:scale-105 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+            Remote & Tech Salary Calculator
+          </h2>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Compare compensation percentiles across 30+ countries, experience levels, and remote tiers to know exactly what you should be earning.
+          </p>
+        </div>
+        <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-400">Based on direct company data</span>
+          <span class="text-xs font-bold text-blue-600 inline-flex items-center gap-1">Check Salary Percentiles →</span>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- Bottom Bridge CTA -->
+    <div class="p-8 rounded-3xl bg-gradient-to-r from-blue-600 to-indigo-700 text-white text-center space-y-4 shadow-lg">
+      <h3 class="text-2xl sm:text-3xl font-black tracking-tight">
+        Want to skip applying manually altogether?
+      </h3>
+      <p class="text-sm text-blue-100 max-w-lg mx-auto">
+        Career Hound's AI Auto-Apply engine automatically discovers, matches, and applies to direct company jobs for you.
+      </p>
+      <div class="pt-2">
+        <a href="/onboarding" class="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-white text-blue-700 hover:bg-blue-50 font-bold text-sm shadow-md transition-all">
+          <span>Start Auto-Apply Free</span>
+          <span>→</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</Layout>

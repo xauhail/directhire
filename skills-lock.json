@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "skills": {
+    "better-auth-integration": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/better-auth-integration/SKILL.md",
+      "computedHash": "d0621569a2f443ef9ae49273e38653d07ed4ce5c526ed1643e45cf5ede58ea1f"
+    },
+    "billing-sdk": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/billing-sdk/SKILL.md",
+      "computedHash": "90701786411077529dee479a7ff3a3c7531005ac82b0da6a0e850b651167802d"
+    },
+    "checkout-integration": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/checkout-integration/SKILL.md",
+      "computedHash": "ae0811ca4d3092eb3b206c83b03a201f9c0adcc4facbaaa32dec71faf4ea5c14"
+    },
+    "credit-based-billing": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/credit-based-billing/SKILL.md",
+      "computedHash": "fef90bc2f735b68ac48187efa08737804dbe11d7fd8444ae7116dca3476e87df"
+    },
+    "customer-management": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/customer-management/SKILL.md",
+      "computedHash": "36ab6ff7cc1ff41d7efbedbe77bb66fa8e46416a71977f9995d444dcc1bfe83a"
+    },
+    "discounts-and-promotions": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/discounts-and-promotions/SKILL.md",
+      "computedHash": "ae395e37bf9accfde111ce392c5a08d3ea3ac1b57c1d91f442c49fd4f88c7553"
+    },
+    "dodo-best-practices": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/dodo-best-practices/SKILL.md",
+      "computedHash": "e76e2c45d37b1071a6de07a2dc19ab3205ef40afea1b0193ea74755ff4f5e451"
+    },
+    "framework-adapters": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/framework-adapters/SKILL.md",
+      "computedHash": "1c1b3430f6877b70045f7bb12e406d2ebdbd4dc85f1050bcb089850263135119"
+    },
+    "license-keys": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/license-keys/SKILL.md",
+      "computedHash": "df2ba540572bcd63557a3d26e766420eea8611b563ad402e6cadf6dd3958dd0b"
+    },
+    "localized-pricing": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/localized-pricing/SKILL.md",
+      "computedHash": "9c4f022d5cb330897b9250da8d82e9323e5484da41e4f5e60484d20cf8220f0a"
+    },
+    "mobile-checkout": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/mobile-checkout/SKILL.md",
+      "computedHash": "8fdf3210b1e65358ed020dbaaa601764ca0485562a039c7a4f14507302e4e63b"
+    },
+    "product-catalog-management": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/product-catalog-management/SKILL.md",
+      "computedHash": "be55626bf01cf2a37b5c5dd706b3268059d028d83304f46906bde1ca4b48f490"
+    },
+    "refunds-and-disputes": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/refunds-and-disputes/SKILL.md",
+      "computedHash": "0a17f8fba7a1c66a0033a279e10d6b4925e7c1a1f8e1f3897f24de1ce3413917"
+    },
+    "subscription-integration": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/subscription-integration/SKILL.md",
+      "computedHash": "28a221ec6ad8bca27a92a02b2ac29e3c6861cdfa7432afdb67f4ca8d3fd560c8"
+    },
+    "testing-and-go-live": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/testing-and-go-live/SKILL.md",
+      "computedHash": "cc47f6cab0d95ac4dcb00b5b3cc22606b4aefe24caa671a78efc34a0604195a3"
+    },
+    "usage-based-billing": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/usage-based-billing/SKILL.md",
+      "computedHash": "b85694c520ca8e25c6fe7c41a894c311d5525ff739210cf4ff1bed8ad20fc375"
+    },
+    "webhook-integration": {
+      "source": "dodopayments/skills",
+      "sourceType": "github",
+      "skillPath": "dodo-payments/webhook-integration/SKILL.md",
+      "computedHash": "095d51d37ea5257ef93b167a5bf96af495189bb5c84ef89a75e99d3c68c20867"
+    }
+  }
+}

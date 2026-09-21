@@ -1,0 +1,350 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Sign In to Career Hound | Career Hound"
+  description="Sign in with Better Auth — secure email & password login with PostgreSQL-backed sessions."
+>
+  <div class="min-h-[85vh] flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50/50 via-white to-slate-50">
+    <div class="max-w-md w-full space-y-8 bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-2xl shadow-slate-200/60">
+      
+      <div class="text-center">
+        <a href="/" class="inline-flex items-center gap-2 mb-6">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-500/20">
+            C
+          </div>
+          <span class="text-xl font-extrabold text-slate-900 tracking-tight">Career Hound</span>
+        </a>
+        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Welcome back</h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-2">
+          Sign in to your account
+        </p>
+      </div>
+
+      <!-- Tab: Sign In / Sign Up -->
+      <div class="flex bg-slate-100 rounded-xl p-1 gap-1">
+        <button id="tab-signin" type="button" class="flex-1 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-900 transition-all" onclick="switchTab('signin')">
+          Sign In
+        </button>
+        <button id="tab-signup" type="button" class="flex-1 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-700 transition-all" onclick="switchTab('signup')">
+          Create Account
+        </button>
+      </div>
+
+      <!-- Onboarding completion callout banner -->
+      <div id="onboarding-banner" class="hidden p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-900 text-xs space-y-1 shadow-xs">
+        <div class="font-extrabold text-blue-700 flex items-center gap-1.5 text-sm">
+          <svg class="w-4 h-4 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+          <span>Your Job Match Profile Is Ready</span>
+        </div>
+        <p class="text-slate-600 text-[11px] leading-relaxed">
+          Create your account to unlock your personalized direct-company feed and select your plan.
+        </p>
+      </div>
+
+      <!-- Error / Success banner -->
+      <div id="auth-error" class="hidden p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium text-center"></div>
+      <div id="auth-success" class="hidden p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium text-center"></div>
+
+      <!-- ── Sign In Form ── -->
+      <form id="signin-form" class="space-y-4" novalidate>
+        <div>
+          <label for="signin-email" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Email Address</label>
+          <input
+            type="email"
+            id="signin-email"
+            autocomplete="email"
+            placeholder="you@company.com"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400 shadow-sm"
+          />
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="signin-password" class="block text-xs font-bold uppercase tracking-wider text-slate-700">Password</label>
+            <button type="button" id="toggle-signin-pwd" class="text-[11px] text-blue-600 hover:text-blue-800 font-semibold">Show</button>
+          </div>
+          <input
+            type="password"
+            id="signin-password"
+            autocomplete="current-password"
+            placeholder="Your password"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400 shadow-sm"
+          />
+        </div>
+
+        <button
+          type="submit"
+          id="signin-btn"
+          class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+        >
+          <span id="signin-btn-label">Sign In</span>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </button>
+
+        <p class="text-center text-xs text-slate-400">
+          <button type="button" onclick="switchTab('signup')" class="text-blue-600 font-semibold hover:underline">No account? Create one free →</button>
+        </p>
+      </form>
+
+      <!-- ── Sign Up Form ── -->
+      <form id="signup-form" class="space-y-4 hidden" novalidate>
+        <div>
+          <label for="signup-name" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Full Name</label>
+          <input
+            type="text"
+            id="signup-name"
+            autocomplete="name"
+            placeholder="Alex Johnson"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400 shadow-sm"
+          />
+        </div>
+
+        <div>
+          <label for="signup-email" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Email Address</label>
+          <input
+            type="email"
+            id="signup-email"
+            autocomplete="email"
+            placeholder="you@company.com"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400 shadow-sm"
+          />
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="signup-password" class="block text-xs font-bold uppercase tracking-wider text-slate-700">Password</label>
+            <button type="button" id="toggle-signup-pwd" class="text-[11px] text-blue-600 hover:text-blue-800 font-semibold">Show</button>
+          </div>
+          <input
+            type="password"
+            id="signup-password"
+            autocomplete="new-password"
+            placeholder="Min 8 characters"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400 shadow-sm"
+          />
+        </div>
+
+        <button
+          type="submit"
+          id="signup-btn"
+          class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+        >
+          <span id="signup-btn-label">Create Account</span>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </button>
+
+        <p class="text-center text-xs text-slate-400">
+          Already have an account? <button type="button" onclick="switchTab('signin')" class="text-blue-600 font-semibold hover:underline">Sign in →</button>
+        </p>
+      </form>
+
+      <!-- Demo credentials (dev helper) -->
+      <details class="text-[11px] text-slate-400 cursor-pointer select-none border-t border-slate-100 pt-3">
+        <summary class="hover:text-slate-600 transition-colors text-center">Testing? View demo credentials</summary>
+        <div class="mt-2 p-3 bg-slate-50 rounded-lg text-left space-y-1.5 font-mono">
+          <div><span class="text-slate-600 font-semibold">Pro user:</span> test@careerhound.io / Career2024!</div>
+          <div><span class="text-slate-600 font-semibold">Free user:</span> demo@careerhound.io / Demo1234!</div>
+          <p class="text-[10px] text-slate-400 mt-2 font-sans">These use the legacy in-memory fallback. Set DATABASE_URL in backend/.env to use Better Auth with PostgreSQL.</p>
+        </div>
+      </details>
+
+      <p class="text-center text-[11px] text-slate-400">
+        Subscriptions securely processed by Dodo Payments.
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { authClient } from '../lib/auth-client';
+
+  // ── Tab switcher ───────────────────────────────────────────────────────────
+  function switchTab(tab: 'signin' | 'signup') {
+    const signinForm = document.getElementById('signin-form');
+    const signupForm = document.getElementById('signup-form');
+    const tabSignin = document.getElementById('tab-signin');
+    const tabSignup = document.getElementById('tab-signup');
+    hideMessages();
+
+    if (tab === 'signin') {
+      signinForm?.classList.remove('hidden');
+      signupForm?.classList.add('hidden');
+      tabSignin?.classList.add('bg-white', 'shadow-sm', 'text-slate-900');
+      tabSignin?.classList.remove('text-slate-500');
+      tabSignup?.classList.remove('bg-white', 'shadow-sm', 'text-slate-900');
+      tabSignup?.classList.add('text-slate-500');
+    } else {
+      signupForm?.classList.remove('hidden');
+      signinForm?.classList.add('hidden');
+      tabSignup?.classList.add('bg-white', 'shadow-sm', 'text-slate-900');
+      tabSignup?.classList.remove('text-slate-500');
+      tabSignin?.classList.remove('bg-white', 'shadow-sm', 'text-slate-900');
+      tabSignin?.classList.add('text-slate-500');
+    }
+  }
+  (window as any).switchTab = switchTab;
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  function showError(msg: string) {
+    const el = document.getElementById('auth-error');
+    if (el) { el.textContent = msg; el.classList.remove('hidden'); }
+    document.getElementById('auth-success')?.classList.add('hidden');
+  }
+  function showSuccess(msg: string) {
+    const el = document.getElementById('auth-success');
+    if (el) { el.textContent = msg; el.classList.remove('hidden'); }
+    document.getElementById('auth-error')?.classList.add('hidden');
+  }
+  function hideMessages() {
+    document.getElementById('auth-error')?.classList.add('hidden');
+    document.getElementById('auth-success')?.classList.add('hidden');
+  }
+
+  function togglePwd(inputId: string, btnId: string) {
+    const input = document.getElementById(inputId) as HTMLInputElement;
+    const btn = document.getElementById(btnId) as HTMLButtonElement;
+    if (!input || !btn) return;
+    const isHidden = input.type === 'password';
+    input.type = isHidden ? 'text' : 'password';
+    btn.textContent = isHidden ? 'Hide' : 'Show';
+  }
+
+  document.getElementById('toggle-signin-pwd')?.addEventListener('click', () => togglePwd('signin-password', 'toggle-signin-pwd'));
+  document.getElementById('toggle-signup-pwd')?.addEventListener('click', () => togglePwd('signup-password', 'toggle-signup-pwd'));
+
+  // ── Persist user to localStorage for Header + Account page ────────────────
+  function persistSession(user: any) {
+    localStorage.setItem('ch_user', JSON.stringify({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      plan: (user as any).plan || 'free',
+      isSubscribed: (user as any).isSubscribed || false,
+      onboardingCompleted: (user as any).onboardingCompleted || false,
+      createdAt: user.createdAt,
+    }));
+    // Better Auth uses httpOnly cookies — mark as authenticated
+    localStorage.setItem('ch_authenticated', '1');
+  }
+
+  // ── Sign In ────────────────────────────────────────────────────────────────
+  const signinForm = document.getElementById('signin-form') as HTMLFormElement;
+  const signinBtn = document.getElementById('signin-btn') as HTMLButtonElement;
+  const signinBtnLabel = document.getElementById('signin-btn-label');
+
+  signinForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideMessages();
+    const email = (document.getElementById('signin-email') as HTMLInputElement).value.trim();
+    const password = (document.getElementById('signin-password') as HTMLInputElement).value;
+
+    if (!email || !password) { showError('Please enter your email and password.'); return; }
+
+    signinBtn.disabled = true;
+    if (signinBtnLabel) signinBtnLabel.textContent = 'Signing in...';
+
+    try {
+      const { data, error } = await authClient.signIn.email({ email, password });
+
+      if (error) {
+        // Fallback to legacy in-memory auth for demo accounts
+        const res = await fetch('http://localhost:4000/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        const legacyData = await res.json();
+        if (!res.ok) throw new Error(legacyData.error || error.message || 'Invalid credentials');
+
+        // Legacy path — store in localStorage
+        localStorage.setItem('ch_token', legacyData.token);
+        localStorage.setItem('ch_user', JSON.stringify(legacyData.user));
+        localStorage.setItem('ch_authenticated', '1');
+
+        const redirectTo = legacyData.user?.onboardingCompleted ? '/account' : '/onboarding';
+        window.location.href = redirectTo;
+        return;
+      }
+
+      // Better Auth path — session cookie set automatically
+      if (data?.user) persistSession(data.user);
+      const redirectTo = (data?.user as any)?.onboardingCompleted ? '/account' : '/onboarding';
+      window.location.href = redirectTo;
+
+    } catch (err: any) {
+      showError(err.message || 'Sign in failed. Please check your credentials.');
+      signinBtn.disabled = false;
+      if (signinBtnLabel) signinBtnLabel.textContent = 'Sign In';
+    }
+  });
+
+  // ── Sign Up ────────────────────────────────────────────────────────────────
+  const signupForm = document.getElementById('signup-form') as HTMLFormElement;
+  const signupBtn = document.getElementById('signup-btn') as HTMLButtonElement;
+  const signupBtnLabel = document.getElementById('signup-btn-label');
+
+  signupForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideMessages();
+    const name = (document.getElementById('signup-name') as HTMLInputElement).value.trim();
+    const email = (document.getElementById('signup-email') as HTMLInputElement).value.trim();
+    const password = (document.getElementById('signup-password') as HTMLInputElement).value;
+
+    if (!name || !email || !password) { showError('Please fill in all fields.'); return; }
+    if (password.length < 8) { showError('Password must be at least 8 characters.'); return; }
+
+    signupBtn.disabled = true;
+    if (signupBtnLabel) signupBtnLabel.textContent = 'Creating account...';
+
+    try {
+      const { data, error } = await authClient.signUp.email({ name, email, password });
+
+      if (error) throw new Error(error.message || 'Registration failed');
+
+      if (data?.user) persistSession(data.user);
+      
+      const hasOnboarding = localStorage.getItem('ch_onboarding_completed') === 'true' || 
+                            new URLSearchParams(window.location.search).get('onboarding') === 'completed';
+
+      if (hasOnboarding) {
+        showSuccess('Account created! Redirecting to select your membership plan...');
+        setTimeout(() => window.location.href = '/pricing?onboarding=completed', 1000);
+      } else {
+        showSuccess('Account created! Redirecting to onboarding to calibrate your jobs...');
+        setTimeout(() => window.location.href = '/onboarding', 1000);
+      }
+
+    } catch (err: any) {
+      showError(err.message || 'Sign up failed. Please try again.');
+      signupBtn.disabled = false;
+      if (signupBtnLabel) signupBtnLabel.textContent = 'Create Account';
+    }
+  });
+
+  // ── Auto-detect parameters (e.g. ?mode=signup or ?onboarding=completed) ────
+  const urlParams = new URLSearchParams(window.location.search);
+  const onboardingBanner = document.getElementById('onboarding-banner');
+  if (urlParams.get('mode') === 'signup' || urlParams.get('onboarding') === 'completed') {
+    switchTab('signup');
+    if (onboardingBanner) onboardingBanner.classList.remove('hidden');
+  }
+
+  // ── Auto-detect if already signed in ──────────────────────────────────────
+  (async () => {
+    try {
+      const { data } = await authClient.getSession();
+      if (data?.user) {
+        persistSession(data.user);
+        window.location.href = '/account';
+      }
+    } catch (_) {
+      // Not signed in — show login form normally
+    }
+  })();
+</script>

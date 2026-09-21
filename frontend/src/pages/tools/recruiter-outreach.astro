@@ -1,0 +1,300 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout
+  title="Free AI Recruiter Cold Outreach Generator | Career Hound"
+  description="Generate high-converting recruiter outreach messages in seconds. LinkedIn connection requests, InMails, and cold emails tailored to get interviews."
+>
+  <!-- Hero Section -->
+  <section class="py-16 md:py-24 bg-gradient-to-b from-blue-50/60 via-white to-slate-50 border-b border-slate-200/80">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold mb-6 shadow-sm">
+        <svg class="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        3.8x higher interview response rate than standard cold applications
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        Free AI <span class="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 bg-clip-text text-transparent">Recruiter Outreach</span> Generator
+      </h1>
+      <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
+        Craft irresistible LinkedIn messages and cold emails directly to hiring managers. Personalized using Career Hound AI in seconds.
+      </p>
+    </div>
+  </section>
+
+  <!-- Workspace -->
+  <section class="py-12 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Input Card -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 sm:p-8 mb-12">
+        <form id="outreachForm" class="space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="role" class="block text-sm font-semibold text-slate-800 mb-1">Target Job Title *</label>
+              <input
+                type="text"
+                id="role"
+                placeholder="e.g. Senior Frontend Engineer"
+                required
+                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 placeholder-slate-400 shadow-sm"
+              />
+            </div>
+            <div>
+              <label for="company" class="block text-sm font-semibold text-slate-800 mb-1">Company Name *</label>
+              <input
+                type="text"
+                id="company"
+                placeholder="e.g. Stripe, Linear, Datadog"
+                required
+                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 placeholder-slate-400 shadow-sm"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="recruiterName" class="block text-sm font-semibold text-slate-800 mb-1">Recruiter / Manager Name (Optional)</label>
+              <input
+                type="text"
+                id="recruiterName"
+                placeholder="e.g. Sarah Jenkins (or leave blank)"
+                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 placeholder-slate-400 shadow-sm"
+              />
+            </div>
+            <div>
+              <label for="tone" class="block text-sm font-semibold text-slate-800 mb-1">Outreach Tone</label>
+              <select
+                id="tone"
+                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 shadow-sm bg-white"
+              >
+                <option value="Direct & Impactful">Direct & Impactful (Recommended)</option>
+                <option value="Professional & Warm">Professional & Warm</option>
+                <option value="Casual & Conversational">Casual & Conversational</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label for="pitch" class="block text-sm font-semibold text-slate-800">Your Value Proposition / Key Proof Points *</label>
+              <button
+                type="button"
+                id="pasteSampleBtn"
+                class="text-xs text-blue-600 hover:text-blue-700 font-medium underline"
+              >
+                Paste Sample Pitch
+              </button>
+            </div>
+            <textarea
+              id="pitch"
+              rows="4"
+              required
+              placeholder="e.g. 5 years building high-load React/Node systems, reduced checkout latency by 35% for 2M active users, passionate about developer experience."
+              class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 placeholder-slate-400 shadow-sm leading-relaxed"
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            id="submitBtn"
+            class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-base shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2"
+          >
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            Generate 3 High-Response Messages
+          </button>
+        </form>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="hidden py-12 text-center">
+          <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mb-4"></div>
+          <p class="text-base font-semibold text-slate-800">Career Hound AI is crafting personalized outreach...</p>
+          <p class="text-sm text-slate-500 mt-1">Calibrating character limits, hooks, and call-to-actions.</p>
+        </div>
+
+        <!-- Output Cards -->
+        <div id="resultsCard" class="hidden mt-8 pt-8 border-t border-slate-200 space-y-6 animate-fade-in">
+          
+          <!-- Template 1: LinkedIn Connection Note -->
+          <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 relative">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-blue-100 text-blue-700 font-bold text-xs">Option 1</span>
+                <h4 class="font-bold text-slate-900 text-sm">LinkedIn Connection Request (&lt; 300 characters)</h4>
+              </div>
+              <button
+                type="button"
+                class="copy-btn px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5"
+                data-target="linkedinNote"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                Copy
+              </button>
+            </div>
+            <p id="linkedinNote" class="text-sm text-slate-800 leading-relaxed font-sans bg-white p-4 rounded-xl border border-slate-200 whitespace-pre-wrap"></p>
+          </div>
+
+          <!-- Template 2: InMail / DM -->
+          <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 relative">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-indigo-100 text-indigo-700 font-bold text-xs">Option 2</span>
+                <h4 class="font-bold text-slate-900 text-sm">LinkedIn InMail / Warm DM</h4>
+              </div>
+              <button
+                type="button"
+                class="copy-btn px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5"
+                data-target="inmailMessage"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                Copy
+              </button>
+            </div>
+            <p id="inmailMessage" class="text-sm text-slate-800 leading-relaxed font-sans bg-white p-4 rounded-xl border border-slate-200 whitespace-pre-wrap"></p>
+          </div>
+
+          <!-- Template 3: Cold Email -->
+          <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 relative">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-purple-100 text-purple-700 font-bold text-xs">Option 3</span>
+                <h4 class="font-bold text-slate-900 text-sm">Direct Cold Email</h4>
+              </div>
+              <button
+                type="button"
+                class="copy-btn px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5"
+                data-target="coldEmail"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                Copy
+              </button>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200">
+              <div class="text-xs font-bold text-slate-500 mb-1">Subject: <span id="emailSubject" class="text-slate-900 font-medium"></span></div>
+              <hr class="my-2 border-slate-100" />
+              <p id="coldEmail" class="text-sm text-slate-800 leading-relaxed font-sans whitespace-pre-wrap"></p>
+            </div>
+          </div>
+
+          <!-- Bridge CTA Card -->
+          <div class="p-6 rounded-2xl bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-950 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="space-y-2 text-center sm:text-left">
+              <span class="px-2.5 py-1 rounded-full bg-blue-800 text-blue-200 text-xs font-medium">
+                Want zero manual outreach?
+              </span>
+              <h3 class="text-lg sm:text-xl font-bold">Automate your entire job application flow</h3>
+              <p class="text-blue-200 text-xs sm:text-sm max-w-md">
+                Career Hound Auto-Apply scans verified listings daily, customizes answers with intelligent screening algorithms, and submits applications automatically.
+              </p>
+            </div>
+            <a
+              href="/auto-apply"
+              class="shrink-0 px-6 py-3 rounded-xl bg-white text-blue-900 hover:bg-blue-50 font-bold text-sm shadow-md transition-all flex items-center gap-2"
+            >
+              <span>Explore AI Auto-Apply</span>
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const outreachForm = document.getElementById('outreachForm') as HTMLFormElement;
+  const pasteSampleBtn = document.getElementById('pasteSampleBtn') as HTMLButtonElement;
+  const loadingState = document.getElementById('loadingState') as HTMLElement;
+  const resultsCard = document.getElementById('resultsCard') as HTMLElement;
+
+  if (pasteSampleBtn) {
+    pasteSampleBtn.addEventListener('click', () => {
+      (document.getElementById('role') as HTMLInputElement).value = 'Senior Product Designer';
+      (document.getElementById('company') as HTMLInputElement).value = 'Linear';
+      (document.getElementById('recruiterName') as HTMLInputElement).value = 'Alex Rivera';
+      (document.getElementById('pitch') as HTMLTextAreaElement).value = 
+        '6+ years designing B2B developer tools and productivity software. Redesigned core workflow at previous Series B company, leading to 28% increase in daily active retention and 4.9 App Store rating.';
+    });
+  }
+
+  if (outreachForm) {
+    outreachForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const role = (document.getElementById('role') as HTMLInputElement).value.trim();
+      const company = (document.getElementById('company') as HTMLInputElement).value.trim();
+      const recruiterName = (document.getElementById('recruiterName') as HTMLInputElement).value.trim() || 'Hiring Manager';
+      const tone = (document.getElementById('tone') as HTMLSelectElement).value;
+      const pitch = (document.getElementById('pitch') as HTMLTextAreaElement).value.trim();
+
+      if (!role || !company || !pitch) return;
+
+      loadingState.classList.remove('hidden');
+      resultsCard.classList.add('hidden');
+
+      try {
+        const response = await fetch('http://localhost:4000/api/tools/generate-outreach', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role, company, recruiterName, tone, pitch }),
+        });
+
+        const data = await response.json();
+        loadingState.classList.add('hidden');
+        resultsCard.classList.remove('hidden');
+
+        // Populate elements
+        const linkedinNote = document.getElementById('linkedinNote');
+        const inmailMessage = document.getElementById('inmailMessage');
+        const coldEmail = document.getElementById('coldEmail');
+        const emailSubject = document.getElementById('emailSubject');
+
+        if (linkedinNote) linkedinNote.textContent = data.linkedinNote || `Hi ${recruiterName}, came across your work hiring for ${role} at ${company}. Given my background in ${pitch.slice(0, 80)}, I'd love to connect and share how I could add value to your team.`;
+        if (inmailMessage) inmailMessage.textContent = data.inmailMessage || `Hi ${recruiterName},\n\nI've been tracking ${company}'s progress and noticed you are hiring for a ${role}.\n\nWith my background focusing on ${pitch}, I believe I could hit the ground running.\n\nWould you be open to a brief 10-minute introductory conversation this week?\n\nBest regards,`;
+        if (coldEmail) coldEmail.textContent = data.coldEmail || `Hi ${recruiterName},\n\nI hope you're having a productive week.\n\nI noticed the ${role} opening at ${company}. ${pitch}\n\nI've attached my resume and work samples for your review. Would you or the team have 10 minutes for a brief chat?\n\nThanks,\n`;
+        if (emailSubject) emailSubject.textContent = data.emailSubject || `${role} inquiry / Quick note regarding ${company}'s engineering team`;
+
+        resultsCard.scrollIntoView({ behavior: 'smooth' });
+      } catch (err) {
+        loadingState.classList.add('hidden');
+        alert('Failed to generate outreach messages. Please check backend connection.');
+      }
+    });
+  }
+
+  // Setup copy buttons
+  document.querySelectorAll('.copy-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-target');
+      if (!targetId) return;
+      const targetEl = document.getElementById(targetId);
+      if (!targetEl) return;
+
+      navigator.clipboard.writeText(targetEl.textContent || '');
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = `
+        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <span class="text-emerald-600">Copied!</span>
+      `;
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+      }, 2000);
+    });
+  });
+</script>

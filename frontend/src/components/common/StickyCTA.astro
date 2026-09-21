@@ -1,0 +1,60 @@
+---
+interface Props {
+  text?: string;
+  buttonText?: string;
+  buttonHref?: string;
+}
+
+const {
+  text = "Over 8,500 active job seekers bypass recruiter agency cuts and apply directly.",
+  buttonText = "Get Started Free →",
+  buttonHref = "/onboarding",
+} = Astro.props;
+---
+
+<aside 
+  id="sticky-top-cta" 
+  class="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white text-xs sm:text-sm py-2 px-4 shadow-sm relative z-30 transition-all"
+  aria-label="Promotional Announcement"
+>
+  <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+    <div class="flex items-center gap-2 flex-1 justify-center sm:justify-start">
+      <span class="flex h-2 w-2 relative">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+      </span>
+      <span class="font-medium text-blue-50">{text}</span>
+    </div>
+
+    <div class="flex items-center gap-3 shrink-0">
+      <a 
+        href={buttonHref}
+        class="inline-flex items-center gap-1 font-bold bg-white text-blue-700 px-3 py-1 rounded-full text-xs hover:bg-blue-50 transition-colors shadow-sm"
+      >
+        <span>{buttonText}</span>
+      </a>
+
+      <button 
+        type="button" 
+        id="dismiss-sticky-cta" 
+        class="text-blue-200 hover:text-white p-0.5 rounded transition-colors"
+        aria-label="Dismiss banner"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<script>
+  const banner = document.getElementById('sticky-top-cta');
+  const dismissBtn = document.getElementById('dismiss-sticky-cta');
+  if (banner && dismissBtn) {
+    dismissBtn.addEventListener('click', () => {
+      banner.style.display = 'none';
+    });
+  }
+</script>

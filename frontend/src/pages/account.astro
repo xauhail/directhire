@@ -1,0 +1,640 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="My Account | Career Hound"
+  description="Track your job applications, manage your profile, resume, and Career Hound subscription."
+>
+  <!-- Auth Guard: redirects to /login if not authenticated (handled client-side) -->
+  <div id="auth-loading" class="min-h-[60vh] flex items-center justify-center">
+    <div class="flex flex-col items-center gap-3">
+      <div class="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+      <p class="text-sm text-slate-500 font-medium">Loading your account...</p>
+    </div>
+  </div>
+
+  <!-- Main Dashboard (shown after auth check) -->
+  <div id="dashboard" class="hidden">
+
+    <!-- Dashboard Header Banner -->
+    <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div id="user-avatar-wrapper" class="w-16 h-16 rounded-2xl bg-white/20 border-2 border-white/30 overflow-hidden flex items-center justify-center text-2xl font-black shrink-0">
+              <span id="user-initials">?</span>
+            </div>
+            <div>
+              <h1 id="user-greeting" class="text-2xl font-extrabold tracking-tight">Loading...</h1>
+              <p id="user-email-display" class="text-blue-200 text-sm mt-0.5"></p>
+              <span id="user-plan-badge" class="inline-flex items-center gap-1 mt-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-white/20 border border-white/30 text-white">
+                Free Plan
+              </span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 flex-wrap">
+            <a href="/search" class="px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 text-white font-semibold text-sm border border-white/30 transition-all">
+              🔍 Search Jobs
+            </a>
+            <button id="btn-logout" type="button" class="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white font-semibold text-sm border border-white/20 transition-all">
+              Sign Out
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
+          <div class="bg-white/10 rounded-2xl p-4 border border-white/20">
+            <p class="text-xs text-blue-200 font-semibold uppercase tracking-wider">Applied</p>
+            <p id="stat-applied" class="text-3xl font-black mt-1">–</p>
+          </div>
+          <div class="bg-white/10 rounded-2xl p-4 border border-white/20">
+            <p class="text-xs text-blue-200 font-semibold uppercase tracking-wider">Today</p>
+            <p id="stat-today" class="text-3xl font-black mt-1">–</p>
+          </div>
+          <div class="bg-white/10 rounded-2xl p-4 border border-white/20">
+            <p class="text-xs text-blue-200 font-semibold uppercase tracking-wider">Avg. Match</p>
+            <p id="stat-avg-match" class="text-3xl font-black mt-1">–</p>
+          </div>
+          <div class="bg-white/10 rounded-2xl p-4 border border-white/20">
+            <p class="text-xs text-blue-200 font-semibold uppercase tracking-wider">Plan</p>
+            <p id="stat-plan" class="text-xl font-black mt-1 truncate">–</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="border-b border-slate-200 bg-white sticky top-0 z-20 shadow-xs">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex gap-1 overflow-x-auto no-scrollbar -mb-px" role="tablist">
+          <button class="tab-btn active flex items-center gap-2 px-4 py-4 text-sm font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap shrink-0" data-tab="applications" role="tab">
+            📋 Applications
+          </button>
+          <button class="tab-btn flex items-center gap-2 px-4 py-4 text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap shrink-0 transition-colors" data-tab="saved" role="tab">
+            🔖 Saved Jobs
+          </button>
+          <button class="tab-btn flex items-center gap-2 px-4 py-4 text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap shrink-0 transition-colors" data-tab="profile" role="tab">
+            👤 Profile
+          </button>
+          <button class="tab-btn flex items-center gap-2 px-4 py-4 text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap shrink-0 transition-colors" data-tab="subscription" role="tab">
+            💳 Subscription
+          </button>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Tab Panels -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+      <!-- ── Applications Tab ── -->
+      <div id="tab-applications" class="tab-panel space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900">Applied Jobs</h2>
+            <p class="text-sm text-slate-500 mt-0.5">Every job you've applied to through Career Hound</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <select id="filter-status" class="text-xs px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-700 font-medium focus:ring-2 focus:ring-blue-500 outline-none">
+              <option value="all">All Status</option>
+              <option value="APPLIED">Applied</option>
+              <option value="QUEUED">Queued</option>
+              <option value="FAILED">Failed</option>
+            </select>
+            <a href="/search" class="px-4 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+              + Apply to More Jobs
+            </a>
+          </div>
+        </div>
+
+        <!-- Loading skeleton -->
+        <div id="apps-loading" class="space-y-3">
+          <div class="h-24 rounded-2xl bg-slate-100 animate-pulse"></div>
+          <div class="h-24 rounded-2xl bg-slate-100 animate-pulse"></div>
+          <div class="h-24 rounded-2xl bg-slate-100 animate-pulse"></div>
+        </div>
+
+        <!-- Applications list -->
+        <div id="apps-list" class="hidden space-y-3"></div>
+
+        <!-- Empty state -->
+        <div id="apps-empty" class="hidden text-center py-20 bg-white rounded-3xl border border-slate-200">
+          <div class="text-5xl mb-4">📭</div>
+          <h3 class="text-xl font-bold text-slate-900">No applications yet</h3>
+          <p class="text-slate-500 text-sm mt-2 max-w-sm mx-auto">Start applying to jobs from the search page. When you click "Apply Directly →" and generate a cover letter, it gets tracked here.</p>
+          <a href="/search" class="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-bold rounded-full hover:bg-blue-700 transition-colors">
+            Browse Jobs →
+          </a>
+        </div>
+      </div>
+
+      <!-- ── Saved Jobs Tab ── -->
+      <div id="tab-saved" class="tab-panel hidden space-y-6">
+        <div>
+          <h2 class="text-xl font-extrabold text-slate-900">Saved Jobs</h2>
+          <p class="text-sm text-slate-500 mt-0.5">Jobs you've bookmarked to review later</p>
+        </div>
+
+        <div id="saved-list" class="space-y-3"></div>
+
+        <div id="saved-empty" class="text-center py-20 bg-white rounded-3xl border border-slate-200">
+          <div class="text-5xl mb-4">🔖</div>
+          <h3 class="text-xl font-bold text-slate-900">No saved jobs yet</h3>
+          <p class="text-slate-500 text-sm mt-2 max-w-sm mx-auto">Bookmark jobs from the search page to save them here for later review.</p>
+          <a href="/search" class="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-bold rounded-full hover:bg-blue-700 transition-colors">
+            Search Jobs →
+          </a>
+        </div>
+      </div>
+
+      <!-- ── Profile Tab ── -->
+      <div id="tab-profile" class="tab-panel hidden space-y-6">
+        <div>
+          <h2 class="text-xl font-extrabold text-slate-900">Profile & Preferences</h2>
+          <p class="text-sm text-slate-500 mt-0.5">Your career preferences and contact information</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Profile card -->
+          <div class="bg-white rounded-3xl border border-slate-200 p-6 space-y-5">
+            <div class="flex items-center gap-4">
+              <div id="profile-avatar" class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white text-2xl font-black">
+                ?
+              </div>
+              <div>
+                <p id="profile-name" class="font-extrabold text-slate-900 text-lg">–</p>
+                <p id="profile-email" class="text-sm text-slate-500">–</p>
+              </div>
+            </div>
+            <hr class="border-slate-100">
+            <div class="space-y-3 text-sm">
+              <div>
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Member Since</label>
+                <p id="profile-created" class="font-semibold text-slate-900">–</p>
+              </div>
+              <div>
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Plan</label>
+                <p id="profile-plan" class="font-semibold text-slate-900">–</p>
+              </div>
+            </div>
+            <a href="/onboarding" class="block w-full text-center py-2.5 px-4 text-sm font-bold text-blue-600 border border-blue-200 rounded-xl hover:bg-blue-50 transition-colors">
+              Update Job Preferences →
+            </a>
+          </div>
+
+          <!-- Resume section -->
+          <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-extrabold text-slate-900">Your Resume / Background</h3>
+              <button id="btn-save-resume" class="text-xs font-bold px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Save</button>
+            </div>
+            <p class="text-xs text-slate-500">This resume text is used by Career Hound AI when generating your cover letters. Keep it updated for the best results.</p>
+            <textarea
+              id="profile-resume-text"
+              rows="12"
+              placeholder="Paste your resume here... (skills, experience, education, achievements)"
+              class="w-full text-sm px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y bg-slate-50/50"
+            ></textarea>
+            <p id="resume-saved-msg" class="hidden text-xs text-emerald-600 font-semibold">✓ Resume saved locally</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Subscription Tab ── -->
+      <div id="tab-subscription" class="tab-panel hidden space-y-6">
+        <div>
+          <h2 class="text-xl font-extrabold text-slate-900">Subscription & Billing</h2>
+          <p class="text-sm text-slate-500 mt-0.5">Managed securely by Dodo Payments</p>
+        </div>
+
+        <!-- Current plan card -->
+        <div id="sub-current-card" class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-6 text-white relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_80%_20%,white,transparent_60%)]"></div>
+          <div class="relative">
+            <p class="text-xs text-blue-200 font-bold uppercase tracking-wider">Current Plan</p>
+            <h3 id="sub-plan-name" class="text-3xl font-black mt-1">Free</h3>
+            <p id="sub-plan-desc" class="text-blue-200 text-sm mt-1">Limited access — upgrade for full job board & AI apply</p>
+            <div class="mt-4 flex flex-wrap gap-3">
+              <div class="bg-white/20 rounded-xl px-3 py-2 text-sm font-bold">10 searches/day</div>
+              <div class="bg-white/20 rounded-xl px-3 py-2 text-sm font-bold">No AI Cover Letter</div>
+              <div id="sub-pro-feature" class="hidden bg-white/20 rounded-xl px-3 py-2 text-sm font-bold">Unlimited AI Apply</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upgrade CTA for free users -->
+        <div id="upgrade-section" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-3">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">Weekly Pass</div>
+            <div class="text-2xl font-black text-slate-900">$9.99<span class="text-sm text-slate-500 font-normal">/week</span></div>
+            <ul class="text-xs text-slate-600 space-y-1.5">
+              <li class="flex items-center gap-1.5">✅ Unlimited job search</li>
+              <li class="flex items-center gap-1.5">✅ AI cover letter generation</li>
+              <li class="flex items-center gap-1.5">✅ ATS match scoring</li>
+            </ul>
+            <button onclick="window.triggerCheckout && window.triggerCheckout('weekly')" class="w-full py-2.5 text-sm font-bold bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors">
+              Get Weekly Pass
+            </button>
+          </div>
+          <div class="bg-blue-600 text-white rounded-2xl p-5 space-y-3 relative">
+            <span class="absolute top-3 right-3 text-[10px] font-black bg-amber-400 text-slate-900 px-2 py-0.5 rounded-full">POPULAR</span>
+            <div class="text-xs font-bold text-blue-200 uppercase tracking-wider">Monthly Pro</div>
+            <div class="text-2xl font-black">$29<span class="text-sm text-blue-300 font-normal">/month</span></div>
+            <ul class="text-xs text-blue-100 space-y-1.5">
+              <li class="flex items-center gap-1.5">✅ Everything in Weekly</li>
+              <li class="flex items-center gap-1.5">✅ Application tracking</li>
+              <li class="flex items-center gap-1.5">✅ Priority job listings</li>
+            </ul>
+            <button onclick="window.triggerCheckout && window.triggerCheckout('monthly')" class="w-full py-2.5 text-sm font-bold bg-white text-blue-600 rounded-xl hover:bg-blue-50 transition-colors">
+              Go Pro Monthly
+            </button>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-3">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">1-Year Pass</div>
+            <div class="text-2xl font-black text-slate-900">$99<span class="text-sm text-slate-500 font-normal"> / year</span></div>
+            <ul class="text-xs text-slate-600 space-y-1.5">
+              <li class="flex items-center gap-1.5">✅ 365 days of full Pro access</li>
+              <li class="flex items-center gap-1.5">✅ All upcoming features</li>
+              <li class="flex items-center gap-1.5">✅ Save 58% vs monthly</li>
+            </ul>
+            <button onclick="window.triggerCheckout && window.triggerCheckout('yearly')" class="w-full py-2.5 text-sm font-bold bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors">
+              Get 1-Year Pass
+            </button>
+          </div>
+        </div>
+
+        <!-- Billing info for pro users -->
+        <div id="billing-section" class="hidden bg-white rounded-2xl border border-slate-200 p-6">
+          <h3 class="font-extrabold text-slate-900 mb-4">Billing Details</h3>
+          <div class="space-y-3 text-sm text-slate-600">
+            <div class="flex justify-between items-center py-2 border-b border-slate-100">
+              <span class="font-medium text-slate-700">Managed by</span>
+              <span class="font-semibold">Dodo Payments (Merchant of Record)</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-slate-100">
+              <span class="font-medium text-slate-700">Cancellation</span>
+              <span>Cancel anytime — no questions asked</span>
+            </div>
+            <div class="flex justify-between items-center py-2">
+              <span class="font-medium text-slate-700">Receipts</span>
+              <span>Sent to your registered email address</span>
+            </div>
+          </div>
+          <a href="mailto:support@careerhound.io" class="mt-4 inline-flex text-xs font-bold text-blue-600 hover:underline">
+            Need help with billing? Contact us →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .tab-btn.active {
+    @apply border-blue-600 text-blue-600;
+  }
+
+  .status-APPLIED { @apply bg-emerald-100 text-emerald-800 border-emerald-200; }
+  .status-QUEUED  { @apply bg-amber-100 text-amber-800 border-amber-200; }
+  .status-FAILED  { @apply bg-red-100 text-red-800 border-red-200; }
+  .status-MATCHED { @apply bg-blue-100 text-blue-800 border-blue-200; }
+  .status-SKIPPED { @apply bg-slate-100 text-slate-600 border-slate-200; }
+</style>
+
+<script>
+  import { authClient } from '../lib/auth-client';
+
+  // ───────────────────────────────────────────────
+  // AUTH CHECK — Better Auth (cookie session) + localStorage fallback
+  // ───────────────────────────────────────────────
+  const authLoading = document.getElementById('auth-loading');
+  const dashboard = document.getElementById('dashboard');
+
+  async function initAuth() {
+    try {
+      // 1. Try Better Auth session (httpOnly cookie-based)
+      const { data: session } = await authClient.getSession();
+      if (session?.user) {
+        // Sync to localStorage so Header + other pages see the user
+        localStorage.setItem('ch_user', JSON.stringify({
+          id: session.user.id,
+          name: session.user.name,
+          email: session.user.email,
+          plan: (session.user as any).plan || 'free',
+          isSubscribed: (session.user as any).isSubscribed || false,
+          onboardingCompleted: (session.user as any).onboardingCompleted || false,
+          createdAt: session.user.createdAt,
+        }));
+        localStorage.setItem('ch_authenticated', '1');
+        if (authLoading) authLoading.classList.add('hidden');
+        if (dashboard) dashboard.classList.remove('hidden');
+        initDashboard(session.user);
+        return;
+      }
+    } catch (_) { /* Better Auth unavailable — fall through to localStorage */ }
+
+    // 2. Fallback: localStorage session (legacy / demo accounts)
+    const userJson = localStorage.getItem('ch_user');
+    const authenticated = localStorage.getItem('ch_authenticated');
+
+    if (userJson && authenticated) {
+      const user = JSON.parse(userJson);
+      if (authLoading) authLoading.classList.add('hidden');
+      if (dashboard) dashboard.classList.remove('hidden');
+      initDashboard(user);
+      return;
+    }
+
+    // 3. Not authenticated — redirect
+    window.location.href = '/login?next=/account';
+  }
+
+  initAuth();
+
+  // ───────────────────────────────────────────────
+  // INIT DASHBOARD
+  // ───────────────────────────────────────────────
+  function initDashboard(user: any) {
+    const initials = (user.name || 'U').split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase();
+
+    // Header section
+    const userInitials = document.getElementById('user-initials');
+    const userGreeting = document.getElementById('user-greeting');
+    const userEmailDisplay = document.getElementById('user-email-display');
+    const userPlanBadge = document.getElementById('user-plan-badge');
+    const statPlan = document.getElementById('stat-plan');
+
+    if (userInitials) userInitials.textContent = initials;
+    if (userGreeting) userGreeting.textContent = `Welcome back, ${user.name?.split(' ')[0] || 'there'} 👋`;
+    if (userEmailDisplay) userEmailDisplay.textContent = user.email;
+
+    const isSubscribed = user.isSubscribed || user.plan !== 'free';
+    const planLabel = isSubscribed
+      ? (user.plan === 'pro_monthly' ? 'Pro Monthly' : (user.plan === 'yearly' || user.plan === 'lifetime') ? '1-Year Pass' : 'Pro')
+      : 'Free Plan';
+
+    if (userPlanBadge) {
+      userPlanBadge.textContent = isSubscribed ? `⭐ ${planLabel}` : '🆓 Free Plan';
+      if (isSubscribed) userPlanBadge.classList.add('bg-amber-500/30', 'border-amber-400/50');
+    }
+    if (statPlan) statPlan.textContent = isSubscribed ? planLabel : 'Free';
+
+    // Profile tab
+    const profileAvatar = document.getElementById('profile-avatar');
+    const profileName = document.getElementById('profile-name');
+    const profileEmail = document.getElementById('profile-email');
+    const profilePlan = document.getElementById('profile-plan');
+    const profileCreated = document.getElementById('profile-created');
+
+    if (profileAvatar) profileAvatar.textContent = initials;
+    if (profileName) profileName.textContent = user.name;
+    if (profileEmail) profileEmail.textContent = user.email;
+    if (profilePlan) profilePlan.textContent = planLabel;
+    if (profileCreated && user.createdAt) {
+      profileCreated.textContent = new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    }
+
+    // Subscription tab
+    const subPlanName = document.getElementById('sub-plan-name');
+    const subPlanDesc = document.getElementById('sub-plan-desc');
+    const upgradeSection = document.getElementById('upgrade-section');
+    const billingSection = document.getElementById('billing-section');
+    const subProFeature = document.getElementById('sub-pro-feature');
+
+    if (subPlanName) subPlanName.textContent = isSubscribed ? planLabel : 'Free';
+    if (subPlanDesc) {
+      subPlanDesc.textContent = isSubscribed
+        ? 'Full access — unlimited job search, AI cover letters, and application tracking'
+        : 'Limited access — upgrade for full job board & AI apply';
+    }
+    if (isSubscribed) {
+      if (upgradeSection) upgradeSection.classList.add('hidden');
+      if (billingSection) billingSection.classList.remove('hidden');
+      if (subProFeature) subProFeature.classList.remove('hidden');
+    }
+
+    // Load resume from localStorage
+    const savedResume = localStorage.getItem('ch_resume_text');
+    const resumeTextarea = document.getElementById('profile-resume-text') as HTMLTextAreaElement;
+    if (savedResume && resumeTextarea) resumeTextarea.value = savedResume;
+
+    // Load applications
+    loadApplications();
+  }
+
+  // ───────────────────────────────────────────────
+  // APPLICATIONS
+  // ───────────────────────────────────────────────
+  async function loadApplications() {
+    try {
+      const res = await fetch('http://localhost:4000/api/auto-apply/logs');
+      const data = await res.json();
+      const logs: any[] = data.logs || [];
+
+      // Stats
+      const today = new Date().toDateString();
+      const todayApps = logs.filter(l => new Date(l.appliedAt || '').toDateString() === today);
+      const avgMatch = logs.length
+        ? Math.round(logs.reduce((s, l) => s + (l.matchScore || 0), 0) / logs.length)
+        : 0;
+
+      const statApplied = document.getElementById('stat-applied');
+      const statToday = document.getElementById('stat-today');
+      const statAvgMatch = document.getElementById('stat-avg-match');
+      if (statApplied) statApplied.textContent = String(logs.length);
+      if (statToday) statToday.textContent = String(todayApps.length);
+      if (statAvgMatch) statAvgMatch.textContent = avgMatch ? `${avgMatch}%` : '–';
+
+      const appsLoading = document.getElementById('apps-loading');
+      const appsList = document.getElementById('apps-list');
+      const appsEmpty = document.getElementById('apps-empty');
+
+      if (appsLoading) appsLoading.classList.add('hidden');
+
+      if (logs.length === 0) {
+        if (appsEmpty) appsEmpty.classList.remove('hidden');
+        return;
+      }
+
+      if (appsList) {
+        appsList.classList.remove('hidden');
+        renderApplications(logs, appsList);
+      }
+
+    } catch (err) {
+      const appsLoading = document.getElementById('apps-loading');
+      const appsEmpty = document.getElementById('apps-empty');
+      if (appsLoading) appsLoading.classList.add('hidden');
+      if (appsEmpty) appsEmpty.classList.remove('hidden');
+    }
+  }
+
+  function renderApplications(logs: any[], container: HTMLElement) {
+    const statusFilter = document.getElementById('filter-status') as HTMLSelectElement;
+
+    function render() {
+      const filter = statusFilter?.value || 'all';
+      const filtered = filter === 'all' ? logs : logs.filter(l => l.status === filter);
+
+      container.innerHTML = filtered.length === 0
+        ? `<div class="text-center py-12 text-slate-400 text-sm">No applications match this filter.</div>`
+        : filtered.map(app => {
+            const statusClass = `status-${app.status}`;
+            const appliedDate = app.appliedAt
+              ? new Date(app.appliedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+              : 'Pending';
+
+            return `
+              <article class="bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-md transition-all">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                  <img
+                    src="${app.companyLogo}"
+                    alt="${app.companyName}"
+                    class="w-12 h-12 rounded-xl object-cover border border-slate-100 bg-slate-50 shrink-0"
+                    onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=64&q=80'"
+                  />
+                  <div class="flex-1 min-w-0">
+                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                      <span class="text-[11px] font-bold ${statusClass} px-2 py-0.5 rounded-full border">${app.status}</span>
+                      ${app.matchScore ? `<span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">${app.matchScore}% match</span>` : ''}
+                    </div>
+                    <h3 class="font-extrabold text-slate-900 truncate">${app.jobTitle}</h3>
+                    <p class="text-sm text-slate-500">${app.companyName} · Applied ${appliedDate}</p>
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      class="text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 transition-colors btn-view-app"
+                      data-app-id="${app.id}"
+                      data-job-title="${app.jobTitle}"
+                      data-company="${app.companyName}"
+                      data-answers='${JSON.stringify(app.screeningAnswers || {})}'
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              </article>
+            `;
+          }).join('');
+
+      // Bind detail buttons
+      container.querySelectorAll('.btn-view-app').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const el = btn as HTMLButtonElement;
+          openAppDetailModal({
+            id: el.dataset.appId || '',
+            jobTitle: el.dataset.jobTitle || '',
+            company: el.dataset.company || '',
+            answers: JSON.parse(el.dataset.answers || '{}'),
+          });
+        });
+      });
+    }
+
+    render();
+    if (statusFilter) statusFilter.addEventListener('change', render);
+  }
+
+  // ───────────────────────────────────────────────
+  // APPLICATION DETAIL MODAL
+  // ───────────────────────────────────────────────
+  let appDetailModal: HTMLElement | null = null;
+
+  function buildAppDetailModal() {
+    const el = document.createElement('div');
+    el.id = 'app-detail-modal';
+    el.className = 'fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4';
+    el.innerHTML = `
+      <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between p-6 border-b border-slate-100">
+          <h3 class="font-extrabold text-slate-900 text-lg" id="modal-app-title">Application Details</h3>
+          <button type="button" id="close-app-modal" class="text-slate-400 hover:text-slate-700 text-xl font-bold p-1">✕</button>
+        </div>
+        <div class="p-6 overflow-y-auto flex-1 space-y-4" id="modal-app-body"></div>
+      </div>
+    `;
+    document.body.appendChild(el);
+
+    el.querySelector('#close-app-modal')?.addEventListener('click', () => el.classList.add('hidden'));
+    el.addEventListener('click', (e) => { if (e.target === el) el.classList.add('hidden'); });
+    return el;
+  }
+
+  function openAppDetailModal({ id, jobTitle, company, answers }: { id: string; jobTitle: string; company: string; answers: Record<string, string> }) {
+    if (!appDetailModal) appDetailModal = buildAppDetailModal();
+    const title = appDetailModal.querySelector('#modal-app-title');
+    const body = appDetailModal.querySelector('#modal-app-body');
+    if (title) title.textContent = `${jobTitle} at ${company}`;
+    if (body) {
+      const answersHtml = Object.entries(answers).length
+        ? Object.entries(answers).map(([q, a]) => `
+            <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+              <p class="text-xs font-bold text-slate-600 mb-1">${q}</p>
+              <p class="text-sm text-slate-800">${a}</p>
+            </div>
+          `).join('')
+        : '<p class="text-sm text-slate-400">No screening answers recorded.</p>';
+      body.innerHTML = `
+        <p class="text-xs text-slate-500">Application ID: <span class="font-mono text-slate-700">${id}</span></p>
+        <h4 class="text-sm font-extrabold text-slate-800">AI-Prepared Screening Answers</h4>
+        ${answersHtml}
+      `;
+    }
+    appDetailModal.classList.remove('hidden');
+  }
+
+  // ───────────────────────────────────────────────
+  // TABS
+  // ───────────────────────────────────────────────
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = (btn as HTMLButtonElement).dataset.tab || '';
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active', 'border-blue-600', 'text-blue-600');
+        b.classList.add('border-transparent', 'text-slate-600');
+      });
+      btn.classList.add('active', 'border-blue-600', 'text-blue-600');
+      btn.classList.remove('border-transparent', 'text-slate-600');
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+      const panel = document.getElementById(`tab-${tab}`);
+      if (panel) panel.classList.remove('hidden');
+    });
+  });
+
+  // ───────────────────────────────────────────────
+  // RESUME SAVE
+  // ───────────────────────────────────────────────
+  const saveResumeBtn = document.getElementById('btn-save-resume');
+  const resumeTextarea = document.getElementById('profile-resume-text') as HTMLTextAreaElement;
+  const resumeSavedMsg = document.getElementById('resume-saved-msg');
+  if (saveResumeBtn) {
+    saveResumeBtn.addEventListener('click', () => {
+      if (resumeTextarea?.value) {
+        localStorage.setItem('ch_resume_text', resumeTextarea.value);
+        if (resumeSavedMsg) {
+          resumeSavedMsg.classList.remove('hidden');
+          setTimeout(() => resumeSavedMsg.classList.add('hidden'), 3000);
+        }
+      }
+    });
+  }
+
+  // ───────────────────────────────────────────────
+  // LOGOUT
+  // ───────────────────────────────────────────────
+  const logoutBtn = document.getElementById('btn-logout');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      // Sign out from Better Auth (clears httpOnly session cookie)
+      try { await authClient.signOut(); } catch (_) {}
+      // Clear localStorage
+      localStorage.removeItem('ch_token');
+      localStorage.removeItem('ch_user');
+      localStorage.removeItem('ch_authenticated');
+      window.location.href = '/login';
+    });
+  }
+</script>

@@ -1,0 +1,530 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const autoApplySchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Career Hound AI Auto-Apply Bot",
+  "applicationCategory": "BusinessApplication",
+  "description": "Autonomous AI job application engine applying to direct company career pages with intelligent screening."
+};
+---
+
+<Layout 
+  title="AI Auto-Apply Bot | Career Hound"
+  description="Automate direct job applications to Greenhouse, Lever, and Ashby boards when match score exceeds 80%."
+  jsonLd={autoApplySchema}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+    
+    <!-- Top Header & Status -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+      <div>
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-bold uppercase tracking-wider mb-2">
+          <span>Autonomous ATS Agent</span>
+        </div>
+        <h1 class="text-3xl font-black tracking-tight text-slate-900">
+          AI Auto-Apply Engine
+        </h1>
+        <p class="text-sm text-slate-500 mt-1">
+          Our AI engine evaluates incoming verified postings, generates tailored screening answers, and submits applications directly.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button 
+          type="button" 
+          id="btn-trigger-test-apply" 
+          class="px-5 py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-sm transition-all flex items-center gap-2 cursor-pointer"
+        >
+          <span>Run Test Auto-Apply</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </button>
+
+        <button 
+          type="button" 
+          data-trigger-checkout
+          class="px-5 py-2.5 rounded-full border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold text-xs sm:text-sm shadow-xs transition-all"
+        >
+          Upgrade Plan
+        </button>
+      </div>
+    </div>
+
+    <!-- KPI Metric Summary Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-1">
+        <span class="text-xs font-semibold text-slate-500">Auto-Applied</span>
+        <div class="text-2xl font-black text-slate-900" id="stat-applied">2</div>
+        <span class="text-[11px] text-emerald-600 font-bold">● All verified direct</span>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-1">
+        <span class="text-xs font-semibold text-slate-500">Average Match Score</span>
+        <div class="text-2xl font-black text-blue-600">90%</div>
+        <span class="text-[11px] text-slate-400">Target $\ge$ 80%</span>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-1">
+        <span class="text-xs font-semibold text-slate-500">Time Saved</span>
+        <div class="text-2xl font-black text-indigo-600">4.5 hrs</div>
+        <span class="text-[11px] text-slate-400">~25 min per application</span>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-1">
+        <span class="text-xs font-semibold text-slate-500">Active Daily Limit</span>
+        <div class="text-2xl font-black text-slate-900" id="stat-limit">2 / 20</div>
+        <span class="text-[11px] text-slate-400">Resets at midnight</span>
+      </div>
+    </div>
+
+    <!-- Main Grid: Settings & Activity Log -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      
+      <!-- Left Column: Auto-Apply Settings Configuration -->
+      <div class="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-6">
+        <div class="pb-4 border-b border-slate-100 flex items-center justify-between">
+          <h3 class="text-base font-bold text-slate-900">Bot Preferences</h3>
+          <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+            Active
+          </span>
+        </div>
+
+        <form id="auto-apply-settings-form" class="space-y-5">
+          <!-- Toggle Master Switch -->
+          <div class="flex items-center justify-between">
+            <div>
+              <h4 class="font-bold text-sm text-slate-900">Auto-Apply Status</h4>
+              <p class="text-xs text-slate-500">Enable autonomous applications</p>
+            </div>
+            <input type="checkbox" id="setting-enabled" checked class="w-5 h-5 text-blue-600 rounded" />
+          </div>
+
+          <!-- Minimum Match Threshold Slider -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs font-bold text-slate-700">Minimum Match Score</label>
+              <span id="score-threshold-val" class="text-xs font-extrabold text-blue-600">80%</span>
+            </div>
+            <input type="range" id="setting-score" min="60" max="95" value="80" class="w-full cursor-pointer accent-blue-600" />
+            <p class="text-[11px] text-slate-400 mt-0.5">The bot will never apply to jobs scoring below this threshold.</p>
+          </div>
+
+          <!-- Daily Application Limit -->
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Daily Application Limit</label>
+            <input type="number" id="setting-daily-limit" value="20" min="1" max="50" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm font-bold" />
+            <p class="text-[11px] text-slate-400 mt-0.5">Recommended: 15–25 applications per day to ensure organic pacing.</p>
+          </div>
+
+          <!-- Tailor Resume Toggle -->
+          <div class="flex items-center justify-between pt-2">
+            <div>
+              <h4 class="font-bold text-xs text-slate-900">AI Screening Answers</h4>
+              <p class="text-[11px] text-slate-500">Generate tailored answers for custom ATS questions</p>
+            </div>
+            <input type="checkbox" id="setting-tailor" checked class="w-4 h-4 text-blue-600 rounded" />
+          </div>
+
+          <!-- Blacklist Input -->
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Blacklist Companies</label>
+            <input type="text" id="setting-blacklist" placeholder="e.g. Meta, Amazon (comma-separated)" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs" />
+          </div>
+
+          <button 
+            type="submit" 
+            class="w-full py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-sm transition-all"
+          >
+            Save Preferences
+          </button>
+        </form>
+      </div>
+
+      <!-- Right Column: Live Activity Log Table -->
+      <div class="lg:col-span-2 p-6 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-6">
+        <div class="pb-4 border-b border-slate-100 flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Recent Applications</h3>
+            <p class="text-xs text-slate-500">Autonomous submissions with verified confirmation receipts</p>
+          </div>
+          <span class="text-xs text-slate-400">Real-time sync</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-600">
+            <thead class="text-[11px] uppercase font-bold text-slate-400 bg-slate-50/50 border-b border-slate-100">
+              <tr>
+                <th class="py-3 px-3">Company & Role</th>
+                <th class="py-3 px-3">Match</th>
+                <th class="py-3 px-3">Applied</th>
+                <th class="py-3 px-3">Status</th>
+                <th class="py-3 px-3 text-right">Bot Actions & Messages</th>
+              </tr>
+            </thead>
+            <tbody id="auto-apply-logs-body" class="divide-y divide-slate-100">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ===== Application Conversation & Messages Details Modal ===== -->
+  <div id="app-conversation-modal" class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between p-6 border-b border-slate-100 shrink-0 bg-slate-50/50">
+        <div class="flex items-center gap-3 min-w-0">
+          <img id="detail-company-logo" src="" alt="Company logo" class="w-12 h-12 rounded-2xl object-cover border border-slate-200 shrink-0 bg-white" />
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span id="detail-company-name" class="text-xs font-bold text-slate-600">Company</span>
+              <span id="detail-source-badge" class="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Direct ATS</span>
+              <span id="detail-match-score" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">92% Match</span>
+            </div>
+            <h2 id="detail-job-title" class="text-lg font-black text-slate-900 truncate mt-0.5">Job Title</h2>
+            <p id="detail-applied-time" class="text-[11px] text-slate-400">Applied Today</p>
+          </div>
+        </div>
+        <button type="button" id="close-conversation-modal" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-xl hover:bg-slate-100 text-lg font-bold shrink-0 ml-4 transition-colors cursor-pointer">✕</button>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="flex items-center border-b border-slate-200 px-6 bg-slate-50/30 text-xs font-bold text-slate-500 overflow-x-auto gap-2">
+        <button type="button" class="tab-btn py-3 px-3 border-b-2 border-blue-600 text-blue-600 cursor-pointer" data-tab="screening">
+          ATS Screening Answers
+        </button>
+        <button type="button" class="tab-btn py-3 px-3 border-b-2 border-transparent hover:text-slate-900 cursor-pointer" data-tab="message">
+          Recruiter Outreach Note
+        </button>
+        <button type="button" class="tab-btn py-3 px-3 border-b-2 border-transparent hover:text-slate-900 cursor-pointer" data-tab="cover">
+          Tailored Cover Letter
+        </button>
+        <button type="button" class="tab-btn py-3 px-3 border-b-2 border-transparent hover:text-slate-900 cursor-pointer" data-tab="receipt">
+          Direct Proof Receipt
+        </button>
+      </div>
+
+      <!-- Modal Body (Tab Panels) -->
+      <div class="p-6 overflow-y-auto flex-1 space-y-4">
+        
+        <!-- Tab 1: Screening Questions & Answers (Kya baat hui hai) -->
+        <div id="tab-panel-screening" class="space-y-3">
+          <div class="p-3.5 rounded-xl bg-blue-50/60 border border-blue-100 flex items-start gap-2.5 text-xs text-blue-900">
+            <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-[10px] shrink-0 mt-0.5">AI</span>
+            <div>
+              <p class="font-bold">Automated Form Responses Submitted to ATS</p>
+              <p class="text-blue-700 mt-0.5">The bot detected employer screening requirements and tailored answers using verified career history.</p>
+            </div>
+          </div>
+          <div id="detail-screening-qa-list" class="space-y-3 pt-1">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Tab 2: Recruiter Outreach Note -->
+        <div id="tab-panel-message" class="hidden space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700">Introductory Message to Hiring Team</span>
+            <button type="button" id="btn-copy-recruiter-msg" class="text-xs font-bold text-blue-600 hover:text-blue-800 cursor-pointer">Copy Message</button>
+          </div>
+          <textarea 
+            id="detail-recruiter-message" 
+            rows="8" 
+            readonly 
+            class="w-full text-xs sm:text-sm p-4 rounded-2xl border border-slate-200 bg-slate-50/70 text-slate-800 font-mono leading-relaxed outline-none resize-none"
+          ></textarea>
+        </div>
+
+        <!-- Tab 3: Custom Cover Letter -->
+        <div id="tab-panel-cover" class="hidden space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700">Submitted Cover Letter</span>
+            <button type="button" id="btn-copy-cover-letter" class="text-xs font-bold text-blue-600 hover:text-blue-800 cursor-pointer">Copy Cover Letter</button>
+          </div>
+          <textarea 
+            id="detail-cover-letter" 
+            rows="10" 
+            readonly 
+            class="w-full text-xs sm:text-sm p-4 rounded-2xl border border-slate-200 bg-slate-50/70 text-slate-800 leading-relaxed outline-none resize-none"
+          ></textarea>
+        </div>
+
+        <!-- Tab 4: Submission Proof Receipt -->
+        <div id="tab-panel-receipt" class="hidden space-y-4">
+          <div class="p-6 rounded-2xl bg-emerald-50/80 border border-emerald-200 text-center space-y-2">
+            <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl mx-auto">✓</div>
+            <h4 class="font-black text-slate-900 text-base">Direct ATS Application Verified</h4>
+            <p class="text-xs text-emerald-800 max-w-sm mx-auto">
+              This application was directly submitted to the employer's official ATS system without intermediate recruiter boards.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5 text-xs">
+            <div class="flex items-center justify-between py-1 border-b border-slate-200/60">
+              <span class="text-slate-500 font-semibold">Submission Reference:</span>
+              <span id="detail-ref-id" class="font-mono font-bold text-slate-800">app_1726748921_a9f1</span>
+            </div>
+            <div class="flex items-center justify-between py-1 border-b border-slate-200/60">
+              <span class="text-slate-500 font-semibold">ATS Integration:</span>
+              <span id="detail-ats-type" class="font-bold text-slate-800">Greenhouse Direct</span>
+            </div>
+            <div class="flex items-center justify-between py-1 border-b border-slate-200/60">
+              <span class="text-slate-500 font-semibold">Execution Mode:</span>
+              <span class="font-bold text-blue-700">Autonomous Auto-Apply Bot</span>
+            </div>
+            <div class="flex items-center justify-between py-1">
+              <span class="text-slate-500 font-semibold">Delivery Status:</span>
+              <span class="font-bold text-emerald-700">Confirmed & Logged</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-5 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0 bg-slate-50/50">
+        <button 
+          type="button" 
+          id="btn-close-conv-modal" 
+          class="px-6 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all cursor-pointer"
+        >
+          Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { getAutoApplySettings, updateAutoApplySettings, getAutoApplyLogs, triggerAutoApply } from '../lib/api';
+
+  const scoreSlider = document.getElementById('setting-score') as HTMLInputElement;
+  const scoreVal = document.getElementById('score-threshold-val');
+  const settingsForm = document.getElementById('auto-apply-settings-form');
+  const logsBody = document.getElementById('auto-apply-logs-body');
+  const triggerBtn = document.getElementById('btn-trigger-test-apply');
+
+  // Modal elements
+  const convModal = document.getElementById('app-conversation-modal');
+  const closeConvModalBtn = document.getElementById('close-conversation-modal');
+  const btnCloseConvModal = document.getElementById('btn-close-conv-modal');
+  const detailCompanyLogo = document.getElementById('detail-company-logo') as HTMLImageElement;
+  const detailCompanyName = document.getElementById('detail-company-name');
+  const detailSourceBadge = document.getElementById('detail-source-badge');
+  const detailMatchScore = document.getElementById('detail-match-score');
+  const detailJobTitle = document.getElementById('detail-job-title');
+  const detailAppliedTime = document.getElementById('detail-applied-time');
+  const detailScreeningQAList = document.getElementById('detail-screening-qa-list');
+  const detailRecruiterMessage = document.getElementById('detail-recruiter-message') as HTMLTextAreaElement;
+  const detailCoverLetter = document.getElementById('detail-cover-letter') as HTMLTextAreaElement;
+  const detailRefId = document.getElementById('detail-ref-id');
+  const detailAtsType = document.getElementById('detail-ats-type');
+  const btnCopyRecruiterMsg = document.getElementById('btn-copy-recruiter-msg');
+  const btnCopyCoverLetter = document.getElementById('btn-copy-cover-letter');
+
+  let activeLogsList: any[] = [];
+
+  if (scoreSlider && scoreVal) {
+    scoreSlider.addEventListener('input', () => {
+      scoreVal.textContent = `${scoreSlider.value}%`;
+    });
+  }
+
+  // Tab switching inside Conversation Modal
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabName = btn.getAttribute('data-tab');
+      tabButtons.forEach(b => {
+        b.classList.remove('border-blue-600', 'text-blue-600');
+        b.classList.add('border-transparent', 'text-slate-500');
+      });
+      btn.classList.add('border-blue-600', 'text-blue-600');
+      btn.classList.remove('border-transparent', 'text-slate-500');
+
+      ['screening', 'message', 'cover', 'receipt'].forEach(t => {
+        const panel = document.getElementById(`tab-panel-${t}`);
+        if (panel) {
+          if (t === tabName) panel.classList.remove('hidden');
+          else panel.classList.add('hidden');
+        }
+      });
+    });
+  });
+
+  function closeConversationModal() {
+    if (convModal) convModal.classList.add('hidden');
+  }
+  if (closeConvModalBtn) closeConvModalBtn.addEventListener('click', closeConversationModal);
+  if (btnCloseConvModal) btnCloseConvModal.addEventListener('click', closeConversationModal);
+  if (convModal) {
+    convModal.addEventListener('click', (e) => {
+      if (e.target === convModal) closeConversationModal();
+    });
+  }
+
+  if (btnCopyRecruiterMsg && detailRecruiterMessage) {
+    btnCopyRecruiterMsg.addEventListener('click', () => {
+      navigator.clipboard.writeText(detailRecruiterMessage.value).then(() => {
+        btnCopyRecruiterMsg.textContent = 'Copied!';
+        setTimeout(() => { btnCopyRecruiterMsg.textContent = 'Copy Message'; }, 2000);
+      });
+    });
+  }
+
+  if (btnCopyCoverLetter && detailCoverLetter) {
+    btnCopyCoverLetter.addEventListener('click', () => {
+      navigator.clipboard.writeText(detailCoverLetter.value).then(() => {
+        btnCopyCoverLetter.textContent = 'Copied!';
+        setTimeout(() => { btnCopyCoverLetter.textContent = 'Copy Cover Letter'; }, 2000);
+      });
+    });
+  }
+
+  function openConversationDetails(logIndex: number) {
+    const log = activeLogsList[logIndex];
+    if (!log) return;
+
+    if (detailCompanyLogo) detailCompanyLogo.src = log.companyLogo || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=128&auto=format&fit=crop&q=80';
+    if (detailCompanyName) detailCompanyName.textContent = log.companyName;
+    if (detailJobTitle) detailJobTitle.textContent = log.jobTitle;
+    if (detailMatchScore) detailMatchScore.textContent = `${log.matchScore}% Match`;
+    if (detailSourceBadge) detailSourceBadge.textContent = log.directApplySource || 'Direct ATS';
+    if (detailAppliedTime) detailAppliedTime.textContent = `Applied on ${new Date(log.appliedAt || Date.now()).toLocaleDateString()} at ${new Date(log.appliedAt || Date.now()).toLocaleTimeString()}`;
+    if (detailRefId) detailRefId.textContent = log.id;
+    if (detailAtsType) detailAtsType.textContent = log.directApplySource || 'Direct Company Portal';
+
+    // Populate Recruiter message
+    const msg = log.submissionMessage || `Hello ${log.companyName} Hiring Team,\n\nI have submitted my application for the ${log.jobTitle} opening directly to your career portal. Given my verified technical experience, I am excited about the opportunity to contribute to your engineering milestones.\n\nBest regards,\nAlex Johnson`;
+    if (detailRecruiterMessage) detailRecruiterMessage.value = msg;
+
+    // Populate Cover letter
+    const cl = log.coverLetter || `Dear Hiring Manager at ${log.companyName},\n\nI am writing to express my enthusiasm for the ${log.jobTitle} position. Given my background building scalable systems with high reliability, I am eager to apply my experience toward solving your team's core technical challenges.\n\nThank you for reviewing my direct application.\n\nSincerely,\nAlex Johnson`;
+    if (detailCoverLetter) detailCoverLetter.value = cl;
+
+    // Populate Screening Q&A
+    if (detailScreeningQAList) {
+      detailScreeningQAList.innerHTML = '';
+      const qaEntries = Object.entries(log.screeningAnswers || {});
+      if (qaEntries.length === 0) {
+        detailScreeningQAList.innerHTML = `
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 text-xs text-center">
+            Standard direct application fields (Name, Email, Resume, Experience Level, LinkedIn) were automatically formatted and submitted.
+          </div>
+        `;
+      } else {
+        qaEntries.forEach(([q, a], idx) => {
+          const card = document.createElement('div');
+          card.className = 'p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs space-y-2';
+          card.innerHTML = `
+            <div class="flex items-start gap-2">
+              <span class="text-xs font-black text-slate-400">Q${idx + 1}:</span>
+              <p class="text-xs font-extrabold text-slate-900">${q}</p>
+            </div>
+            <div class="pl-5 border-l-2 border-blue-500 space-y-0.5">
+              <span class="text-[10px] font-black uppercase tracking-wider text-blue-600 block">Bot Submitted Answer</span>
+              <p class="text-xs text-slate-700 font-medium leading-relaxed">${a}</p>
+            </div>
+          `;
+          detailScreeningQAList.appendChild(card);
+        });
+      }
+    }
+
+    if (convModal) convModal.classList.remove('hidden');
+  }
+
+  async function loadLogs() {
+    try {
+      const data = await getAutoApplyLogs();
+      activeLogsList = data.logs || [];
+      renderLogs(activeLogsList);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function renderLogs(logs: any[]) {
+    if (!logsBody) return;
+    logsBody.innerHTML = '';
+
+    logs.forEach((log, index) => {
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-slate-50 transition-colors';
+      tr.innerHTML = `
+        <td class="py-3.5 px-3">
+          <div class="font-bold text-slate-900">${log.jobTitle}</div>
+          <div class="text-[11px] text-slate-400">${log.companyName} • <span class="text-slate-500 font-medium">${log.directApplySource || 'Direct ATS'}</span></div>
+        </td>
+        <td class="py-3.5 px-3 font-bold text-emerald-600">${log.matchScore}%</td>
+        <td class="py-3.5 px-3 text-[11px] text-slate-500">${new Date(log.appliedAt || Date.now()).toLocaleDateString()}</td>
+        <td class="py-3.5 px-3">
+          <span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            ${log.status}
+          </span>
+        </td>
+        <td class="py-3.5 px-3 text-right">
+          <button 
+            type="button" 
+            class="px-3 py-1.5 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-extrabold text-[11px] border border-blue-200 hover:border-blue-300 transition-all cursor-pointer inline-flex items-center gap-1.5"
+            data-log-idx="${index}"
+          >
+            <span>View Bot Messages</span>
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+          </button>
+        </td>
+      `;
+      logsBody.appendChild(tr);
+    });
+
+    // Bind click handlers to open details
+    document.querySelectorAll('[data-log-idx]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.getAttribute('data-log-idx') || '0', 10);
+        openConversationDetails(idx);
+      });
+    });
+  }
+
+  if (settingsForm) {
+    settingsForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const enabled = (document.getElementById('setting-enabled') as HTMLInputElement)?.checked;
+      const minMatchScore = Number(scoreSlider?.value) || 80;
+      const dailyLimit = Number((document.getElementById('setting-daily-limit') as HTMLInputElement)?.value) || 20;
+
+      await updateAutoApplySettings({ enabled, minMatchScore, dailyLimit });
+      alert('Auto-Apply preferences saved successfully!');
+    });
+  }
+
+  if (triggerBtn) {
+    triggerBtn.addEventListener('click', async () => {
+      triggerBtn.setAttribute('disabled', 'true');
+      triggerBtn.innerHTML = '<span class="inline-flex items-center gap-2"><svg class="animate-spin h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg><span>Evaluating Job & Submitting Directly...</span></span>';
+
+      try {
+        const res = await triggerAutoApply();
+        await loadLogs();
+        openConversationDetails(0); // Automatically open the new application details!
+      } catch (err: any) {
+        alert(err.message || 'Auto-Apply triggered successfully.');
+      } finally {
+        triggerBtn.removeAttribute('disabled');
+        triggerBtn.innerHTML = '<span>Run Test Auto-Apply</span> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+      }
+    });
+  }
+
+  loadLogs();
+</script>

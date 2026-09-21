@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Allow: /search
+Allow: /worldwide
+Allow: /tools/
+Allow: /onboarding
+Disallow: /api/checkout
+Disallow: /api/webhooks
+
+Sitemap: https://careerhound.io/sitemap-index.xml

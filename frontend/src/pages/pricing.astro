@@ -1,0 +1,551 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const pricingSchema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Career Hound Job Search Platform",
+  "description": "Direct company job search and autonomous AI application suite.",
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Monthly Pro Membership",
+      "price": "20.00",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock",
+      "priceValidUntil": "2027-12-31"
+    },
+    {
+      "@type": "Offer",
+      "name": "1-Year Unlimited Pass",
+      "price": "99.00",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock",
+      "priceValidUntil": "2027-12-31"
+    }
+  ]
+};
+---
+
+<Layout
+  title="Pricing & Plans | Career Hound"
+  description="Transparent, zero-commitment pricing. Choose between flexible monthly access or an annual 1-year pass to unlock direct company jobs and autonomous AI auto-apply."
+  jsonLd={pricingSchema}
+>
+  <!-- Hero Section -->
+  <section class="relative pt-16 pb-20 md:pt-24 md:pb-28 overflow-hidden bg-gradient-to-b from-blue-50/70 via-white to-slate-50 border-b border-slate-200/80">
+    <div class="absolute inset-0 bg-grid-pattern opacity-50 pointer-events-none"></div>
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold uppercase tracking-wider shadow-sm">
+        <svg class="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        Transparent, High-ROI Career Plans
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight">
+        Land Interviews <span class="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 bg-clip-text text-transparent">4.2x Faster</span>.<br class="hidden sm:inline" />
+        Stop Applying into the Void.
+      </h1>
+
+      <p class="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+        Apply directly on company Greenhouse, Lever & Ashby career pages before roles get flooded by 200+ LinkedIn easy-applies. Zero hidden fees. 7-day money-back guarantee.
+      </p>
+
+      <!-- Trust Badges Bar -->
+      <div class="pt-2 flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-slate-500">
+        <span class="flex items-center gap-1.5 text-slate-700">
+          <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+          7-Day 100% Money-Back Guarantee
+        </span>
+        <span class="text-slate-300">•</span>
+        <span class="flex items-center gap-1.5 text-slate-700">
+          <svg class="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+          Encrypted Dodo Payments Billing
+        </span>
+        <span class="text-slate-300">•</span>
+        <span class="flex items-center gap-1.5 text-slate-700">
+          <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+          Rated 4.9/5 by 8,570+ Job Seekers
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Cards Grid -->
+  <section class="py-16 md:py-24 bg-white relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto">
+        
+        <!-- Plan 1: Free Explorer -->
+        <div class="rounded-3xl p-8 border border-slate-200 bg-slate-50/50 flex flex-col justify-between hover:border-slate-300 transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-200/60 px-3 py-1 rounded-full">Explorer</span>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900">Free</h3>
+            <p class="text-xs text-slate-500 mt-1 min-h-[32px]">Essential search and free AI diagnostic tools to explore verified jobs.</p>
+            
+            <div class="mt-6 mb-8 flex items-baseline gap-1">
+              <span class="text-4xl sm:text-5xl font-black text-slate-900">$0</span>
+              <span class="text-sm font-semibold text-slate-400">/ forever</span>
+            </div>
+
+            <!-- Features -->
+            <ul class="space-y-3.5 text-xs text-slate-700">
+              <li class="flex items-start gap-2.5">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <span>Browse 100,000+ verified direct company postings</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <span>Free ATS resume keyword scanner & score calculator</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <span>Free Ghost Job Detector with risk verdict</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <span>Recruiter outreach cold message generator</span>
+              </li>
+              <li class="flex items-start gap-2.5 text-slate-400">
+                <svg class="w-4 h-4 text-slate-300 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                <span>Direct company ATS application links</span>
+              </li>
+              <li class="flex items-start gap-2.5 text-slate-400">
+                <svg class="w-4 h-4 text-slate-300 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                <span>Autonomous AI Auto-Apply engine</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-slate-200">
+            <a
+              href="/onboarding"
+              class="w-full py-3.5 px-5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm border border-slate-300 shadow-sm transition-all flex items-center justify-center gap-2 text-center"
+            >
+              <span>Get Started Free</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Plan 2: Pro Monthly (Featured & Most Popular) -->
+        <div class="rounded-3xl p-8 border-2 border-blue-600 bg-white shadow-xl shadow-blue-600/10 flex flex-col justify-between relative ring-4 ring-blue-50 transform lg:-translate-y-2 transition-all">
+          <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[11px] font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-md">
+            Most Popular
+          </span>
+
+          <div>
+            <div class="flex items-center justify-between mb-4 mt-2">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-blue-700 bg-blue-50 px-3 py-1 rounded-full">Pro Member</span>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900">Monthly Pro</h3>
+            <p class="text-xs text-slate-600 mt-1 min-h-[32px]">Direct application URLs and autonomous AI screening to land interviews fast.</p>
+            
+            <div class="mt-6 mb-8 flex items-baseline gap-1">
+              <span class="text-4xl sm:text-5xl font-black text-slate-900">$20</span>
+              <span class="text-sm font-semibold text-slate-500">/ month</span>
+            </div>
+
+            <!-- Features -->
+            <ul class="space-y-3.5 text-xs text-slate-700">
+              <li class="flex items-start gap-2.5 font-medium">
+                <svg class="w-4 h-4 text-blue-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <span>Direct application URLs (Greenhouse, Lever, Ashby, Workday)</span>
+              </li>
+              <li class="flex items-start gap-2.5 font-medium">
+                <svg class="w-4 h-4 text-blue-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <span>Autonomous AI Auto-Apply Bot (up to 20 applications/day)</span>
+              </li>
+              <li class="flex items-start gap-2.5 font-medium">
+                <svg class="w-4 h-4 text-blue-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <span>Tailored AI screening answers for custom employer forms</span>
+              </li>
+              <li class="flex items-start gap-2.5 font-medium">
+                <svg class="w-4 h-4 text-blue-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <span>1-Click customized cover letter generator per target job</span>
+              </li>
+              <li class="flex items-start gap-2.5 font-medium">
+                <svg class="w-4 h-4 text-blue-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <span>Daily early-bird alerts for unadvertised postings</span>
+              </li>
+              <li class="flex items-start gap-2.5 font-medium">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <span class="text-emerald-700 font-bold">100% Money-back guarantee for 7 full days</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-slate-100 space-y-2">
+            <button
+              type="button"
+              data-trigger-checkout
+              data-tier="monthly"
+              class="w-full py-4 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-sm tracking-wide shadow-lg shadow-blue-600/30 hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>Unlock Pro Monthly ($20)</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </button>
+            <p class="text-[11px] text-center text-slate-400 font-medium">Cancel anytime in 1-click via dashboard</p>
+          </div>
+        </div>
+
+        <!-- Plan 3: 1-Year Pass (Best Value) -->
+        <div class="rounded-3xl p-8 border border-slate-200 bg-gradient-to-b from-slate-900 to-indigo-950 text-white flex flex-col justify-between shadow-xl relative transition-all">
+          <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-slate-950 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
+            Save 58% • Billed Annually
+          </span>
+
+          <div>
+            <div class="flex items-center justify-between mb-4 mt-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-300 bg-white/10 px-3 py-1 rounded-full">Annual Pass</span>
+            </div>
+            <h3 class="text-2xl font-black text-white">1-Year Pass</h3>
+            <p class="text-xs text-slate-300 mt-1 min-h-[32px]">365 days of unlimited access to direct company listings and AI auto-apply.</p>
+            
+            <div class="mt-6 mb-8 flex items-baseline gap-1">
+              <span class="text-4xl sm:text-5xl font-black text-white">$99</span>
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider ml-1">/ year ($8.25/mo)</span>
+            </div>
+
+            <!-- Features -->
+            <ul class="space-y-3.5 text-xs text-slate-200">
+              <li class="flex items-start gap-2.5">
+                <svg class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <span><strong>1 full year of everything in Monthly Pro</strong></span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <svg class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <span>Up to 50 AI Auto-Applies per day</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <svg class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <span>Priority VIP processing for all background auto-apply jobs</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <svg class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <span>Full access to all new product updates for a whole year</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <svg class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <span>Save $141/yr compared to paying monthly</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-white/10 space-y-2">
+            <button
+              type="button"
+              data-trigger-checkout
+              data-tier="yearly"
+              class="w-full py-4 px-6 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-black text-sm tracking-wide shadow-lg hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>Get 1-Year Pass ($99/yr)</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </button>
+            <p class="text-[11px] text-center text-slate-400 font-medium">Billed annually at $99 • Cancel anytime</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Weekly Option Note -->
+      <div class="mt-8 text-center">
+        <p class="text-xs text-slate-500">
+          Need a quick 7-day sprint? We also offer a 
+          <button type="button" data-trigger-checkout data-tier="weekly" class="text-blue-600 font-bold underline hover:text-blue-800 ml-1 cursor-pointer">
+            Weekly Sprint Pass for $7
+          </button>.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ROI / Value Comparison Section -->
+  <section class="py-16 bg-slate-50 border-y border-slate-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
+        <h2 class="text-3xl font-black text-slate-900 tracking-tight">Why Career Hound Pays for Itself</h2>
+        <p class="text-sm text-slate-600">The average job search takes 5 months and over 200 hours. Here is how Career Hound flips the odds in your favor.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+        <!-- Old Way -->
+        <div class="p-8 rounded-3xl bg-white border border-red-200/80 space-y-5 shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center font-bold text-lg">✕</div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 text-lg">The Old Way (LinkedIn & Indeed)</h3>
+              <p class="text-xs text-slate-500">High friction, low response rates</p>
+            </div>
+          </div>
+          <ul class="space-y-3 text-xs sm:text-sm text-slate-600">
+            <li class="flex items-start gap-2 text-red-700/90">
+              <span class="font-bold">•</span>
+              <span>Compete with 200+ applicants within 60 minutes of posting</span>
+            </li>
+            <li class="flex items-start gap-2 text-red-700/90">
+              <span class="font-bold">•</span>
+              <span>40%+ of listings are ghost jobs posted just to signal company growth</span>
+            </li>
+            <li class="flex items-start gap-2 text-red-700/90">
+              <span class="font-bold">•</span>
+              <span>Spent 3–4 hours every night manually answering repetitive ATS screening questions</span>
+            </li>
+            <li class="flex items-start gap-2 text-red-700/90">
+              <span class="font-bold">•</span>
+              <span>Average response rate under 2.5%</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Career Hound Way -->
+        <div class="p-8 rounded-3xl bg-gradient-to-br from-blue-50 to-indigo-50/50 border-2 border-blue-500 space-y-5 shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg">✓</div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 text-lg">The Career Hound Way</h3>
+              <p class="text-xs text-blue-700 font-semibold">Direct to hiring managers, high response rate</p>
+            </div>
+          </div>
+          <ul class="space-y-3 text-xs sm:text-sm text-slate-700">
+            <li class="flex items-start gap-2 text-emerald-800 font-medium">
+              <span class="font-bold text-emerald-600">✓</span>
+              <span>Apply straight to employer Greenhouse, Lever & Ashby forms</span>
+            </li>
+            <li class="flex items-start gap-2 text-emerald-800 font-medium">
+              <span class="font-bold text-emerald-600">✓</span>
+              <span>100% verified active postings with zero recruiter re-post spam</span>
+            </li>
+            <li class="flex items-start gap-2 text-emerald-800 font-medium">
+              <span class="font-bold text-emerald-600">✓</span>
+              <span>AI Auto-Apply evaluates compatibility and answers forms on autopilot</span>
+            </li>
+            <li class="flex items-start gap-2 text-emerald-800 font-medium">
+              <span class="font-bold text-emerald-600">✓</span>
+              <span>4.2x higher interview reply rate than standard job board submissions</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Detailed Feature Comparison Table -->
+  <section class="py-16 md:py-24 bg-white">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-14 space-y-3">
+        <h2 class="text-3xl font-black text-slate-900 tracking-tight">Full Plan Comparison</h2>
+        <p class="text-sm text-slate-600">Compare every feature across our Free, Monthly, and 1-Year tiers.</p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[600px]">
+          <thead>
+            <tr class="border-b-2 border-slate-200">
+              <th class="py-4 px-4 text-sm font-extrabold text-slate-900 w-1/2">Features</th>
+              <th class="py-4 px-4 text-sm font-bold text-slate-600 text-center w-1/6">Free</th>
+              <th class="py-4 px-4 text-sm font-black text-blue-600 text-center w-1/6 bg-blue-50/50 rounded-t-xl">Monthly ($20)</th>
+              <th class="py-4 px-4 text-sm font-black text-slate-900 text-center w-1/6">1-Year ($99/yr)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-xs sm:text-sm text-slate-700">
+            <!-- Group: Job Discovery -->
+            <tr class="bg-slate-50/80 font-bold text-slate-900 text-xs">
+              <td colspan="4" class="py-3 px-4 uppercase tracking-wider text-slate-500">Job Discovery & Verification</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-medium">Direct Company Database</td>
+              <td class="py-3.5 px-4 text-center">Basic</td>
+              <td class="py-3.5 px-4 text-center bg-blue-50/30 font-semibold text-blue-700">Full Access</td>
+              <td class="py-3.5 px-4 text-center font-semibold">Full Access</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-medium">Direct Apply URLs (Greenhouse, Lever, Ashby)</td>
+              <td class="py-3.5 px-4 text-center text-slate-300">✕</td>
+              <td class="py-3.5 px-4 text-center bg-blue-50/30 text-emerald-600 font-bold">✓ Included</td>
+              <td class="py-3.5 px-4 text-center text-emerald-600 font-bold">✓ Included</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-medium">Worldwide & Remote Filtering</td>
+              <td class="py-3.5 px-4 text-center text-emerald-600">✓</td>
+              <td class="py-3.5 px-4 text-center bg-blue-50/30 text-emerald-600">✓</td>
+              <td class="py-3.5 px-4 text-center text-emerald-600">✓</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-medium">Unadvertised Daily Alerts</td>
+              <td class="py-3.5 px-4 text-center text-slate-400">Weekly Digest</td>
+              <td class="py-3.5 px-4 text-center bg-blue-50/30 text-emerald-600 font-bold">Instant Real-time</td>
+              <td class="py-3.5 px-4 text-center text-emerald-600 font-bold">Instant Real-time</td>
+            </tr>
+
+            <!-- Group: AI Application Suite -->
+            <tr class="bg-slate-50/80 font-bold text-slate-900 text-xs">
+              <td colspan="4" class="py-3 px-4 uppercase tracking-wider text-slate-500">Autonomous AI Suite</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-medium">AI Auto-Apply Daily Capacity</td>
+              <td class="py-3.5 px-4 text-center text-slate-300">✕</td>
+              <td class="py-3.5 px-4 text-center bg-blue-50/30 font-bold text-blue-700">20 / day</td>
+              <td class="py-3.5 px-4 text-center font-bold text-emerald-700">50 / day</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-medium">AI Custom Screening Answers</td>
+              <td class="py-3.5 px-4 text-center text-slate-300">✕</td>
+              <td class="py-3.5 px-4 text-center bg-blue-50/30 text-emerald-600 font-bold">✓ Automated</td>
+              <td class="py-3.5 px-4 text-center text-emerald-600 font-bold">✓ Automated</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-medium">Custom ATS Cover Letter Writer</td>
+              <td class="py-3.5 px-4 text-center text-slate-400">1 free / day</td>
+              <td class="py-3.5 px-4 text-center bg-blue-50/30 text-emerald-600 font-bold">Unlimited</td>
+              <td class="py-3.5 px-4 text-center text-emerald-600 font-bold">Unlimited</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-medium">ATS Match Score & Gap Analysis</td>
+              <td class="py-3.5 px-4 text-center text-emerald-600">✓ Free</td>
+              <td class="py-3.5 px-4 text-center bg-blue-50/30 text-emerald-600 font-bold">✓ Advanced</td>
+              <td class="py-3.5 px-4 text-center text-emerald-600 font-bold">✓ Advanced</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-medium">Ghost Job Risk Analysis</td>
+              <td class="py-3.5 px-4 text-center text-emerald-600">✓ Basic</td>
+              <td class="py-3.5 px-4 text-center bg-blue-50/30 text-emerald-600 font-bold">✓ Deep Audit</td>
+              <td class="py-3.5 px-4 text-center text-emerald-600 font-bold">✓ Deep Audit</td>
+            </tr>
+
+            <!-- Group: Billing & Support -->
+            <tr class="bg-slate-50/80 font-bold text-slate-900 text-xs">
+              <td colspan="4" class="py-3 px-4 uppercase tracking-wider text-slate-500">Billing & Guarantees</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-medium">7-Day 100% Money-Back Guarantee</td>
+              <td class="py-3.5 px-4 text-center text-slate-400">N/A</td>
+              <td class="py-3.5 px-4 text-center bg-blue-50/30 text-emerald-600 font-bold">✓ Yes</td>
+              <td class="py-3.5 px-4 text-center text-emerald-600 font-bold">✓ Yes</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-medium">Customer Support</td>
+              <td class="py-3.5 px-4 text-center text-slate-500">Community</td>
+              <td class="py-3.5 px-4 text-center bg-blue-50/30 text-slate-800 font-medium">Standard Email</td>
+              <td class="py-3.5 px-4 text-center text-blue-700 font-bold">Priority VIP Queue</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ Accordion Section -->
+  <section class="py-16 md:py-24 bg-slate-50 border-t border-slate-200">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div class="text-center space-y-3">
+        <h2 class="text-3xl font-black text-slate-900 tracking-tight">Frequently Asked Questions</h2>
+        <p class="text-sm text-slate-600">Have questions before upgrading? Here is everything you need to know.</p>
+      </div>
+
+      <div class="space-y-4">
+        <!-- FAQ 1 -->
+        <details class="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm cursor-pointer open:ring-2 open:ring-blue-500/20">
+          <summary class="font-extrabold text-slate-900 text-base flex items-center justify-between list-none">
+            <span>How does Career Hound find direct jobs before LinkedIn?</span>
+            <span class="transition-transform group-open:rotate-180 text-slate-400 font-bold text-lg">↓</span>
+          </summary>
+          <p class="text-xs sm:text-sm text-slate-600 mt-4 leading-relaxed">
+            Rather than relying on public job boards where recruiters pay hundreds of dollars to sponsor listings, our spiders scan employer ATS systems directly (such as Greenhouse, Lever, Ashby, and Workday) multiple times a day. You see openings within minutes of an engineering team creating the requisition.
+          </p>
+        </details>
+
+        <!-- FAQ 2 -->
+        <details class="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm cursor-pointer open:ring-2 open:ring-blue-500/20">
+          <summary class="font-extrabold text-slate-900 text-base flex items-center justify-between list-none">
+            <span>How does the AI Auto-Apply engine work?</span>
+            <span class="transition-transform group-open:rotate-180 text-slate-400 font-bold text-lg">↓</span>
+          </summary>
+          <p class="text-xs sm:text-sm text-slate-600 mt-4 leading-relaxed">
+            You upload your resume and configure target filters (such as roles, salary thresholds, and minimum match score). When a matching job appears with an 80%+ compatibility score, our automated engine formulates tailored responses to custom screening questions, generates an ATS-optimized cover letter, and submits the application directly.
+          </p>
+        </details>
+
+        <!-- FAQ 3 -->
+        <details class="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm cursor-pointer open:ring-2 open:ring-blue-500/20">
+          <summary class="font-extrabold text-slate-900 text-base flex items-center justify-between list-none">
+            <span>What is Dodo Payments and is my payment secure?</span>
+            <span class="transition-transform group-open:rotate-180 text-slate-400 font-bold text-lg">↓</span>
+          </summary>
+          <p class="text-xs sm:text-sm text-slate-600 mt-4 leading-relaxed">
+            Dodo Payments is our globally licensed Merchant of Record (MoR). All checkout transactions are processed through 256-bit SSL encrypted PCI-DSS compliant gateways. We accept all major credit cards, Apple Pay, and Google Pay worldwide without ever seeing or storing your raw card details.
+          </p>
+        </details>
+
+        <!-- FAQ 4 -->
+        <details class="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm cursor-pointer open:ring-2 open:ring-blue-500/20">
+          <summary class="font-extrabold text-slate-900 text-base flex items-center justify-between list-none">
+            <span>How does the 7-day money-back guarantee work?</span>
+            <span class="transition-transform group-open:rotate-180 text-slate-400 font-bold text-lg">↓</span>
+          </summary>
+          <p class="text-xs sm:text-sm text-slate-600 mt-4 leading-relaxed">
+            If you do not find Career Hound significantly more productive than applying manually through LinkedIn or Indeed, simply message <a href="mailto:support@careerhound.io" class="text-blue-600 underline font-bold">support@careerhound.io</a> within 7 days of purchase and we will issue a full 100% refund, no questions asked.
+          </p>
+        </details>
+
+        <!-- FAQ 5 -->
+        <details class="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm cursor-pointer open:ring-2 open:ring-blue-500/20">
+          <summary class="font-extrabold text-slate-900 text-base flex items-center justify-between list-none">
+            <span>Can I cancel my monthly subscription easily?</span>
+            <span class="transition-transform group-open:rotate-180 text-slate-400 font-bold text-lg">↓</span>
+          </summary>
+          <p class="text-xs sm:text-sm text-slate-600 mt-4 leading-relaxed">
+            Yes, anytime with a single click. Go to your <a href="/account" class="text-blue-600 font-bold underline">Account Dashboard</a> under the Subscription tab and click "Cancel Subscription". You will retain access until the end of your billing cycle with zero penalty.
+          </p>
+        </details>
+      </div>
+
+      <!-- Support Callout -->
+      <div class="text-center pt-4">
+        <p class="text-xs text-slate-500">
+          Still have questions? Our candidate success team is ready to help at 
+          <a href="/contact" class="text-blue-600 font-bold underline ml-1">Contact Support</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final Bottom Conversion CTA -->
+  <section class="py-20 bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-800 text-white text-center relative overflow-hidden">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 relative z-10">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-bold uppercase tracking-wider">
+        <span>Start Today</span>
+      </div>
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight">
+        Ready to bypass the 200+ applicant line?
+      </h2>
+      <p class="text-base sm:text-lg text-blue-100 max-w-xl mx-auto">
+        Join thousands of smart candidates securing interviews directly through company career portals.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+        <button
+          type="button"
+          data-trigger-checkout
+          data-tier="monthly"
+          class="w-full sm:w-auto px-9 py-4 rounded-full bg-white text-blue-700 hover:bg-blue-50 font-black text-base shadow-2xl hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <span>Get Started Now ($20/mo)</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+        </button>
+        <a
+          href="/search"
+          class="w-full sm:w-auto px-9 py-4 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-base border border-white/30 backdrop-blur-md transition-all flex items-center justify-center gap-2"
+        >
+          <span>Browse Free Jobs</span>
+          <span>→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "astro-docs": {
+      "serverUrl": "https://mcp.docs.astro.build/mcp"
+    },
+    "better-auth": {
+      "serverUrl": "https://mcp.better-auth.com/mcp"
+    },
+    "dodopayments": {
+      "serverUrl": "https://mcp.dodopayments.com/sse",
+      "env": {
+        "DODO_PAYMENTS_API_KEY": "foZur3iZfSq5RRFD.Pd4SJ2ti63yvIAmE424UP9W_5sn4QIwDs9-EYoti0AYEMsPo",
+        "DODO_PAYMENTS_MODE": "live_mode"
+      }
+    }
+  }
+}
