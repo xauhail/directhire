@@ -2,7 +2,7 @@
   "name": "careerhound",
   "version": "1.0.0",
   "private": true,
-  "description": "Career Hound - 1:1 Direct ATS Job Board & AI Auto-Apply Platform",
+  "description": "Career Hound - 1:1 Direct ATS Job Board",
   "scripts": {
     "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
     "dev:backend": "npm --prefix backend run dev",

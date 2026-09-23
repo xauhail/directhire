@@ -1,11 +1,12 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 
 const onboardingSchema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "name": "Personalized Job Match | Career Hound",
-  "description": "Onboarding to personalize your direct-company job search and configure AI Auto-Apply."
+  name: "Personalized Job Match | Career Hound",
+  description:
+    "Onboarding to personalize your direct-company job search and alerts.",
 };
 
 const defaultRoles = [
@@ -23,61 +24,95 @@ const defaultRoles = [
   { id: "sales", name: "Sales / SDR / Account Exec" },
   { id: "marketing", name: "Growth & Marketing" },
   { id: "finance", name: "Finance & Accounting" },
-  { id: "hr", name: "Human Resources & Ops" }
+  { id: "hr", name: "Human Resources & Ops" },
 ];
 ---
 
-<Layout 
+<Layout
   title="Personalized Job Match | Career Hound"
   description="Calibrate your job search in 2 minutes to discover hidden roles matching your exact requirements."
   jsonLd={onboardingSchema}
   hideStickyCTA={true}
 >
   <div class="max-w-2xl mx-auto px-4 py-12 sm:py-16">
-    <h1 class="sr-only">Career Hound Personalized Job Match & Auto-Apply Onboarding</h1>
-    
+    <h1 class="sr-only">Career Hound Personalized Job Match Onboarding</h1>
+
     <!-- Progress Indicator Bar -->
     <div class="mb-8">
-      <div class="flex items-center justify-between text-xs font-bold text-slate-500 mb-2">
+      <div
+        class="flex items-center justify-between text-xs font-bold text-slate-500 mb-2"
+      >
         <span id="step-label">Step 1 of 6: Target Role</span>
-        <span id="progress-percent" class="text-blue-600 font-extrabold">17%</span>
+        <span id="progress-percent" class="text-blue-600 font-extrabold"
+          >17%</span
+        >
       </div>
       <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
-        <div id="progress-bar" class="h-full bg-blue-600 rounded-full transition-all duration-300" style="width: 17%;"></div>
+        <div
+          id="progress-bar"
+          class="h-full bg-blue-600 rounded-full transition-all duration-300"
+          style="width: 17%;"
+        >
+        </div>
       </div>
     </div>
 
     <!-- Wizard Card Container -->
-    <div class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-xl shadow-slate-200/50 space-y-8">
-      
+    <div
+      class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-xl shadow-slate-200/50 space-y-8"
+    >
+      <!-- Already Onboarded Alert Banner -->
+      <div id="already-onboarded-banner" class="hidden p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs mb-4">
+        <div class="flex items-center gap-2.5">
+          <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">✓</span>
+          <div>
+            <p class="font-bold text-emerald-900 text-sm">You have already configured your matching preferences!</p>
+            <p class="text-emerald-700 text-xs mt-0.5">Your profile is saved in our database. You can jump directly to your jobs or fine-tune preferences below.</p>
+          </div>
+        </div>
+        <a href="/job-search/all" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs whitespace-nowrap shadow-xs transition-colors shrink-0">
+          View Matched Jobs →
+        </a>
+      </div>
+
       <!-- Step 1: Target Roles -->
       <div id="step-1" class="wizard-step space-y-6">
         <div>
-          <h2 class="text-2xl font-black text-slate-900 tracking-tight">What roles are you looking for?</h2>
-          <p class="text-xs sm:text-sm text-slate-500 mt-1">Select one or more target titles to calibrate your feed.</p>
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight">
+            What roles are you looking for?
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">
+            Select one or more target titles to calibrate your feed.
+          </p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="role-pill-grid">
-          {defaultRoles.map((role, idx) => (
-            <button 
-              type="button" 
-              class={`role-pill p-3.5 rounded-2xl border-2 border-slate-200 text-xs font-bold text-slate-700 hover:border-blue-400 text-left transition-all ${idx === 0 ? 'is-selected' : ''}`}
-              data-role={role.name}
-            >
-              <span class="flex items-center gap-2">
-                <span>{role.name}</span>
-              </span>
-              <span class="check-indicator">✓</span>
-            </button>
-          ))}
+          {
+            defaultRoles.map((role, idx) => (
+              <button
+                type="button"
+                class={`role-pill p-3.5 rounded-2xl border-2 border-slate-200 text-xs font-bold text-slate-700 hover:border-blue-400 text-left transition-all ${idx === 0 ? "is-selected" : ""}`}
+                data-role={role.name}
+              >
+                <span class="flex items-center gap-2">
+                  <span>{role.name}</span>
+                </span>
+                <span class="check-indicator">✓</span>
+              </button>
+            ))
+          }
         </div>
 
         <div>
-          <label for="custom-role-input" class="text-xs font-bold text-slate-600 block mb-1">Or type a specific job title:</label>
-          <input 
-            type="text" 
-            id="custom-role-input" 
-            placeholder="e.g. Health Informatics Lead, Cloud Architect, Growth Lead..." 
+          <label
+            for="custom-role-input"
+            class="text-xs font-bold text-slate-600 block mb-1"
+            >Or type a specific job title:</label
+          >
+          <input
+            type="text"
+            id="custom-role-input"
+            placeholder="e.g. Health Informatics Lead, Cloud Architect, Growth Lead..."
             class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -86,50 +121,95 @@ const defaultRoles = [
       <!-- Step 2: Workplace & Location -->
       <div id="step-2" class="wizard-step hidden space-y-6">
         <div>
-          <h2 class="text-2xl font-black text-slate-900 tracking-tight">How do you prefer to work?</h2>
-          <p class="text-xs sm:text-sm text-slate-500 mt-1">Select your workplace arrangement and location flexibility.</p>
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight">
+            How do you prefer to work?
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">
+            Select your workplace arrangement and location flexibility.
+          </p>
         </div>
 
         <div class="space-y-3">
-          <div class="workplace-card is-selected flex items-center justify-between p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-400 transition-all" data-value="remote-solely">
+          <div
+            class="workplace-card is-selected flex items-center justify-between p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-400 transition-all"
+            data-value="remote-solely"
+          >
             <div class="flex items-center gap-3">
-              <input type="checkbox" name="work_pref" value="remote-solely" checked class="w-4 h-4 text-blue-600 rounded pointer-events-none" />
+              <input
+                type="checkbox"
+                name="work_pref"
+                value="remote-solely"
+                checked
+                class="w-4 h-4 text-blue-600 rounded pointer-events-none"
+              />
               <div>
                 <h4 class="font-bold text-slate-900 text-sm">Remote Solely</h4>
-                <p class="text-xs text-slate-500">100% remote with no office requirement.</p>
+                <p class="text-xs text-slate-500">
+                  100% remote with no office requirement.
+                </p>
               </div>
             </div>
             <span class="check-indicator">✓</span>
           </div>
 
-          <div class="workplace-card flex items-center justify-between p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-400 transition-all" data-value="remote-ok">
+          <div
+            class="workplace-card flex items-center justify-between p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-400 transition-all"
+            data-value="remote-ok"
+          >
             <div class="flex items-center gap-3">
-              <input type="checkbox" name="work_pref" value="remote-ok" class="w-4 h-4 text-blue-600 rounded pointer-events-none" />
+              <input
+                type="checkbox"
+                name="work_pref"
+                value="remote-ok"
+                class="w-4 h-4 text-blue-600 rounded pointer-events-none"
+              />
               <div>
                 <h4 class="font-bold text-slate-900 text-sm">Remote OK</h4>
-                <p class="text-xs text-slate-500">Remote role, but company has optional offices.</p>
+                <p class="text-xs text-slate-500">
+                  Remote role, but company has optional offices.
+                </p>
               </div>
             </div>
             <span class="check-indicator">✓</span>
           </div>
 
-          <div class="workplace-card flex items-center justify-between p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-400 transition-all" data-value="hybrid">
+          <div
+            class="workplace-card flex items-center justify-between p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-400 transition-all"
+            data-value="hybrid"
+          >
             <div class="flex items-center gap-3">
-              <input type="checkbox" name="work_pref" value="hybrid" class="w-4 h-4 text-blue-600 rounded pointer-events-none" />
+              <input
+                type="checkbox"
+                name="work_pref"
+                value="hybrid"
+                class="w-4 h-4 text-blue-600 rounded pointer-events-none"
+              />
               <div>
                 <h4 class="font-bold text-slate-900 text-sm">Hybrid</h4>
-                <p class="text-xs text-slate-500">Split between home and office.</p>
+                <p class="text-xs text-slate-500">
+                  Split between home and office.
+                </p>
               </div>
             </div>
             <span class="check-indicator">✓</span>
           </div>
 
-          <div class="workplace-card flex items-center justify-between p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-400 transition-all" data-value="on-site">
+          <div
+            class="workplace-card flex items-center justify-between p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-400 transition-all"
+            data-value="on-site"
+          >
             <div class="flex items-center gap-3">
-              <input type="checkbox" name="work_pref" value="on-site" class="w-4 h-4 text-blue-600 rounded pointer-events-none" />
+              <input
+                type="checkbox"
+                name="work_pref"
+                value="on-site"
+                class="w-4 h-4 text-blue-600 rounded pointer-events-none"
+              />
               <div>
                 <h4 class="font-bold text-slate-900 text-sm">On-site</h4>
-                <p class="text-xs text-slate-500">Work directly from company office or premises.</p>
+                <p class="text-xs text-slate-500">
+                  Work directly from company office or premises.
+                </p>
               </div>
             </div>
             <span class="check-indicator">✓</span>
@@ -137,9 +217,18 @@ const defaultRoles = [
         </div>
 
         <div class="pt-2">
-          <label class="flex items-center gap-2 cursor-pointer font-bold text-xs text-blue-700 bg-blue-50 p-3.5 rounded-xl border border-blue-200">
-            <input type="checkbox" id="worldwide-pref" checked class="w-4 h-4 text-blue-600 rounded" />
-            <span>Show jobs that hire worldwide (candidates outside US/EU welcome)</span>
+          <label
+            class="flex items-center gap-2 cursor-pointer font-bold text-xs text-blue-700 bg-blue-50 p-3.5 rounded-xl border border-blue-200"
+          >
+            <input
+              type="checkbox"
+              id="worldwide-pref"
+              checked
+              class="w-4 h-4 text-blue-600 rounded"
+            />
+            <span
+              >Show jobs that hire worldwide (candidates outside US/EU welcome)</span
+            >
           </label>
         </div>
       </div>
@@ -147,31 +236,68 @@ const defaultRoles = [
       <!-- Step 3: Experience Level -->
       <div id="step-3" class="wizard-step hidden space-y-6">
         <div>
-          <h2 class="text-2xl font-black text-slate-900 tracking-tight">Your Experience Level</h2>
-          <p class="text-xs sm:text-sm text-slate-500 mt-1">This filters out roles that don't match your seniority.</p>
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight">
+            Your Experience Level
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">
+            This filters out roles that don't match your seniority.
+          </p>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
-          <div class="exp-card p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-400 transition-all text-center" data-val="0-to-2">
-            <input type="radio" name="exp_level" value="0-to-2" class="sr-only" />
+          <div
+            class="exp-card p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-400 transition-all text-center"
+            data-val="0-to-2"
+          >
+            <input
+              type="radio"
+              name="exp_level"
+              value="0-to-2"
+              class="sr-only"
+            />
             <h4 class="font-bold text-slate-900 text-sm">0–2 Years</h4>
             <p class="text-[11px] text-slate-500 mt-0.5">Entry / Associate</p>
           </div>
 
-          <div class="exp-card is-selected p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-400 transition-all text-center" data-val="2-to-5">
-            <input type="radio" name="exp_level" value="2-to-5" checked class="sr-only" />
+          <div
+            class="exp-card is-selected p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-400 transition-all text-center"
+            data-val="2-to-5"
+          >
+            <input
+              type="radio"
+              name="exp_level"
+              value="2-to-5"
+              checked
+              class="sr-only"
+            />
             <h4 class="font-bold text-slate-900 text-sm">2–5 Years</h4>
             <p class="text-[11px] text-slate-500 mt-0.5">Mid-level</p>
           </div>
 
-          <div class="exp-card p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-400 transition-all text-center" data-val="5-to-10">
-            <input type="radio" name="exp_level" value="5-to-10" class="sr-only" />
+          <div
+            class="exp-card p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-400 transition-all text-center"
+            data-val="5-to-10"
+          >
+            <input
+              type="radio"
+              name="exp_level"
+              value="5-to-10"
+              class="sr-only"
+            />
             <h4 class="font-bold text-slate-900 text-sm">5–10 Years</h4>
             <p class="text-[11px] text-slate-500 mt-0.5">Senior / Staff</p>
           </div>
 
-          <div class="exp-card p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-400 transition-all text-center" data-val="10-plus">
-            <input type="radio" name="exp_level" value="10-plus" class="sr-only" />
+          <div
+            class="exp-card p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-400 transition-all text-center"
+            data-val="10-plus"
+          >
+            <input
+              type="radio"
+              name="exp_level"
+              value="10-plus"
+              class="sr-only"
+            />
             <h4 class="font-bold text-slate-900 text-sm">10+ Years</h4>
             <p class="text-[11px] text-slate-500 mt-0.5">Lead / Director</p>
           </div>
@@ -181,14 +307,25 @@ const defaultRoles = [
       <!-- Step 4: Salary Expectations -->
       <div id="step-4" class="wizard-step hidden space-y-6">
         <div>
-          <h2 class="text-2xl font-black text-slate-900 tracking-tight">Minimum Target Compensation</h2>
-          <p class="text-xs sm:text-sm text-slate-500 mt-1">We hide positions that fall below your target floor.</p>
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight">
+            Minimum Target Compensation
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">
+            We hide positions that fall below your target floor.
+          </p>
         </div>
 
         <div class="space-y-4">
           <div>
-            <label for="salary-currency" class="text-xs font-bold text-slate-700 block mb-1">Currency</label>
-            <select id="salary-currency" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm bg-white">
+            <label
+              for="salary-currency"
+              class="text-xs font-bold text-slate-700 block mb-1"
+              >Currency</label
+            >
+            <select
+              id="salary-currency"
+              class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm bg-white"
+            >
               <option value="USD" selected>USD ($)</option>
               <option value="CAD">CAD ($)</option>
               <option value="EUR">EUR (€)</option>
@@ -198,19 +335,27 @@ const defaultRoles = [
           </div>
 
           <div>
-            <label for="min-salary-input" class="text-xs font-bold text-slate-700 block mb-1">Minimum Annual Base Salary</label>
+            <label
+              for="min-salary-input"
+              class="text-xs font-bold text-slate-700 block mb-1"
+              >Minimum Annual Base Salary</label
+            >
             <div class="relative">
-              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-bold">$</span>
-              <input 
-                type="number" 
-                id="min-salary-input" 
-                value="90000" 
+              <span
+                class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-bold"
+                >$</span
+              >
+              <input
+                type="number"
+                id="min-salary-input"
+                value="90000"
                 step="5000"
                 class="w-full pl-8 pr-4 py-2.5 rounded-xl border border-slate-300 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <p class="text-[11px] text-slate-400 mt-1">
-              Tip: Direct company jobs on Career Hound typically pay 15–20% higher by cutting recruiter agency cuts.
+              Tip: Direct company jobs on Career Hound typically pay 15–20%
+              higher by cutting recruiter agency cuts.
             </p>
           </div>
         </div>
@@ -219,29 +364,46 @@ const defaultRoles = [
       <!-- Step 5: Skills & Tech Stack -->
       <div id="step-5" class="wizard-step hidden space-y-6">
         <div>
-          <h2 class="text-2xl font-black text-slate-900 tracking-tight">Your Core Skills & Stack</h2>
-          <p class="text-xs sm:text-sm text-slate-500 mt-1">Add or remove skills to fine-tune your matching and Auto-Apply targeting.</p>
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight">
+            Your Core Skills & Stack
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">
+            Add or remove skills to fine-tune your job matching.
+          </p>
         </div>
 
         <!-- Selected Active Skills with Remove buttons -->
         <div>
-          <label class="text-xs font-bold text-slate-700 block mb-2">Selected Skills (click &times; to remove):</label>
-          <div id="selected-skills-box" class="flex flex-wrap gap-2 min-h-[42px] p-3 rounded-2xl bg-slate-50 border border-slate-200">
+          <label class="text-xs font-bold text-slate-700 block mb-2"
+            >Selected Skills (click &times; to remove):</label
+          >
+          <div
+            id="selected-skills-box"
+            class="flex flex-wrap gap-2 min-h-[42px] p-3 rounded-2xl bg-slate-50 border border-slate-200"
+          >
             <!-- Rendered by JS with interactive remove buttons -->
           </div>
         </div>
 
         <!-- Add Custom Skill input -->
         <div>
-          <label for="add-skill-input" class="text-xs font-bold text-slate-700 block mb-1">Add custom skill or tool:</label>
+          <label
+            for="add-skill-input"
+            class="text-xs font-bold text-slate-700 block mb-1"
+            >Add custom skill or tool:</label
+          >
           <div class="flex gap-2">
-            <input 
-              type="text" 
-              id="add-skill-input" 
-              placeholder="e.g. Kubernetes, Epic EHR, PyTorch..." 
+            <input
+              type="text"
+              id="add-skill-input"
+              placeholder="e.g. Kubernetes, Epic EHR, PyTorch..."
               class="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <button type="button" id="btn-add-skill-manual" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-all">
+            <button
+              type="button"
+              id="btn-add-skill-manual"
+              class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-all"
+            >
               Add
             </button>
           </div>
@@ -249,17 +411,40 @@ const defaultRoles = [
 
         <!-- Suggested Skills -->
         <div>
-          <span class="text-xs font-bold text-slate-500 block mb-2">Suggested / Common Skills:</span>
+          <span class="text-xs font-bold text-slate-500 block mb-2"
+            >Suggested / Common Skills:</span
+          >
           <div class="flex flex-wrap gap-2" id="suggested-skills-cloud">
-            {["React", "TypeScript", "Node.js", "Python", "Next.js", "AWS", "Docker", "PostgreSQL", "SQL", "FastAPI", "Go", "GraphQL", "Tailwind CSS", "AI & Machine Learning", "Healthcare Data", "Clinical Operations", "Product Management", "Salesforce"].map((skill) => (
-              <button 
-                type="button" 
-                class="suggested-skill-btn px-3 py-1 rounded-full border border-slate-200 bg-white text-slate-600 hover:border-blue-400 hover:text-blue-600 text-xs font-semibold transition-all"
-                data-skill={skill}
-              >
-                + {skill}
-              </button>
-            ))}
+            {
+              [
+                "React",
+                "TypeScript",
+                "Node.js",
+                "Python",
+                "Next.js",
+                "AWS",
+                "Docker",
+                "PostgreSQL",
+                "SQL",
+                "FastAPI",
+                "Go",
+                "GraphQL",
+                "Tailwind CSS",
+                "AI & Machine Learning",
+                "Healthcare Data",
+                "Clinical Operations",
+                "Product Management",
+                "Salesforce",
+              ].map((skill) => (
+                <button
+                  type="button"
+                  class="suggested-skill-btn px-3 py-1 rounded-full border border-slate-200 bg-white text-slate-600 hover:border-blue-400 hover:text-blue-600 text-xs font-semibold transition-all"
+                  data-skill={skill}
+                >
+                  + {skill}
+                </button>
+              ))
+            }
           </div>
         </div>
       </div>
@@ -267,15 +452,36 @@ const defaultRoles = [
       <!-- Step 6: Resume Upload (AI Extraction) -->
       <div id="step-6" class="wizard-step hidden space-y-6">
         <div>
-          <h2 class="text-2xl font-black text-slate-900 tracking-tight">Upload Your Resume</h2>
-          <p class="text-xs sm:text-sm text-slate-500 mt-1">Our AI engine will extract your achievements to match jobs and power Auto-Apply.</p>
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight">
+            Upload Your Resume
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">
+            Our AI engine will extract your achievements to match top direct ATS
+            jobs.
+          </p>
         </div>
 
         <!-- Drag and drop zone -->
-        <div class="border-2 border-dashed border-slate-300 rounded-3xl p-8 text-center hover:border-blue-500 transition-colors bg-slate-50/50 space-y-3">
-          <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <div
+          class="border-2 border-dashed border-slate-300 rounded-3xl p-8 text-center hover:border-blue-500 transition-colors bg-slate-50/50 space-y-3"
+        >
+          <div
+            class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto shadow-sm"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+              ></path>
               <polyline points="14 2 14 8 20 8"></polyline>
               <line x1="16" y1="13" x2="8" y2="13"></line>
               <line x1="16" y1="17" x2="8" y2="17"></line>
@@ -283,48 +489,83 @@ const defaultRoles = [
             </svg>
           </div>
           <div>
-            <label for="resume-file" class="cursor-pointer font-bold text-sm text-blue-600 hover:text-blue-700 underline">
+            <label
+              for="resume-file"
+              class="cursor-pointer font-bold text-sm text-blue-600 hover:text-blue-700 underline"
+            >
               Click to choose file
             </label>
             <span class="text-xs text-slate-500"> or drag and drop</span>
-            <input type="file" id="resume-file" accept=".pdf,.docx,.txt" class="sr-only" />
+            <input
+              type="file"
+              id="resume-file"
+              accept=".pdf,.docx,.txt"
+              class="sr-only"
+            />
           </div>
-          <p class="text-[11px] text-slate-400">Supported formats: PDF, DOCX, TXT (Max 10MB)</p>
-          <div id="file-name-display" class="hidden text-xs font-bold text-emerald-600 bg-emerald-50 py-1.5 px-3 rounded-full inline-block"></div>
+          <p class="text-[11px] text-slate-400">
+            Supported formats: PDF, DOCX, TXT (Max 10MB)
+          </p>
+          <div
+            id="file-name-display"
+            class="hidden text-xs font-bold text-emerald-600 bg-emerald-50 py-1.5 px-3 rounded-full inline-block"
+          >
+          </div>
         </div>
 
         <!-- Or paste resume text -->
         <div>
           <div class="flex items-center justify-between mb-1">
-            <label for="resume-text-input" class="text-xs font-bold text-slate-700">Or paste resume text below:</label>
-            <button type="button" id="paste-sample-btn" class="text-xs font-bold text-blue-600 hover:underline">Paste Sample Resume</button>
+            <label
+              for="resume-text-input"
+              class="text-xs font-bold text-slate-700"
+              >Or paste resume text below:</label
+            >
+            <button
+              type="button"
+              id="paste-sample-btn"
+              class="text-xs font-bold text-blue-600 hover:underline"
+              >Paste Sample Resume</button
+            >
           </div>
-          <textarea 
-            id="resume-text-input" 
-            rows="5" 
-            placeholder="Paste work history, summary, or bullets..." 
+          <textarea
+            id="resume-text-input"
+            rows="5"
+            placeholder="Paste work history, summary, or bullets..."
             class="w-full p-3 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
           ></textarea>
         </div>
       </div>
 
       <!-- Wizard Navigation Action Buttons -->
-      <div class="pt-6 border-t border-slate-100 flex items-center justify-between gap-4">
-        <button 
-          type="button" 
-          id="btn-prev" 
+      <div
+        class="pt-6 border-t border-slate-100 flex items-center justify-between gap-4"
+      >
+        <button
+          type="button"
+          id="btn-prev"
           class="hidden px-5 py-2.5 rounded-full border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-bold transition-all"
         >
           ← Back
         </button>
 
-        <button 
-          type="button" 
-          id="btn-next" 
+        <button
+          type="button"
+          id="btn-next"
           class="ml-auto px-8 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer"
         >
           <span>Continue</span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <path d="M5 12h14"></path>
             <path d="m12 5 7 7-7 7"></path>
           </svg>
@@ -333,12 +574,28 @@ const defaultRoles = [
     </div>
 
     <!-- Privacy note -->
-    <p class="text-center text-xs text-slate-400 mt-6 flex items-center justify-center gap-1.5">
-      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400">
+    <p
+      class="text-center text-xs text-slate-400 mt-6 flex items-center justify-center gap-1.5"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="13"
+        height="13"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="text-slate-400"
+      >
         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
       </svg>
-      <span>Your information is confidential and used strictly to personalize your verified direct job recommendations.</span>
+      <span
+        >Your information is confidential and used strictly to personalize your
+        verified direct job recommendations.</span
+      >
     </p>
   </div>
 </Layout>
@@ -439,81 +696,122 @@ const defaultRoles = [
 </style>
 
 <script>
-  import { submitOnboarding } from '../lib/api';
+  import { submitOnboarding } from "../lib/api.js";
+
+  // Check if user has already completed onboarding
+  const cachedUserStr = localStorage.getItem("ch_user");
+  let currentUser: any = null;
+  if (cachedUserStr) {
+    try { currentUser = JSON.parse(cachedUserStr); } catch (_) {}
+  }
+  const isAlreadyOnboarded =
+    localStorage.getItem("ch_onboarding_completed") === "true" ||
+    currentUser?.onboardingCompleted === true;
+
+  const alreadyOnboardedBanner = document.getElementById("already-onboarded-banner");
+  if (isAlreadyOnboarded && alreadyOnboardedBanner) {
+    alreadyOnboardedBanner.classList.remove("hidden");
+  }
 
   let currentStep = 1;
   const totalSteps = 6;
-  const selectedRoles = new Set(['Full Stack Engineer']);
-  const selectedSkills = new Set(['React', 'TypeScript', 'Node.js']);
+  const selectedRoles = new Set(["Full Stack Engineer"]);
+  const selectedSkills = new Set(["React", "TypeScript", "Node.js"]);
 
-  const stepLabel = document.getElementById('step-label');
-  const progressPercent = document.getElementById('progress-percent');
-  const progressBar = document.getElementById('progress-bar');
-  const btnNext = document.getElementById('btn-next');
-  const btnPrev = document.getElementById('btn-prev');
-  const fileInput = document.getElementById('resume-file') as HTMLInputElement;
-  const fileNameDisplay = document.getElementById('file-name-display');
-  const pasteSampleBtn = document.getElementById('paste-sample-btn');
+  const stepLabel = document.getElementById("step-label");
+  const progressPercent = document.getElementById("progress-percent");
+  const progressBar = document.getElementById("progress-bar");
+  const btnNext = document.getElementById("btn-next");
+  const btnPrev = document.getElementById("btn-prev");
+  const fileInput = document.getElementById("resume-file") as HTMLInputElement;
+  const fileNameDisplay = document.getElementById("file-name-display");
+  const pasteSampleBtn = document.getElementById("paste-sample-btn");
 
   // Step 1: Role pills click handler
-  document.querySelectorAll('.role-pill').forEach((pill) => {
-    pill.addEventListener('click', (e) => {
+  document.querySelectorAll(".role-pill").forEach((pill) => {
+    pill.addEventListener("click", (e) => {
       e.preventDefault();
-      const role = pill.getAttribute('data-role');
+      const role = pill.getAttribute("data-role");
       if (!role) return;
 
       if (selectedRoles.has(role)) {
         selectedRoles.delete(role);
-        pill.classList.remove('is-selected');
+        pill.classList.remove("is-selected");
       } else {
         selectedRoles.add(role);
-        pill.classList.add('is-selected');
+        pill.classList.add("is-selected");
       }
     });
   });
 
   // Step 2: Workplace cards click handler
-  document.querySelectorAll('.workplace-card').forEach((card) => {
-    card.addEventListener('click', () => {
-      const checkbox = card.querySelector('input[type="checkbox"]') as HTMLInputElement;
+  document.querySelectorAll(".workplace-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const checkbox = card.querySelector(
+        'input[type="checkbox"]',
+      ) as HTMLInputElement;
       if (!checkbox) return;
       checkbox.checked = !checkbox.checked;
       if (checkbox.checked) {
-        card.classList.add('is-selected');
+        card.classList.add("is-selected");
       } else {
-        card.classList.remove('is-selected');
+        card.classList.remove("is-selected");
       }
     });
   });
 
   // Step 3: Experience level cards click handler
-  const expCards = document.querySelectorAll('.exp-card');
+  const expCards = document.querySelectorAll(".exp-card");
   expCards.forEach((card) => {
-    card.addEventListener('click', () => {
-      expCards.forEach(c => c.classList.remove('is-selected'));
-      card.classList.add('is-selected');
-      const radio = card.querySelector('input[type="radio"]') as HTMLInputElement;
+    card.addEventListener("click", () => {
+      expCards.forEach((c) => c.classList.remove("is-selected"));
+      card.classList.add("is-selected");
+      const radio = card.querySelector(
+        'input[type="radio"]',
+      ) as HTMLInputElement;
       if (radio) radio.checked = true;
     });
   });
 
-  // Step 5: Skills management with explicit remove buttons
-  const selectedSkillsBox = document.getElementById('selected-skills-box');
-  const addSkillInput = document.getElementById('add-skill-input') as HTMLInputElement;
-  const btnAddSkillManual = document.getElementById('btn-add-skill-manual');
+  // Step 5: Skills management with interactive suggestions & remove buttons
+  const selectedSkillsBox = document.getElementById("selected-skills-box");
+  const addSkillInput = document.getElementById(
+    "add-skill-input",
+  ) as HTMLInputElement;
+  const btnAddSkillManual = document.getElementById("btn-add-skill-manual");
+
+  function syncSuggestedSkillsButtons() {
+    document.querySelectorAll(".suggested-skill-btn").forEach((btn) => {
+      const skill = btn.getAttribute("data-skill");
+      if (!skill) return;
+      const isSelected = selectedSkills.has(skill);
+      if (isSelected) {
+        btn.classList.add("bg-blue-600", "text-white", "border-blue-600", "shadow-xs");
+        btn.classList.remove("bg-white", "text-slate-600", "border-slate-200");
+        btn.innerHTML = `✓ ${skill}`;
+      } else {
+        btn.classList.remove("bg-blue-600", "text-white", "border-blue-600", "shadow-xs");
+        btn.classList.add("bg-white", "text-slate-600", "border-slate-200");
+        btn.innerHTML = `+ ${skill}`;
+      }
+    });
+  }
 
   function renderSelectedSkills() {
     if (!selectedSkillsBox) return;
-    selectedSkillsBox.innerHTML = '';
+    selectedSkillsBox.innerHTML = "";
 
     if (selectedSkills.size === 0) {
-      selectedSkillsBox.innerHTML = '<span class="text-xs text-slate-400 italic py-1">No skills added yet. Select from suggestions below or type a skill above.</span>';
+      selectedSkillsBox.innerHTML =
+        '<span class="text-xs text-slate-400 italic py-1">No skills added yet. Select from suggestions below or type a skill above.</span>';
+      syncSuggestedSkillsButtons();
       return;
     }
 
-    selectedSkills.forEach(skill => {
-      const chip = document.createElement('span');
-      chip.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold shadow-xs';
+    selectedSkills.forEach((skill) => {
+      const chip = document.createElement("span");
+      chip.className =
+        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold shadow-xs";
       chip.innerHTML = `
         <span>${skill}</span>
         <button type="button" class="btn-delete-skill w-4 h-4 rounded-full hover:bg-blue-200/70 text-blue-700 font-black text-sm flex items-center justify-center cursor-pointer transition-colors" data-skill="${skill}" title="Remove ${skill}">
@@ -524,31 +822,36 @@ const defaultRoles = [
     });
 
     // Bind remove button handlers
-    selectedSkillsBox.querySelectorAll('.btn-delete-skill').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    selectedSkillsBox.querySelectorAll(".btn-delete-skill").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        const skillToRemove = (btn as HTMLElement).getAttribute('data-skill');
+        const skillToRemove = (btn as HTMLElement).getAttribute("data-skill");
         if (skillToRemove) {
           selectedSkills.delete(skillToRemove);
           renderSelectedSkills();
         }
       });
     });
+
+    syncSuggestedSkillsButtons();
   }
 
-  // Initial render of default selected skills
+  // Initial render of default selected skills and active buttons
   renderSelectedSkills();
 
-  // Suggested skills click handler
-  document.querySelectorAll('.suggested-skill-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+  // Suggested skills toggle click handler
+  document.querySelectorAll(".suggested-skill-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
       e.preventDefault();
-      const skill = btn.getAttribute('data-skill');
-      if (skill) {
+      const skill = btn.getAttribute("data-skill");
+      if (!skill) return;
+      if (selectedSkills.has(skill)) {
+        selectedSkills.delete(skill);
+      } else {
         selectedSkills.add(skill);
-        renderSelectedSkills();
       }
+      renderSelectedSkills();
     });
   });
 
@@ -557,20 +860,20 @@ const defaultRoles = [
     const val = addSkillInput.value.trim();
     if (!val) return;
     selectedSkills.add(val);
-    addSkillInput.value = '';
+    addSkillInput.value = "";
     renderSelectedSkills();
   }
 
   if (btnAddSkillManual) {
-    btnAddSkillManual.addEventListener('click', (e) => {
+    btnAddSkillManual.addEventListener("click", (e) => {
       e.preventDefault();
       addCustomSkillFromInput();
     });
   }
 
   if (addSkillInput) {
-    addSkillInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
+    addSkillInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
         e.preventDefault();
         addCustomSkillFromInput();
       }
@@ -579,8 +882,10 @@ const defaultRoles = [
 
   // Step 6: Paste sample resume
   if (pasteSampleBtn) {
-    pasteSampleBtn.addEventListener('click', () => {
-      const textarea = document.getElementById('resume-text-input') as HTMLTextAreaElement;
+    pasteSampleBtn.addEventListener("click", () => {
+      const textarea = document.getElementById(
+        "resume-text-input",
+      ) as HTMLTextAreaElement;
       if (textarea) {
         textarea.value = `Alex Morgan | alex.morgan@example.com | San Francisco, CA
 Full Stack Software Engineer with 5+ years of experience building high-scale distributed web applications.
@@ -593,10 +898,10 @@ Full Stack Software Engineer with 5+ years of experience building high-scale dis
 
   // File input change
   if (fileInput && fileNameDisplay) {
-    fileInput.addEventListener('change', () => {
+    fileInput.addEventListener("change", () => {
       if (fileInput.files && fileInput.files[0]) {
         fileNameDisplay.textContent = `Attached: ${fileInput.files[0].name}`;
-        fileNameDisplay.classList.remove('hidden');
+        fileNameDisplay.classList.remove("hidden");
       }
     });
   }
@@ -605,8 +910,8 @@ Full Stack Software Engineer with 5+ years of experience building high-scale dis
     for (let i = 1; i <= totalSteps; i++) {
       const stepEl = document.getElementById(`step-${i}`);
       if (stepEl) {
-        if (i === currentStep) stepEl.classList.remove('hidden');
-        else stepEl.classList.add('hidden');
+        if (i === currentStep) stepEl.classList.remove("hidden");
+        else stepEl.classList.add("hidden");
       }
     }
 
@@ -620,64 +925,96 @@ Full Stack Software Engineer with 5+ years of experience building high-scale dis
       "Experience Level",
       "Compensation",
       "Skills & Tech Stack",
-      "Resume Upload"
+      "Resume Upload",
     ];
-    if (stepLabel) stepLabel.textContent = `Step ${currentStep} of 6: ${titles[currentStep - 1]}`;
+    if (stepLabel)
+      stepLabel.textContent = `Step ${currentStep} of 6: ${titles[currentStep - 1]}`;
 
     if (btnPrev) {
-      if (currentStep > 1) btnPrev.classList.remove('hidden');
-      else btnPrev.classList.add('hidden');
+      if (currentStep > 1) btnPrev.classList.remove("hidden");
+      else btnPrev.classList.add("hidden");
     }
 
     if (btnNext) {
       if (currentStep === totalSteps) {
-        btnNext.innerHTML = '<span>Complete & Unlock Matches</span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>';
+        btnNext.innerHTML =
+          '<span>Complete & Unlock Matches</span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>';
       } else {
-        btnNext.innerHTML = '<span>Continue</span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>';
+        btnNext.innerHTML =
+          '<span>Continue</span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>';
       }
     }
   }
 
   if (btnNext) {
-    btnNext.addEventListener('click', async () => {
+    btnNext.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       if (currentStep < totalSteps) {
         currentStep++;
         updateStepUI();
       } else {
         // Submit onboarding data
-        btnNext.setAttribute('disabled', 'true');
-        btnNext.innerHTML = '<span>Calibrating Matches with AI Engine...</span>';
+        btnNext.setAttribute("disabled", "true");
+        btnNext.innerHTML =
+          "<span>Calibrating Matches with AI Engine...</span>";
 
-        const customRole = (document.getElementById('custom-role-input') as HTMLInputElement)?.value;
+        const customRole = (
+          document.getElementById("custom-role-input") as HTMLInputElement
+        )?.value;
         if (customRole) selectedRoles.add(customRole);
 
-        const checkedWorkplaces = Array.from(document.querySelectorAll('input[name="work_pref"]:checked'))
-          .map(el => (el as HTMLInputElement).value);
-        const isWorldwide = (document.getElementById('worldwide-pref') as HTMLInputElement)?.checked ?? true;
-        const expLevel = (document.querySelector('input[name="exp_level"]:checked') as HTMLInputElement)?.value || '2-to-5';
-        const salaryCurrency = (document.getElementById('salary-currency') as HTMLSelectElement)?.value || 'USD';
-        const minSalary = Number((document.getElementById('min-salary-input') as HTMLInputElement)?.value) || 80000;
-        const resumeText = (document.getElementById('resume-text-input') as HTMLTextAreaElement)?.value || '';
+        const checkedWorkplaces = Array.from(
+          document.querySelectorAll('input[name="work_pref"]:checked'),
+        ).map((el) => (el as HTMLInputElement).value);
+        const isWorldwide =
+          (document.getElementById("worldwide-pref") as HTMLInputElement)
+            ?.checked ?? true;
+        const expLevel =
+          (
+            document.querySelector(
+              'input[name="exp_level"]:checked',
+            ) as HTMLInputElement
+          )?.value || "2-to-5";
+        const salaryCurrency =
+          (document.getElementById("salary-currency") as HTMLSelectElement)
+            ?.value || "USD";
+        const minSalary =
+          Number(
+            (document.getElementById("min-salary-input") as HTMLInputElement)
+              ?.value,
+          ) || 80000;
+        const resumeText =
+          (document.getElementById("resume-text-input") as HTMLTextAreaElement)
+            ?.value || "";
 
         const onboardingPayload = {
+          email: currentUser?.email,
           targetTitles: Array.from(selectedRoles),
           workArrangements: checkedWorkplaces,
           isWorldwide,
-          locations: ['Worldwide'],
+          locations: ["Worldwide"],
           experienceLevel: expLevel,
-          educationLevel: 'bachelor-degree',
+          educationLevel: "bachelor-degree",
           minSalary,
           salaryCurrency,
-          salaryUnit: 'year',
+          salaryUnit: "year",
           skills: Array.from(selectedSkills),
           resumeText,
         };
 
         // Cache onboarding profile in localStorage so signup & pricing can access it immediately
         try {
-          localStorage.setItem('ch_onboarding_completed', 'true');
-          localStorage.setItem('ch_onboarding_profile', JSON.stringify(onboardingPayload));
-          if (resumeText) localStorage.setItem('ch_resume_text', resumeText);
+          localStorage.setItem("ch_onboarding_completed", "true");
+          localStorage.setItem(
+            "ch_onboarding_profile",
+            JSON.stringify(onboardingPayload),
+          );
+          if (currentUser) {
+            currentUser.onboardingCompleted = true;
+            localStorage.setItem("ch_user", JSON.stringify(currentUser));
+          }
+          if (resumeText) localStorage.setItem("ch_resume_text", resumeText);
         } catch (_) {}
 
         try {
@@ -686,15 +1023,25 @@ Full Stack Software Engineer with 5+ years of experience building high-scale dis
           // non-blocking
         }
 
-        // Redirect to Create Account / Payment flow instead of directly dumping into jobs
-        const primaryRole = Array.from(selectedRoles)[0] || '';
-        window.location.href = `/login?mode=signup&onboarding=completed&role=${encodeURIComponent(primaryRole)}`;
+        // Smart routing: if already subscribed -> direct to jobs, if free member -> pricing, if guest -> signup
+        const primaryRole = Array.from(selectedRoles)[0] || "";
+        if (currentUser) {
+          if (currentUser.isSubscribed || currentUser.plan !== "free") {
+            window.location.href = "/job-search/all";
+          } else {
+            window.location.href = "/pricing?onboarding=completed";
+          }
+        } else {
+          window.location.href = `/login?mode=signup&onboarding=completed&role=${encodeURIComponent(primaryRole)}`;
+        }
       }
     });
   }
 
   if (btnPrev) {
-    btnPrev.addEventListener('click', () => {
+    btnPrev.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       if (currentStep > 1) {
         currentStep--;
         updateStepUI();

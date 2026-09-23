@@ -24,11 +24,13 @@ export async function fetchApi<T>(endpoint: string, options: RequestInit = {}): 
 }
 
 // Job Search
-export async function searchJobs(params: any, isSubscribed = false) {
+export async function searchJobs(params: any, isSubscribed = false, isAuthenticated = false) {
   return fetchApi<any>('/api/job-search', {
     method: 'POST',
+    credentials: 'include',
     headers: {
       'x-user-subscribed': isSubscribed ? 'true' : 'false',
+      'x-user-authenticated': isAuthenticated ? 'true' : 'false',
     },
     body: JSON.stringify(params),
   });
@@ -85,29 +87,6 @@ export async function generateOutreach(candidateName: string, skills: string[], 
 
 export async function getSalaryBenchmark(role: string, experienceYears: number, country: string) {
   return fetchApi<any>(`/api/tools/salary-benchmark?role=${encodeURIComponent(role)}&experienceYears=${experienceYears}&country=${encodeURIComponent(country)}`);
-}
-
-// Auto-Apply
-export async function getAutoApplySettings() {
-  return fetchApi<any>('/api/auto-apply/settings');
-}
-
-export async function updateAutoApplySettings(settings: any) {
-  return fetchApi<any>('/api/auto-apply/settings', {
-    method: 'POST',
-    body: JSON.stringify(settings),
-  });
-}
-
-export async function getAutoApplyLogs() {
-  return fetchApi<any>('/api/auto-apply/logs');
-}
-
-export async function triggerAutoApply(jobId?: string) {
-  return fetchApi<any>('/api/auto-apply/trigger', {
-    method: 'POST',
-    body: JSON.stringify({ jobId }),
-  });
 }
 
 // Dodo Payments Checkout

@@ -1,6 +1,33 @@
 import { db } from '../auth.js';
 import { JobItem, JobSearchRequest, JobSearchResponse, LocationItem } from '../types/index.js';
 
+export interface AtsJobInput {
+  id?: string;
+  title: string;
+  companyName: string;
+  companySlug?: string;
+  companyIndustry?: string;
+  companyLogo?: string;
+  companyWebsite?: string;
+  descriptionExcerpt?: string;
+  descriptionFull?: string;
+  workArrangement?: string;
+  employmentTypes?: string[];
+  experienceLevel?: string;
+  educationLevel?: string;
+  taxonomy?: string;
+  locations?: string[];
+  isWorldwide?: boolean;
+  salaryCurrency?: string;
+  salaryMin?: number;
+  salaryMax?: number;
+  salaryUnit?: string;
+  skills?: string[];
+  applicationUrl: string;
+  directApplySource: string;
+  publishedAt?: Date;
+}
+
 export const TAXONOMIES = [
   { label: 'Engineering', value: 'engineering' },
   { label: 'Software', value: 'software' },
@@ -83,6 +110,19 @@ export const SALARY_CURRENCIES = [
   { label: 'JPY', value: 'JPY' }
 ];
 
+export const COUNTRIES = [
+  { label: 'Worldwide (Anywhere)', value: 'Worldwide' },
+  { label: 'United States', value: 'United States' },
+  { label: 'United Kingdom', value: 'United Kingdom' },
+  { label: 'Canada', value: 'Canada' },
+  { label: 'Australia', value: 'Australia' },
+  { label: 'Germany', value: 'Germany' },
+  { label: 'India', value: 'India' },
+  { label: 'Singapore', value: 'Singapore' },
+  { label: 'Switzerland', value: 'Switzerland' },
+  { label: 'United Arab Emirates', value: 'United Arab Emirates' }
+];
+
 function mapRowToJobItem(row: any): JobItem {
   const locations = Array.isArray(row.locations)
     ? row.locations
@@ -136,14 +176,17 @@ export class JobService {
   /**
    * Search jobs from PostgreSQL database
    */
-  static async searchJobs(params: JobSearchRequest, isSubscribed = false): Promise<JobSearchResponse> {
+  static async searchJobs(params: JobSearchRequest, isSubscribed = false, isGuest = false): Promise<JobSearchResponse> {
     const {
       page = 1,
       pageSize = 10,
       query = '',
+      title = '',
       sort = 'RELEVANCE',
       filters = {}
     } = params;
+
+    const effectiveQuery = (title || query || '').trim();
 
     // If PostgreSQL pool is available, query directly
     if (db) {
@@ -152,9 +195,9 @@ export class JobService {
         const values: any[] = [];
         let idx = 1;
 
-        // 1. Text Query Filter
-        if (query && query.trim()) {
-          const q = query.trim();
+        // 1. Text Query / Title Filter
+        if (effectiveQuery) {
+          const q = effectiveQuery;
           const queryMode = params.queryMode || 'FLEXIBLE';
 
           if (queryMode === 'EXACT') {
@@ -199,40 +242,82 @@ export class JobService {
           }
         }
 
-        // 2. Workplace Types
-        if (filters.workArrangements && filters.workArrangements.length > 0) {
-          const normalized = filters.workArrangements.map(w => {
-            if (w === 'remote-solely') return 'Remote Solely';
-            if (w === 'remote-ok') return 'Remote OK';
-            if (w === 'hybrid') return 'Hybrid';
-            if (w === 'on-site') return 'On-site';
-            return w;
-          });
-          conditions.push(`work_arrangement = ANY($${idx})`);
-          values.push(normalized);
-          idx++;
+        // 2. Workplace Types & Remote Only
+        if (filters.isRemoteOnly) {
+          conditions.push(`(
+            is_worldwide = true OR 
+            work_arrangement ILIKE '%remote%' OR 
+            locations::text ILIKE '%worldwide%' OR 
+            locations::text ILIKE '%remote%'
+          )`);
+        } else if (filters.workArrangements && filters.workArrangements.length > 0) {
+          const normalizedClauses: string[] = [];
+          for (const w of filters.workArrangements) {
+            if (w === 'remote-solely') {
+              normalizedClauses.push(`work_arrangement ILIKE '%solely%' OR work_arrangement = 'Remote Solely'`);
+            } else if (w === 'remote-ok') {
+              normalizedClauses.push(`work_arrangement ILIKE '%remote ok%' OR work_arrangement = 'Remote OK'`);
+            } else if (w === 'hybrid') {
+              normalizedClauses.push(`work_arrangement ILIKE '%hybrid%'`);
+            } else if (w === 'on-site' || (w as string) === 'on site') {
+              normalizedClauses.push(`work_arrangement ILIKE '%on-site%' OR work_arrangement ILIKE '%on site%'`);
+            } else {
+              normalizedClauses.push(`work_arrangement ILIKE $${idx}`);
+              values.push(`%${w}%`);
+              idx++;
+            }
+          }
+          if (normalizedClauses.length > 0) {
+            conditions.push(`(${normalizedClauses.join(' OR ')})`);
+          }
         }
 
-        // 3. Taxonomies
-        if (filters.taxonomies && filters.taxonomies.length > 0) {
+        // 3. Taxonomies & Categories (CareerHound alias)
+        const rawCategories = [
+          ...(filters.categories || []),
+          ...(filters.taxonomies || [])
+        ];
+        // Split comma-delimited strings if any
+        const allCategories = rawCategories.flatMap(c => typeof c === 'string' ? c.split(',') : c).map(c => c.trim().toLowerCase()).filter(Boolean);
+        if (allCategories.length > 0) {
           conditions.push(`LOWER(taxonomy) = ANY($${idx})`);
-          values.push(filters.taxonomies.map(t => t.toLowerCase()));
+          values.push(allCategories);
           idx++;
         }
 
-        // 4. Experience Levels
+        // 4. Countries Filter (CareerHound)
+        if (filters.countries && filters.countries.length > 0) {
+          const countryClauses: string[] = [];
+          for (const country of filters.countries) {
+            if (country.toLowerCase() === 'worldwide') {
+              countryClauses.push(`(is_worldwide = true OR locations::text ILIKE '%worldwide%')`);
+            } else {
+              countryClauses.push(`locations::text ILIKE $${idx}`);
+              values.push(`%${country}%`);
+              idx++;
+            }
+          }
+          if (countryClauses.length > 0) {
+            conditions.push(`(${countryClauses.join(' OR ')})`);
+          }
+        }
+
+        // 5. Experience Levels
         if (filters.experienceLevels && filters.experienceLevels.length > 0) {
           conditions.push(`experience_level = ANY($${idx})`);
           values.push(filters.experienceLevels);
           idx++;
         }
 
-        // 5. Worldwide Only
-        if (filters.worldwide) {
+        // 6. Worldwide Only
+        if (filters.worldwide && !filters.isRemoteOnly) {
           conditions.push(`(is_worldwide = true OR locations::text ILIKE '%worldwide%')`);
         }
 
-        // 6. Salary Minimum and Maximum
+        // 7. Salary Minimum and Maximum & hasCompensation
+        if (filters.hasCompensation || filters.salarySpecifiedOnly) {
+          conditions.push(`(salary_max > 0 OR salary_min > 0)`);
+        }
         if (filters.salaryMinimum && filters.salaryMinimum > 0) {
           conditions.push(`(salary_max >= $${idx} OR salary_min >= $${idx})`);
           values.push(filters.salaryMinimum);
@@ -244,8 +329,11 @@ export class JobService {
           idx++;
         }
 
-        // 7. Date Posted
-        if (filters.datePosted && filters.datePosted !== 'all') {
+        // 8. Date Posted & daysAgo (CareerHound)
+        if (filters.daysAgo !== undefined && filters.daysAgo !== null && filters.daysAgo !== 'all') {
+          const days = Number(filters.daysAgo) || 30;
+          conditions.push(`published_at >= NOW() - INTERVAL '${days} DAYS'`);
+        } else if (filters.datePosted && filters.datePosted !== 'all') {
           let hoursAgo = 24 * 30; // default 30 days
           if (filters.datePosted === '1-day-ago') hoursAgo = 24;
           else if (filters.datePosted === '3-days-ago') hoursAgo = 72;
@@ -255,13 +343,24 @@ export class JobService {
           conditions.push(`published_at >= NOW() - INTERVAL '${hoursAgo} HOURS'`);
         }
 
-        // 8. Keywords
+        // 9. Keywords
         if (filters.keywords && filters.keywords.length > 0) {
           for (const kw of filters.keywords) {
             conditions.push(`skills::text ILIKE $${idx}`);
             values.push(`%${kw}%`);
             idx++;
           }
+        }
+
+        // 10. Company / Company Slug Filter
+        if (filters.companySlug) {
+          conditions.push(`company_slug = $${idx}`);
+          values.push(filters.companySlug);
+          idx++;
+        } else if (filters.company) {
+          conditions.push(`(company_name ILIKE $${idx} OR company_slug ILIKE $${idx})`);
+          values.push(`%${filters.company}%`);
+          idx++;
         }
 
         const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
@@ -299,13 +398,17 @@ export class JobService {
           if (count > 1) moreJobsCountByCompany[slug] = count - 1;
         }
 
+        const returnedItems = isGuest
+          ? (page === 1 ? items.slice(0, 5) : [])
+          : items;
+
         return {
-          items,
+          items: returnedItems,
           page,
-          pageSize,
+          pageSize: isGuest ? 5 : pageSize,
           totalJobs,
-          hasMore: offset + items.length < totalJobs,
-          isPaywalled: false,
+          hasMore: isGuest ? false : (offset + items.length < totalJobs),
+          isPaywalled: isGuest && totalJobs > 5,
           moreJobsCountByCompany,
         };
       } catch (err) {
@@ -317,10 +420,10 @@ export class JobService {
     return {
       items: [],
       page: 1,
-      pageSize,
+      pageSize: isGuest ? 5 : pageSize,
       totalJobs: 0,
       hasMore: false,
-      isPaywalled: false,
+      isPaywalled: isGuest,
       moreJobsCountByCompany: {},
     };
   }
@@ -364,5 +467,68 @@ export class JobService {
     return commonKeywords
       .filter(k => k.toLowerCase().includes(q))
       .map(k => ({ label: k, value: k }));
+  }
+
+  /**
+   * Batch upsert jobs crawled directly from ATS providers (Greenhouse, Ashby, Lever)
+   */
+  static async batchUpsertAtsJobs(jobs: AtsJobInput[]): Promise<number> {
+    if (!db || !jobs || jobs.length === 0) return 0;
+    let inserted = 0;
+    for (const job of jobs) {
+      const slug = job.companySlug || job.companyName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      const jobId = job.id || `ch-${slug}-${Math.random().toString(36).substring(2, 9)}`;
+      const query = `
+        INSERT INTO jobs (
+          id, title, company_slug, company_name, company_industry, company_logo, company_website,
+          description_excerpt, description_full, work_arrangement, employment_types, experience_level,
+          education_level, taxonomy, locations, is_worldwide, salary_currency, salary_min, salary_max,
+          salary_unit, skills, application_url, direct_apply_source, published_at
+        ) VALUES (
+          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24
+        )
+        ON CONFLICT (id) DO UPDATE SET
+          title = EXCLUDED.title,
+          description_excerpt = EXCLUDED.description_excerpt,
+          description_full = EXCLUDED.description_full,
+          application_url = EXCLUDED.application_url,
+          salary_min = EXCLUDED.salary_min,
+          salary_max = EXCLUDED.salary_max,
+          skills = EXCLUDED.skills,
+          published_at = EXCLUDED.published_at;
+      `;
+      try {
+        await db.query(query, [
+          jobId,
+          job.title,
+          slug,
+          job.companyName,
+          job.companyIndustry || 'Technology',
+          job.companyLogo || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=128&auto=format&fit=crop&q=80',
+          job.companyWebsite || '',
+          job.descriptionExcerpt || (job.descriptionFull ? job.descriptionFull.slice(0, 180) + '...' : ''),
+          job.descriptionFull || '',
+          job.workArrangement || 'Remote OK',
+          JSON.stringify(job.employmentTypes || ['full-time']),
+          job.experienceLevel || '2-to-5',
+          job.educationLevel || 'bachelor-degree',
+          job.taxonomy || 'software',
+          JSON.stringify(job.locations || ['Worldwide']),
+          job.isWorldwide ?? true,
+          job.salaryCurrency || 'USD',
+          job.salaryMin || null,
+          job.salaryMax || null,
+          job.salaryUnit || 'YEAR',
+          JSON.stringify(job.skills || []),
+          job.applicationUrl,
+          job.directApplySource || 'direct',
+          job.publishedAt || new Date()
+        ]);
+        inserted++;
+      } catch (e) {
+        console.error('Failed to upsert ATS job:', e);
+      }
+    }
+    return inserted;
   }
 }

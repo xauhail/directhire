@@ -22,6 +22,7 @@ import { jwt } from 'better-auth/plugins';
 import { mcp } from '@better-auth/mcp';
 import { cimd } from '@better-auth/cimd';
 import { fetchClientMetadataResource } from '@better-auth/cimd/node';
+import { fromNodeHeaders } from 'better-auth/node';
 import { Pool } from 'pg';
 import { config } from './config/env.js';
 
@@ -144,6 +145,34 @@ export const auth = betterAuth({
 // ── Export the pg pool for use in other services ─────────────────────────────
 export { pool as db };
 
+// ── Auth session helper for Fastify routes ───────────────────────────────────
+export async function getAuthUser(req: any) {
+  try {
+    const headers = fromNodeHeaders(req.headers || {});
+    const session = await auth.api.getSession({ headers });
+    if (session?.user) {
+      return session.user;
+    }
+  } catch (_) {}
+
+  try {
+    const authHeader = req.headers?.authorization;
+    const token = authHeader?.replace('Bearer ', '') || req.cookies?.['better-auth.session_token'] || req.cookies?.['ch_token'];
+    if (token && pool) {
+      const sessRes = await pool.query(
+        'SELECT u.* FROM session s JOIN "user" u ON s."userId" = u.id WHERE s.token = $1 AND s."expiresAt" > NOW()',
+        [token]
+      );
+      if (sessRes.rows.length > 0) {
+        return sessRes.rows[0];
+      }
+    }
+  } catch (_) {}
+
+  return null;
+}
+
 // ── Type helper ──────────────────────────────────────────────────────────────
 export type Session = typeof auth.$Infer.Session;
 export type User = typeof auth.$Infer.Session.user;
+

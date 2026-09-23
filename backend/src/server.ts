@@ -8,7 +8,6 @@ import { auth } from './auth.js';
 import { jobRoutes } from './api/routes/jobs.js';
 import { onboardingRoutes } from './api/routes/onboarding.js';
 import { toolRoutes } from './api/routes/tools.js';
-import { autoApplyRoutes } from './api/routes/auto-apply.js';
 import { checkoutRoutes } from './api/routes/checkout.js';
 import { webhookRoutes } from './api/routes/webhooks.js';
 import { authRoutes } from './api/routes/auth.js';
@@ -23,7 +22,17 @@ async function main() {
     origin: [config.frontendUrl, 'http://localhost:4321', 'http://localhost:4000'],
     credentials: true,                    // required for Better Auth cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'x-user-subscribed', 'x-csrf-token'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'Cookie',
+      'x-user-subscribed',
+      'x-user-authenticated',
+      'x-csrf-token',
+      'better-auth.session_token',
+      'x-requested-with',
+      'Accept'
+    ],
   });
 
   await server.register(sensible);
@@ -56,6 +65,9 @@ async function main() {
 
       // Convert Node.js headers → Fetch API Headers
       const headers = fromNodeHeaders(request.headers);
+      if (!headers.get('origin')) {
+        headers.set('origin', config.frontendUrl || 'http://localhost:4321');
+      }
 
       // Build Fetch-compatible Request
       const req = new Request(url, {
@@ -90,10 +102,17 @@ async function main() {
   await server.register(jobRoutes);
   await server.register(onboardingRoutes);
   await server.register(toolRoutes);
-  await server.register(autoApplyRoutes);
   await server.register(checkoutRoutes);
   await server.register(webhookRoutes);
   await server.register(authRoutes);   // Legacy in-memory auth (kept as fallback/test)
+
+  // ── Clean 404 Not Found Handler ───────────────────────────────────────────
+  server.setNotFoundHandler((request, reply) => {
+    return reply.status(404).send({ 
+      error: 'Not Found', 
+      message: `Route ${request.method}:${request.url} not found` 
+    });
+  });
 
   // ── Start server ──────────────────────────────────────────────────────────
   try {

@@ -125,11 +125,11 @@ const toolSchema = {
       <!-- High-Converting Bridge CTA -->
       <div class="p-6 rounded-2xl bg-gradient-to-r from-blue-700 to-indigo-800 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="space-y-1 text-center sm:text-left">
-          <h4 class="font-bold text-base text-white">Want us to apply to 50+ matching jobs automatically?</h4>
-          <p class="text-xs text-blue-100">Career Hound's AI Auto-Apply bot submits verified direct-company applications for you.</p>
+          <h4 class="font-bold text-base text-white">Ready to apply directly to verified hiring teams?</h4>
+          <p class="text-xs text-blue-100">Career Hound indexes active Greenhouse, Lever, and Ashby postings updated every 10 minutes.</p>
         </div>
-        <a href="/onboarding" class="px-6 py-3 rounded-full bg-white text-blue-700 hover:bg-blue-50 font-bold text-xs shrink-0 shadow-md">
-          Get Started with Auto-Apply →
+        <a href="/search" class="px-6 py-3 rounded-full bg-white text-blue-700 hover:bg-blue-50 font-bold text-xs shrink-0 shadow-md">
+          Browse Direct ATS Jobs →
         </a>
       </div>
 
@@ -139,7 +139,7 @@ const toolSchema = {
 </Layout>
 
 <script>
-  import { getAtsScore } from '../../lib/api';
+  import { getAtsScore } from '../../lib/api.js';
 
   const form = document.getElementById('ats-form');
   const btn = document.getElementById('btn-scan-ats');

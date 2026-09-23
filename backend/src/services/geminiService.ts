@@ -1,15 +1,3 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { config } from '../config/env.js';
-
-let genAI: GoogleGenerativeAI | null = null;
-if (config.geminiApiKey) {
-  try {
-    genAI = new GoogleGenerativeAI(config.geminiApiKey);
-  } catch (err) {
-    console.warn('Failed to initialize Google Generative AI client:', err);
-  }
-}
-
 export interface ParsedResume {
   name: string;
   email: string;
@@ -22,7 +10,7 @@ export interface ParsedResume {
 }
 
 export interface MatchResult {
-  score: number; // 0 - 100
+  score: number; // 0 - 100 
   matchingSkills: string[];
   missingSkills: string[];
   strengths: string[];
@@ -46,338 +34,225 @@ export interface OutreachMessages {
   };
 }
 
-export class GeminiService {
+export class CareerAnalysisService {
   /**
-   * Helper to generate text via Gemini
+   * Parse a raw resume text using deterministic pattern matching & skills dictionary
    */
-  private static async generate(prompt: string): Promise<string | null> {
-    if (!genAI || !config.geminiApiKey) return null;
-    try {
-      const model = genAI.getGenerativeModel({ model: config.geminiModel });
-      const result = await model.generateContent(prompt);
-      const res = await result.response;
-      return res.text() || null;
-    } catch (err) {
-      console.error('Gemini API call failed:', err);
-      return null;
-    }
-  }
+  static parseResume(resumeText: string): ParsedResume {
+    const text = resumeText || '';
 
-  /**
-   * Parse a raw resume text using Gemini 2.5 Flash
-   */
-  static async parseResume(resumeText: string): Promise<ParsedResume> {
-    const prompt = `You are an expert HR technologist and ATS parser. Extract the following candidate details from this resume text as strict JSON:
-    {
-      "name": "Candidate Full Name",
-      "email": "Email address",
-      "phone": "Phone number or empty string",
-      "summary": "Brief 2-3 sentence executive summary",
-      "skills": ["Skill 1", "Skill 2"],
-      "experienceYears": 4,
-      "educationLevel": "High school" | "Bachelor's degree" | "Master's degree" | "PhD" | "Other",
-      "jobTitles": ["Recent title 1", "Recent title 2"]
-    }
-    
-    Resume text:
-    """${resumeText.slice(0, 8000)}"""
-    
-    Return ONLY valid JSON. No markdown code blocks, no explanation.`;
+    // Extract Email
+    const emailMatch = text.match(/[\w.-]+@[\w.-]+\.\w+/);
+    const email = emailMatch ? emailMatch[0] : '';
 
-    const raw = await this.generate(prompt);
-    if (raw) {
-      try {
-        const cleaned = raw.replace(/^```json\s*/, '').replace(/```\s*$/, '').trim();
-        return JSON.parse(cleaned);
-      } catch (err) {
-        console.error('Failed to parse Gemini resume JSON:', err);
+    // Extract Phone
+    const phoneMatch = text.match(/(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
+    const phone = phoneMatch ? phoneMatch[0] : '';
+
+    // Extract Candidate Name from top lines
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    let name = 'Candidate';
+    if (lines.length > 0) {
+      const firstLine = lines[0].replace(/^(resume|curriculum vitae|cv)\s*:?/i, '').trim();
+      if (firstLine.length < 50 && !firstLine.includes('@')) {
+        name = firstLine.split('|')[0].split('-')[0].trim();
       }
     }
 
-    // Heuristic fallback
-    const emailMatch = resumeText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
-    const phoneMatch = resumeText.match(/(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
-    const techKeywords = ['React', 'TypeScript', 'JavaScript', 'Node.js', 'Python', 'Go', 'AWS', 'Docker', 'PostgreSQL', 'SQL', 'FastAPI', 'Next.js', 'Tailwind CSS', 'Git', 'GraphQL', 'Kubernetes', 'Product Management', 'Sales', 'Marketing'];
-    const foundSkills = techKeywords.filter(k => new RegExp(`\\b${k}\\b`, 'i').test(resumeText));
+    // Comprehensive skills library to scan
+    const skillCatalog = [
+      'React', 'Next.js', 'Vue.js', 'Angular', 'TypeScript', 'JavaScript', 'Node.js',
+      'Python', 'FastAPI', 'Django', 'Flask', 'Go', 'Golang', 'Rust', 'Java', 'Spring Boot',
+      'C++', 'C#', '.NET', 'PHP', 'Laravel', 'Ruby', 'Rails', 'Swift', 'Kotlin', 'Flutter',
+      'SQL', 'PostgreSQL', 'MySQL', 'MongoDB', 'Redis', 'Cassandra', 'DynamoDB',
+      'AWS', 'Azure', 'GCP', 'Docker', 'Kubernetes', 'Terraform', 'CI/CD', 'Git',
+      'Linux', 'GraphQL', 'REST API', 'Microservices', 'Tailwind CSS', 'CSS', 'HTML',
+      'Machine Learning', 'AI', 'LLM', 'PyTorch', 'TensorFlow', 'Data Science',
+      'Product Management', 'Agile', 'Scrum', 'Jira', 'Figma', 'System Architecture'
+    ];
+
+    const lowerText = text.toLowerCase();
+    const foundSkills = skillCatalog.filter(skill => {
+      const regex = new RegExp(`\\b${skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+      return regex.test(text);
+    });
+
+    // Detect job titles
+    const titleCatalog = [
+      'Full Stack Engineer', 'Frontend Engineer', 'Backend Engineer', 'Software Engineer',
+      'Senior Software Engineer', 'Staff Engineer', 'DevOps Engineer', 'Cloud Architect',
+      'Data Engineer', 'Data Scientist', 'Machine Learning Engineer', 'AI Engineer',
+      'Product Manager', 'Engineering Manager', 'QA Engineer', 'Security Engineer'
+    ];
+    const foundTitles = titleCatalog.filter(t => lowerText.includes(t.toLowerCase()));
+
+    // Estimate experience years
+    let experienceYears = 3;
+    const yearMatches = text.match(/\b(19\d\d|20\d\d)\b/g);
+    if (yearMatches && yearMatches.length >= 2) {
+      const years = yearMatches.map(Number).filter(y => y >= 1990 && y <= new Date().getFullYear());
+      if (years.length >= 2) {
+        const minYear = Math.min(...years);
+        const maxYear = Math.max(...years);
+        experienceYears = Math.min(25, Math.max(1, maxYear - minYear));
+      }
+    }
 
     return {
-      name: 'Candidate',
-      email: emailMatch ? emailMatch[0] : 'candidate@example.com',
-      phone: phoneMatch ? phoneMatch[0] : '',
-      summary: 'Experienced professional with demonstrated expertise in modern technology, high-scale reliability, and cross-functional feature delivery.',
-      skills: foundSkills.length ? foundSkills : ['JavaScript', 'TypeScript', 'React', 'Problem Solving', 'Communication'],
-      experienceYears: 4,
-      educationLevel: "Bachelor's degree",
-      jobTitles: ['Software Engineer', 'Full Stack Developer'],
+      name: name || 'Alex Johnson',
+      email: email || 'alex.candidate@example.com',
+      phone: phone || '',
+      summary: lines.slice(1, 4).join(' ').slice(0, 300) || 'Experienced software professional with demonstrated technical impact.',
+      skills: foundSkills.length > 0 ? foundSkills : ['React', 'TypeScript', 'Node.js', 'PostgreSQL'],
+      experienceYears,
+      educationLevel: lowerText.includes('master') ? 'postgraduate-degree' : 'bachelor-degree',
+      jobTitles: foundTitles.length > 0 ? foundTitles : ['Software Engineer'],
     };
   }
 
   /**
-   * Score match between candidate profile and a job description
+   * Free Tool: ATS Resume Match Scorer (Deterministic)
    */
-  static async scoreJobMatch(
-    resumeSkills: string[],
+  static scoreJobMatch(
+    candidateSkills: string[],
     resumeText: string,
     jobTitle: string,
     jobDescription: string,
     jobSkills: string[]
-  ): Promise<MatchResult> {
-    const prompt = `You are an executive ATS matching engine. Compare this candidate against the job posting and evaluate compatibility on a 0 to 100 scale.
-    
-    Job Title: ${jobTitle}
-    Job Skills Needed: ${jobSkills.join(', ')}
-    Job Description: """${jobDescription.slice(0, 4000)}"""
-    
-    Candidate Skills: ${resumeSkills.join(', ')}
-    Candidate Profile: """${resumeText.slice(0, 3000)}"""
-    
-    Return strict JSON only:
-    {
-      "score": 85,
-      "matchingSkills": ["skill1", "skill2"],
-      "missingSkills": ["missingSkill1"],
-      "strengths": ["Key strength 1", "Key strength 2"],
-      "rationale": "2-3 sentences explaining fit"
-    }`;
+  ): MatchResult {
+    const candidateLower = candidateSkills.map(s => s.toLowerCase());
+    const resumeLower = (resumeText || '').toLowerCase();
 
-    const raw = await this.generate(prompt);
-    if (raw) {
-      try {
-        const cleaned = raw.replace(/^```json\s*/, '').replace(/```\s*$/, '').trim();
-        return JSON.parse(cleaned);
-      } catch (err) {
-        console.error('Failed to parse Gemini match JSON:', err);
+    // Normalize target skills
+    const targetSkills = jobSkills.length > 0
+      ? jobSkills
+      : ['React', 'TypeScript', 'API Design', 'System Architecture', 'Testing'];
+
+    const matchingSkills: string[] = [];
+    const missingSkills: string[] = [];
+
+    for (const skill of targetSkills) {
+      const sLower = skill.toLowerCase();
+      if (candidateLower.some(c => c.includes(sLower) || sLower.includes(c)) || resumeLower.includes(sLower)) {
+        matchingSkills.push(skill);
+      } else {
+        missingSkills.push(skill);
       }
     }
 
-    // Overlap fallback
-    const resumeSkillsLower = new Set(resumeSkills.map(s => s.toLowerCase()));
-    const matching = jobSkills.filter(s => resumeSkillsLower.has(s.toLowerCase()));
-    const missing = jobSkills.filter(s => !resumeSkillsLower.has(s.toLowerCase()));
-    const baseScore = jobSkills.length > 0 
-      ? Math.round((matching.length / jobSkills.length) * 85) + 15 
-      : 75;
-    const finalScore = Math.min(98, Math.max(45, baseScore));
+    const matchRatio = targetSkills.length > 0 ? matchingSkills.length / targetSkills.length : 0.75;
+    const baseScore = Math.round(55 + matchRatio * 40);
+    const score = Math.min(96, Math.max(45, baseScore));
+
+    const strengths: string[] = [
+      `Strong alignment in core requirements: ${matchingSkills.slice(0, 3).join(', ') || 'foundation skills'}`,
+      `Demonstrated direct experience suitable for ${jobTitle}`,
+      'Resume exhibits clear technical achievements with quantifiable scope'
+    ];
+
+    const rationale = `The candidate matches ${matchingSkills.length} of ${targetSkills.length} primary tech stack requirements (${Math.round(matchRatio * 100)}%). Adding ${missingSkills.slice(0, 2).join(' and ') || 'specialized toolsets'} directly to the summary or project bullets will further boost ATS parser ranking.`;
 
     return {
-      score: finalScore,
-      matchingSkills: matching.slice(0, 8),
-      missingSkills: missing.slice(0, 5),
-      strengths: [
-        `Direct alignment with required competencies (${matching.slice(0, 3).join(', ') || 'technical skill set'})`,
-        'Demonstrated background in scalable modern tooling and engineering best practices'
-      ],
-      rationale: `Candidate matches ${matching.length} key required technical proficiencies with the target role and exhibits strong background alignment for ${jobTitle}.`
+      score,
+      matchingSkills,
+      missingSkills,
+      strengths,
+      rationale
     };
   }
 
   /**
-   * Answer custom screening questions autonomously for Playwright Auto-Apply
+   * Free Tool: Ghost Job Detector & Verification Analysis
    */
-  static async generateScreeningAnswer(
-    question: string,
-    candidateInfo: { name: string; skills: string[]; resumeText: string },
-    jobTitle: string,
-    company: string
-  ): Promise<string> {
-    const prompt = `You are applying to the job "${jobTitle}" at "${company}" on behalf of ${candidateInfo.name}.
-    Candidate Skills: ${candidateInfo.skills.join(', ')}
-    Candidate Background: """${candidateInfo.resumeText.slice(0, 2500)}"""
-    
-    Answer this application screening question accurately, concisely, and professionally.
-    Question: "${question}"
-    
-    Guidelines:
-    - Keep response to 2-4 sentences max.
-    - Be direct, professional, and positive.
-    - Ground answers strictly in the candidate's actual background.
-    - If it is a yes/no or numerical question, provide the direct answer first.`;
-
-    const raw = await this.generate(prompt);
-    if (raw && raw.trim()) {
-      return raw.trim();
-    }
-
-    const qLower = question.toLowerCase();
-    if (qLower.includes('authorized to work') || qLower.includes('legally authorized')) return 'Yes';
-    if (qLower.includes('sponsorship') || qLower.includes('require visa')) return 'No';
-    if (qLower.includes('years of experience')) return '4+ years';
-    if (qLower.includes('notice period') || qLower.includes('start date')) return 'Available within 2 weeks';
-    if (qLower.includes('salary expectation') || qLower.includes('desired compensation')) return 'Open to discussing competitive market rates based on total compensation.';
-    return `I bring strong hands-on experience in ${candidateInfo.skills.slice(0, 3).join(', ')}, with a proven track record of delivering robust systems that directly align with ${company}'s goals for the ${jobTitle} position.`;
-  }
-
-  /**
-   * Free Tool: Ghost Job Detector
-   */
-  static async analyzeGhostJob(
+  static analyzeGhostJob(
     jobTitle: string,
     company: string,
     description: string,
     postedDaysAgo: number
-  ): Promise<GhostJobAnalysis> {
-    const prompt = `You are a career security analyst. Detect whether this job posting has indicators of being a "Ghost Job" (a fake listing kept open indefinitely for talent pipeline harvesting, compliance optics, or employer brand advertising).
-    
-    Title: ${jobTitle}
-    Company: ${company}
-    Days Open: ${postedDaysAgo} days
-    Description: """${description.slice(0, 4000)}"""
-    
-    Return strict JSON:
-    {
-      "ghostRiskScore": 35,
-      "riskLevel": "LOW" | "MODERATE" | "HIGH",
-      "redFlags": ["specific flag 1"],
-      "greenFlags": ["positive signal 1"],
-      "summary": "2-3 sentences explaining the assessment"
-    }`;
-
-    const raw = await this.generate(prompt);
-    if (raw) {
-      try {
-        const cleaned = raw.replace(/^```json\s*/, '').replace(/```\s*$/, '').trim();
-        return JSON.parse(cleaned);
-      } catch (err) {
-        console.error('Failed to parse Gemini ghost job JSON:', err);
-      }
-    }
-
+  ): GhostJobAnalysis {
+    const descLower = (description || '').toLowerCase();
+    let ghostRiskScore = 15; // baseline low risk for direct ATS
     const redFlags: string[] = [];
     const greenFlags: string[] = [];
-    let score = 20;
 
-    if (postedDaysAgo > 45) {
-      score += 40;
-      redFlags.push(`Listing has been open for ${postedDaysAgo} days without being filled or refreshed.`);
-    } else if (postedDaysAgo <= 7) {
-      score -= 15;
-      greenFlags.push('Recently posted within the past 7 days (active fresh hiring demand).');
+    // Check age of posting
+    if (postedDaysAgo > 60) {
+      ghostRiskScore += 35;
+      redFlags.push(`Listing has been active for ${postedDaysAgo} days without closing (potential evergreen pool)`);
+    } else if (postedDaysAgo < 14) {
+      ghostRiskScore -= 10;
+      greenFlags.push(`Recently posted (${postedDaysAgo} days ago) on official company ATS`);
     }
 
-    if (/evergreen|ongoing pipeline|talent pool|general application/i.test(description)) {
-      score += 35;
-      redFlags.push('Contains "pipeline" or "talent community" language rather than a specific open headcount.');
+    // Check vague language
+    if (descLower.includes('competitive environment') || descLower.includes('fast-paced startup') && description.length < 300) {
+      ghostRiskScore += 15;
+      redFlags.push('Short or generic job description lacking detailed project deliverables');
+    } else if (description.length > 800) {
+      greenFlags.push('Comprehensive role scope with specific team responsibilities and tech stack requirements');
     }
 
-    if (/competitive salary|\$|\d{2,3},\d{3}/i.test(description)) {
-      greenFlags.push('Explicit compensation disclosure provided (strong sign of verified budget).');
-    } else {
-      score += 15;
-      redFlags.push('No salary or compensation range specified.');
+    if (descLower.includes('greenhouse.io') || descLower.includes('lever.co') || descLower.includes('ashbyhq.com') || descLower.includes('workday')) {
+      ghostRiskScore -= 15;
+      greenFlags.push('Direct first-party applicant tracking system (ATS) verified link');
     }
 
-    if (description.length < 400) {
-      score += 20;
-      redFlags.push('Ultra-brief or generic job description with minimal team-specific requirements.');
-    } else {
-      greenFlags.push('Detailed, role-specific deliverables and team charter outlined.');
-    }
-
-    const finalScore = Math.min(95, Math.max(10, score));
-    const level = finalScore >= 65 ? 'HIGH' : finalScore >= 40 ? 'MODERATE' : 'LOW';
+    const finalScore = Math.min(95, Math.max(5, ghostRiskScore));
+    const riskLevel: 'LOW' | 'MODERATE' | 'HIGH' =
+      finalScore < 30 ? 'LOW' : finalScore < 60 ? 'MODERATE' : 'HIGH';
 
     return {
       ghostRiskScore: finalScore,
-      riskLevel: level,
-      redFlags: redFlags.length ? redFlags : ['No immediate red flags detected.'],
-      greenFlags: greenFlags.length ? greenFlags : ['Standard job description structure.'],
-      summary: level === 'HIGH'
-        ? 'High probability of being an evergreen talent pool or stale listing. Proceed with caution and apply directly on the company career page rather than third-party job boards.'
-        : 'Listing shows healthy indicators of an active headcount with concrete requirements.'
+      riskLevel,
+      redFlags: redFlags.length ? redFlags : ['No significant ghost job indicators identified'],
+      greenFlags,
+      summary: riskLevel === 'LOW'
+        ? `${company}'s listing for ${jobTitle} shows strong signs of an actively hiring requisition on a direct verified portal.`
+        : `${company}'s listing has been open for an extended duration. Reaching out directly to hiring managers is advised.`
     };
   }
 
   /**
-   * On-Demand Cover Letter Generator
-   * Called ONLY when user explicitly triggers Apply and provides their resume
+   * AI Cover Letter Generator (Deterministic, High-converting)
    */
-  static async generateCoverLetter(
-    resumeText: string,
+  static generateCoverLetter(
     jobTitle: string,
     companyName: string,
     jobDescription: string,
+    resumeText: string,
     jobSkills: string[]
-  ): Promise<string> {
-    const prompt = `You are an expert career coach and professional cover letter writer.
-    
-Write a compelling, personalized cover letter for the following job application. The letter should:
-- Be 3-4 short paragraphs
-- Open with a strong, direct hook (no "I am writing to apply for..." clichés)
-- Specifically reference the company name and role
-- Match the candidate's real skills to the job requirements
-- Close with a confident call-to-action
-- Sound human, professional, and authentic (not AI-generated)
-
-Job Title: ${jobTitle}
-Company: ${companyName}
-Job Description: """${jobDescription.slice(0, 3000)}"""
-Required Skills: ${jobSkills.join(', ')}
-
-Candidate Resume/Background:
-"""${resumeText.slice(0, 4000)}"""
-
-Write the full cover letter text only. No subject line, no meta-commentary, no markdown formatting. Start directly with "Dear Hiring Manager," or similar salutation.`;
-
-    const raw = await this.generate(prompt);
-    if (raw && raw.trim()) return raw.trim();
-
-    // Fallback if Gemini unavailable
-    const skills = jobSkills.slice(0, 3).join(', ') || 'modern technologies';
+  ): string {
+    const skills = jobSkills.slice(0, 3).join(', ') || 'modern full-stack technologies';
     return `Dear Hiring Manager,
 
-I'm excited to apply for the ${jobTitle} position at ${companyName}. After reviewing the role and your team's work, I'm confident my background is an excellent match for what you're building.
+I am writing to express my strong interest in the ${jobTitle} role at ${companyName}. Having followed ${companyName}'s work and reviewed the role requirements, I am confident that my technical background and focus on engineering excellence make me a high-impact addition to your team.
 
-Throughout my career, I have developed deep expertise in ${skills}, consistently delivering high-impact results. I thrive in fast-paced environments where technical excellence and strong collaboration are equally valued — exactly the culture ${companyName} is known for.
+Throughout my career, I have specialized in ${skills}, architecting reliable distributed services and shipping customer-facing features with high velocity. In my recent roles, I have consistently driven technical standards, improved performance, and worked cross-functionally to transform product visions into production-ready software.
 
-I would love the opportunity to discuss how my experience can contribute to your team's goals. Thank you for your time and consideration.
+I am particularly excited about ${companyName}'s vision and would value the opportunity to discuss how my hands-on experience can help your team achieve its upcoming milestones.
+
+Thank you for your time and consideration.
 
 Sincerely,
-[Your Name]`;
+Alex Johnson`;
   }
 
   /**
    * Free Tool: Cold Recruiter & Hiring Manager DM Generator
    */
-  static async generateOutreachMessages(
+  static generateOutreachMessages(
     candidateName: string,
     candidateSkills: string[],
     company: string,
     roleTitle: string,
     hiringManagerName?: string
-  ): Promise<OutreachMessages> {
+  ): OutreachMessages {
     const greeting = hiringManagerName ? `Hi ${hiringManagerName}` : 'Hi there';
-
-    const prompt = `Write 3 high-converting cold outreach messages for a job seeker reaching out to the hiring team.
-    Candidate Name: ${candidateName}
-    Key Skills: ${candidateSkills.join(', ')}
-    Target Company: ${company}
-    Target Role: ${roleTitle}
-    Hiring Manager: ${hiringManagerName || 'Hiring Manager'}
-    
-    Return strict JSON:
-    {
-      "connectionNote": "Under 300 characters LinkedIn connection request note",
-      "inMail": "Punchy 3-4 sentence LinkedIn InMail / message highlighting direct fit",
-      "coldEmail": {
-        "subject": "Compelling high-open-rate subject line",
-        "body": "Short 3-paragraph cold email with a low-friction call to action"
-      }
-    }`;
-
-    const raw = await this.generate(prompt);
-    if (raw) {
-      try {
-        const cleaned = raw.replace(/^```json\s*/, '').replace(/```\s*$/, '').trim();
-        return JSON.parse(cleaned);
-      } catch (err) {
-        console.error('Failed to parse Gemini outreach JSON:', err);
-      }
-    }
-
     const topSkills = candidateSkills.slice(0, 3).join(', ') || 'full-stack systems and rapid feature delivery';
+
     return {
       connectionNote: `${greeting}, saw ${company}'s opening for ${roleTitle}. With expertise in ${topSkills}, I'd love to connect and follow your team's work! - ${candidateName}`,
-      inMail: `${greeting},\n\nI noticed ${company} is hiring for a ${roleTitle} on your direct career page. I've spent the past several years driving production deliverables in ${topSkills}.\n\nRather than getting lost in LinkedIn's 200+ applicant queue, I wanted to reach out directly to see if my background aligns with your current priorities for this quarter. Would you be open to a brief 5-minute chat next week?\n\nBest regards,\n${candidateName}`,
+      inMail: `${greeting},\n\nI noticed ${company} is hiring for a ${roleTitle} on your direct career page. I've spent the past several years driving production deliverables in ${topSkills}.\n\nRather than getting lost in third-party aggregator applicant queues, I wanted to reach out directly to see if my background aligns with your current priorities for this quarter. Would you be open to a brief 5-minute chat next week?\n\nBest regards,\n${candidateName}`,
       coldEmail: {
         subject: `${roleTitle} @ ${company} — Direct Application & Introduction (${candidateName})`,
         body: `${greeting},\n\nI hope this week is going well. I recently came across your opening for the ${roleTitle} role on the ${company} career portal and was immediately excited by what your team is building.\n\nMy background specializes in ${topSkills}. In my recent work, I spearheaded projects that cut deployment times and scaled reliable services with minimal overhead.\n\nI've attached my resume for your review. Would you or the hiring manager have 10 minutes for a brief introductory call this Thursday or Friday?\n\nThank you for your time,\n${candidateName}`
@@ -385,3 +260,6 @@ Sincerely,
     };
   }
 }
+
+// Backward-compatible alias for existing imports
+export const GeminiService = CareerAnalysisService;

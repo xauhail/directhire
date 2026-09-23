@@ -77,6 +77,7 @@ export interface JobItem {
 
 export interface JobSearchFilters {
   datePosted?: string; // 'all' | '1-day-ago' | '1-week-ago' | ...
+  daysAgo?: number | string;
   educationLevels?: string[];
   employmentTypes?: string[];
   experienceLevels?: string[];
@@ -84,14 +85,20 @@ export interface JobSearchFilters {
   keywordMatch?: 'ANY' | 'ALL';
   keywords?: string[];
   locations?: LocationItem[];
+  countries?: string[];
   salaryCurrency?: string;
   salaryMinimum?: number;
   salaryMaximum?: number;
   salaryUnit?: SalaryUnit;
   salarySpecifiedOnly?: boolean;
+  hasCompensation?: boolean;
   taxonomies?: string[];
+  categories?: string[];
   worldwide?: boolean;
+  isRemoteOnly?: boolean;
   workArrangements?: WorkplaceType[];
+  company?: string;
+  companySlug?: string;
 }
 
 export interface JobSearchRequest {
@@ -99,6 +106,7 @@ export interface JobSearchRequest {
   page?: number;
   pageSize?: number;
   query?: string;
+  title?: string;
   queryMode?: 'FLEXIBLE' | 'EXACT';
   sort?: 'RELEVANCE' | 'NEWEST';
   filters?: JobSearchFilters;
@@ -112,32 +120,6 @@ export interface JobSearchResponse {
   hasMore: boolean;
   isPaywalled: boolean;
   moreJobsCountByCompany?: Record<string, number>;
-}
-
-export interface AutoApplyApplication {
-  id: string;
-  jobId: string;
-  jobTitle: string;
-  companyName: string;
-  companyLogo: string;
-  matchScore: number;
-  status: 'QUEUED' | 'MATCHED' | 'SUBMITTING' | 'APPLIED' | 'FAILED' | 'SKIPPED';
-  appliedAt: string | null;
-  screenshotUrl?: string;
-  coverLetter?: string;
-  submissionMessage?: string;
-  directApplySource?: string;
-  screeningAnswers?: Record<string, string>;
-  errorMessage?: string;
-}
-
-export interface AutoApplySettings {
-  enabled: boolean;
-  minMatchScore: number; // e.g. 80
-  dailyLimit: number; // e.g. 20
-  appliedToday: number;
-  blacklistedCompanies: string[];
-  autoTailorResume: boolean;
 }
 
 export interface OnboardingData {

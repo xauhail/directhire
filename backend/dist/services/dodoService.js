@@ -29,60 +29,33 @@ class DodoService {
         let productId = env_js_1.config.dodoWeeklyProductId;
         if (planTier === 'monthly')
             productId = env_js_1.config.dodoMonthlyProductId;
+        if (planTier === 'yearly')
+            productId = env_js_1.config.dodoYearlyProductId;
         if (planTier === 'lifetime')
             productId = env_js_1.config.dodoLifetimeProductId;
         if (dodoClient && env_js_1.config.dodoPaymentsApiKey) {
             try {
-                if (planTier === 'lifetime') {
-                    // One-time payment session
-                    const payment = await dodoClient.payments.create({
-                        billing: {
-                            country: 'US',
-                            city: 'New York',
-                            state: 'NY',
-                            street: '100 Broadway',
-                            zipcode: '10001',
-                        },
-                        customer: {
-                            email: customerEmail,
-                            name: customerName || customerEmail.split('@')[0],
-                        },
-                        product_cart: [{ product_id: productId, quantity: 1 }],
-                        return_url: finalReturnUrl,
-                    });
-                    return {
-                        checkoutUrl: payment.payment_link || payment.checkout_url || finalReturnUrl,
-                        sessionId: payment.payment_id || `pay_${Date.now()}`,
-                        planTier,
+                const payload = {
+                    product_cart: [{ product_id: productId, quantity: 1 }],
+                    return_url: finalReturnUrl,
+                };
+                if (customerEmail) {
+                    payload.customer = {
+                        email: customerEmail,
+                        name: customerName || customerEmail.split('@')[0],
                     };
                 }
-                else {
-                    // Recurring subscription session
-                    const subscription = await dodoClient.subscriptions.create({
-                        billing: {
-                            country: 'US',
-                            city: 'New York',
-                            state: 'NY',
-                            street: '100 Broadway',
-                            zipcode: '10001',
-                        },
-                        customer: {
-                            email: customerEmail,
-                            name: customerName || customerEmail.split('@')[0],
-                        },
-                        product_id: productId,
-                        quantity: 1,
-                        return_url: finalReturnUrl,
-                    });
+                const session = await dodoClient.checkoutSessions.create(payload);
+                if (session.checkout_url) {
                     return {
-                        checkoutUrl: subscription.payment_link || subscription.checkout_url || finalReturnUrl,
-                        sessionId: subscription.subscription_id || `sub_${Date.now()}`,
+                        checkoutUrl: session.checkout_url,
+                        sessionId: session.session_id,
                         planTier,
                     };
                 }
             }
             catch (err) {
-                console.error('Dodo Payments API error, using mock checkout link:', err);
+                console.error('Dodo Payments checkout session error:', err);
             }
         }
         // High fidelity test mode checkout fallback

@@ -1,0 +1,51 @@
+---
+import JobSearchApp from "../../components/jobs/JobSearchApp.astro";
+
+export async function getStaticPaths() {
+  const categories = [
+    "all",
+    "engineering",
+    "software",
+    "technology",
+    "data-and-analytics",
+    "art-and-design",
+    "creative-and-media",
+    "management-and-leadership",
+    "consulting",
+    "administrative",
+    "legal",
+    "finance-and-accounting",
+    "human-resources",
+    "manufacturing",
+    "environmental-and-sustainability",
+    "security-and-safety",
+    "science-and-research",
+    "food-and-beverage",
+    "hospitality",
+    "sales",
+    "marketing",
+    "government-and-public-sector",
+    "healthcare",
+    "agriculture",
+    "education",
+    "customer-service-and-support",
+    "social-services",
+    "construction",
+    "trades",
+    "transportation",
+    "logistics",
+    "retail",
+    "energy",
+    "sports-and-recreation",
+  ];
+
+  return [
+    { params: { slug: undefined } },
+    ...categories.map((cat) => ({ params: { slug: cat } })),
+  ];
+}
+
+const { slug } = Astro.params;
+---
+
+<JobSearchApp initialSlug={slug || "all"} />

@@ -10,7 +10,7 @@ const checkoutRoutes = async (server) => {
                 {
                     id: 'weekly',
                     name: 'Weekly Sprint Pass',
-                    price: 12.99,
+                    price: 7.00,
                     interval: 'week',
                     features: [
                         'Direct unmasked ATS job links',
@@ -22,7 +22,7 @@ const checkoutRoutes = async (server) => {
                 {
                     id: 'monthly',
                     name: 'Monthly Pro (Most Popular)',
-                    price: 34.99,
+                    price: 20.00,
                     interval: 'month',
                     popular: true,
                     features: [
@@ -34,15 +34,16 @@ const checkoutRoutes = async (server) => {
                     ]
                 },
                 {
-                    id: 'lifetime',
-                    name: 'Lifetime All-Access Pass',
-                    price: 149.00,
-                    interval: 'one-time',
+                    id: 'yearly',
+                    name: '1-Year Unlimited Pass',
+                    price: 99.00,
+                    interval: 'year',
+                    popular: false,
                     features: [
-                        'Lifetime access to all direct listings',
-                        'Unlimited AI Auto-Applies forever',
-                        'All current & future Free Growth Tools',
-                        'Zero recurring subscription charges'
+                        '1 full year of unlimited direct job listings',
+                        'Up to 50 AI Auto-Applies / day',
+                        'All current & future AI career tools',
+                        'Save 58% compared to monthly billing'
                     ]
                 }
             ]
@@ -51,10 +52,7 @@ const checkoutRoutes = async (server) => {
     // Create Dodo Payments checkout session
     server.post('/api/checkout', async (req, reply) => {
         try {
-            const { planTier = 'weekly', email, name, returnUrl } = req.body || {};
-            if (!email) {
-                return reply.status(400).send({ error: 'Customer email is required to initiate checkout.' });
-            }
+            const { planTier = 'monthly', email = '', name, returnUrl } = req.body || {};
             const session = await dodoService_js_1.DodoService.createCheckoutSession({
                 planTier,
                 customerEmail: email,

@@ -16,8 +16,8 @@ import Layout from '../layouts/Layout.astro';
           </div>
           <span class="text-xl font-extrabold text-slate-900 tracking-tight">Career Hound</span>
         </a>
-        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Welcome back</h1>
-        <p class="text-xs sm:text-sm text-slate-500 mt-2">
+        <h1 id="auth-title" class="text-2xl font-black text-slate-900 tracking-tight">Welcome back</h1>
+        <p id="auth-subtitle" class="text-xs sm:text-sm text-slate-500 mt-2">
           Sign in to your account
         </p>
       </div>
@@ -162,7 +162,7 @@ import Layout from '../layouts/Layout.astro';
 </Layout>
 
 <script>
-  import { authClient } from '../lib/auth-client';
+  import { authClient } from '../lib/auth-client.js';
 
   // ── Tab switcher ───────────────────────────────────────────────────────────
   function switchTab(tab: 'signin' | 'signup') {
@@ -170,9 +170,13 @@ import Layout from '../layouts/Layout.astro';
     const signupForm = document.getElementById('signup-form');
     const tabSignin = document.getElementById('tab-signin');
     const tabSignup = document.getElementById('tab-signup');
+    const titleEl = document.getElementById('auth-title');
+    const subtitleEl = document.getElementById('auth-subtitle');
     hideMessages();
 
     if (tab === 'signin') {
+      if (titleEl) titleEl.textContent = 'Welcome back';
+      if (subtitleEl) subtitleEl.textContent = 'Sign in to your account';
       signinForm?.classList.remove('hidden');
       signupForm?.classList.add('hidden');
       tabSignin?.classList.add('bg-white', 'shadow-sm', 'text-slate-900');
@@ -180,6 +184,8 @@ import Layout from '../layouts/Layout.astro';
       tabSignup?.classList.remove('bg-white', 'shadow-sm', 'text-slate-900');
       tabSignup?.classList.add('text-slate-500');
     } else {
+      if (titleEl) titleEl.textContent = 'Create your account';
+      if (subtitleEl) subtitleEl.textContent = 'Start tracking verified direct ATS jobs';
       signupForm?.classList.remove('hidden');
       signinForm?.classList.add('hidden');
       tabSignup?.classList.add('bg-white', 'shadow-sm', 'text-slate-900');
@@ -267,14 +273,20 @@ import Layout from '../layouts/Layout.astro';
         localStorage.setItem('ch_user', JSON.stringify(legacyData.user));
         localStorage.setItem('ch_authenticated', '1');
 
-        const redirectTo = legacyData.user?.onboardingCompleted ? '/account' : '/onboarding';
+        const nextUrl = new URLSearchParams(window.location.search).get('next');
+        const isSubscribed = legacyData.user?.isSubscribed || legacyData.user?.plan !== 'free';
+        const hasOnboarded = legacyData.user?.onboardingCompleted || localStorage.getItem('ch_onboarding_completed') === 'true';
+        const redirectTo = nextUrl || (isSubscribed ? '/job-search/all' : (hasOnboarded ? '/account' : '/onboarding'));
         window.location.href = redirectTo;
         return;
       }
 
       // Better Auth path — session cookie set automatically
       if (data?.user) persistSession(data.user);
-      const redirectTo = (data?.user as any)?.onboardingCompleted ? '/account' : '/onboarding';
+      const nextUrl = new URLSearchParams(window.location.search).get('next');
+      const isSub = (data?.user as any)?.isSubscribed || (data?.user as any)?.plan !== 'free';
+      const hasOnb = (data?.user as any)?.onboardingCompleted || localStorage.getItem('ch_onboarding_completed') === 'true';
+      const redirectTo = nextUrl || (isSub ? '/job-search/all' : (hasOnb ? '/account' : '/onboarding'));
       window.location.href = redirectTo;
 
     } catch (err: any) {
@@ -309,6 +321,13 @@ import Layout from '../layouts/Layout.astro';
 
       if (data?.user) persistSession(data.user);
       
+      const nextUrl = new URLSearchParams(window.location.search).get('next');
+      if (nextUrl) {
+        showSuccess('Account created! Redirecting to jobs...');
+        setTimeout(() => window.location.href = nextUrl, 800);
+        return;
+      }
+
       const hasOnboarding = localStorage.getItem('ch_onboarding_completed') === 'true' || 
                             new URLSearchParams(window.location.search).get('onboarding') === 'completed';
 
@@ -327,12 +346,12 @@ import Layout from '../layouts/Layout.astro';
     }
   });
 
-  // ── Auto-detect parameters (e.g. ?mode=signup or ?onboarding=completed) ────
+  // ── Auto-detect parameters (e.g. ?mode=signup or ?tab=signup or ?onboarding=completed) ────
   const urlParams = new URLSearchParams(window.location.search);
   const onboardingBanner = document.getElementById('onboarding-banner');
-  if (urlParams.get('mode') === 'signup' || urlParams.get('onboarding') === 'completed') {
+  if (urlParams.get('mode') === 'signup' || urlParams.get('tab') === 'signup' || urlParams.get('onboarding') === 'completed') {
     switchTab('signup');
-    if (onboardingBanner) onboardingBanner.classList.remove('hidden');
+    if (onboardingBanner && urlParams.get('onboarding') === 'completed') onboardingBanner.classList.remove('hidden');
   }
 
   // ── Auto-detect if already signed in ──────────────────────────────────────
@@ -341,7 +360,8 @@ import Layout from '../layouts/Layout.astro';
       const { data } = await authClient.getSession();
       if (data?.user) {
         persistSession(data.user);
-        window.location.href = '/account';
+        const nextUrl = new URLSearchParams(window.location.search).get('next');
+        window.location.href = nextUrl || '/account';
       }
     } catch (_) {
       // Not signed in — show login form normally
