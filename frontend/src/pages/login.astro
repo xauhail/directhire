@@ -144,6 +144,49 @@ import Layout from '../layouts/Layout.astro';
         </p>
       </form>
 
+      <!-- ── OTP Verification Form (Neon Auth Verification Code) ── -->
+      <form id="otp-form" class="space-y-5 hidden" novalidate>
+        <div class="text-center space-y-1.5">
+          <div class="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center mx-auto text-2xl shadow-xs">
+            ✉️
+          </div>
+          <h3 class="text-lg font-black text-slate-900 tracking-tight">Enter Verification Code</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            Neon Auth sent a 6-digit verification code from <span class="font-mono font-semibold text-slate-700">auth@mail.myneon.app</span> to <strong id="otp-email-target" class="text-slate-800"></strong>.
+          </p>
+        </div>
+
+        <div>
+          <label for="otp-code-input" class="sr-only">6-Digit Verification Code</label>
+          <input
+            type="text"
+            id="otp-code-input"
+            maxlength="6"
+            placeholder="123456"
+            autocomplete="one-time-code"
+            class="w-full text-center text-2xl tracking-[0.4em] font-mono font-black py-3 px-4 rounded-xl border-2 border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-xs"
+          />
+          <p class="text-[11px] text-slate-400 text-center mt-1.5">Check your inbox or spam folder for your 6-digit code.</p>
+        </div>
+
+        <button
+          type="submit"
+          id="otp-submit-btn"
+          class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+        >
+          <span id="otp-submit-label">Confirm Code & Sign In →</span>
+        </button>
+
+        <div class="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-100">
+          <button type="button" id="btn-resend-otp" class="text-blue-600 font-semibold hover:underline cursor-pointer">
+            Resend Code
+          </button>
+          <button type="button" id="btn-back-to-signup" class="text-slate-500 hover:text-slate-700 cursor-pointer">
+            ← Change Email
+          </button>
+        </div>
+      </form>
+
       <p class="text-center text-[11px] text-slate-400">
         Subscriptions securely processed with 256-bit SSL encryption.
       </p>
@@ -154,15 +197,20 @@ import Layout from '../layouts/Layout.astro';
 <script>
   import { authClient } from '../lib/auth-client.js';
 
+  let pendingEmail = '';
+
   // ── Tab switcher ───────────────────────────────────────────────────────────
   function switchTab(tab: 'signin' | 'signup') {
     const signinForm = document.getElementById('signin-form');
     const signupForm = document.getElementById('signup-form');
+    const otpForm = document.getElementById('otp-form');
     const tabSignin = document.getElementById('tab-signin');
     const tabSignup = document.getElementById('tab-signup');
     const titleEl = document.getElementById('auth-title');
     const subtitleEl = document.getElementById('auth-subtitle');
     hideMessages();
+
+    if (otpForm) otpForm.classList.add('hidden');
 
     if (tab === 'signin') {
       if (titleEl) titleEl.textContent = 'Welcome back';
@@ -185,6 +233,30 @@ import Layout from '../layouts/Layout.astro';
     }
   }
   (window as any).switchTab = switchTab;
+
+  function showOtpForm(email: string) {
+    pendingEmail = email;
+    const signinForm = document.getElementById('signin-form');
+    const signupForm = document.getElementById('signup-form');
+    const otpForm = document.getElementById('otp-form');
+    const titleEl = document.getElementById('auth-title');
+    const subtitleEl = document.getElementById('auth-subtitle');
+    const targetEmail = document.getElementById('otp-email-target');
+
+    signinForm?.classList.add('hidden');
+    signupForm?.classList.add('hidden');
+    otpForm?.classList.remove('hidden');
+
+    if (titleEl) titleEl.textContent = 'Verify Your Email';
+    if (subtitleEl) subtitleEl.textContent = 'Enter the 6-digit code sent to your email';
+    if (targetEmail) targetEmail.textContent = email;
+
+    const codeInput = document.getElementById('otp-code-input') as HTMLInputElement;
+    if (codeInput) {
+      codeInput.value = '';
+      codeInput.focus();
+    }
+  }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   function showError(msg: string) {
@@ -250,10 +322,18 @@ import Layout from '../layouts/Layout.astro';
       const { data, error } = await authClient.signIn.email({ email, password });
 
       if (error) {
+        // If email verification is required by Neon Auth
+        if ((error as any).status === 403 || error.message?.toLowerCase().includes('verif')) {
+          showOtpForm(email);
+          await (authClient as any).emailOtp.sendVerificationOtp({ email, type: 'email-verification' });
+          showError('Please verify your email address. We have sent a 6-digit code to your inbox.');
+          signinBtn.disabled = false;
+          if (signinBtnLabel) signinBtnLabel.textContent = 'Sign In';
+          return;
+        }
         throw new Error(error.message || 'Invalid email or password.');
       }
 
-      // Better Auth path — session cookie set automatically
       if (data?.user) persistSession(data.user);
       const nextUrl = new URLSearchParams(window.location.search).get('next');
       const isSub = (data?.user as any)?.isSubscribed || (data?.user as any)?.plan !== 'free';
@@ -287,12 +367,26 @@ import Layout from '../layouts/Layout.astro';
     if (signupBtnLabel) signupBtnLabel.textContent = 'Creating account...';
 
     try {
-      const { data, error } = await authClient.signUp.email({ name, email, password });
+      const { data, error } = await authClient.signUp.email({
+        name,
+        email,
+        password,
+        callbackURL: window.location.origin + '/job-search/all?onboarding=completed'
+      });
 
       if (error) throw new Error(error.message || 'Registration failed');
 
+      // Neon Auth requires email verification code (Verify at Sign-up is ON)
+      if (data?.user && data.user.emailVerified === false) {
+        showSuccess('Account created! Verification code sent to your email.');
+        setTimeout(() => {
+          showOtpForm(email);
+        }, 500);
+        return;
+      }
+
       if (data?.user) persistSession(data.user);
-      
+
       const nextUrl = new URLSearchParams(window.location.search).get('next');
       if (nextUrl) {
         showSuccess('Account created! Redirecting to jobs...');
@@ -300,22 +394,74 @@ import Layout from '../layouts/Layout.astro';
         return;
       }
 
-      const hasOnboarding = localStorage.getItem('ch_onboarding_completed') === 'true' || 
-                            new URLSearchParams(window.location.search).get('onboarding') === 'completed';
-
-      if (hasOnboarding) {
-        showSuccess('Account created! Redirecting to select your membership plan...');
-        setTimeout(() => window.location.href = '/pricing?onboarding=completed', 1000);
-      } else {
-        showSuccess('Account created! Redirecting to onboarding to calibrate your jobs...');
-        setTimeout(() => window.location.href = '/onboarding', 1000);
-      }
+      showSuccess('Account created! Redirecting to your jobs...');
+      setTimeout(() => window.location.href = '/job-search/all?onboarding=completed', 800);
 
     } catch (err: any) {
       showError(err.message || 'Sign up failed. Please try again.');
       signupBtn.disabled = false;
       if (signupBtnLabel) signupBtnLabel.textContent = 'Create Account';
     }
+  });
+
+  // ── OTP Form Submission (Neon Auth 6-digit Verification Code) ──────────────
+  const otpForm = document.getElementById('otp-form') as HTMLFormElement;
+  const otpCodeInput = document.getElementById('otp-code-input') as HTMLInputElement;
+  const otpSubmitBtn = document.getElementById('otp-submit-btn') as HTMLButtonElement;
+  const otpSubmitLabel = document.getElementById('otp-submit-label');
+
+  otpForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideMessages();
+    const otp = otpCodeInput?.value?.trim();
+    if (!otp || otp.length < 6) {
+      showError('Please enter the 6-digit verification code sent to your email.');
+      return;
+    }
+
+    if (otpSubmitBtn) otpSubmitBtn.disabled = true;
+    if (otpSubmitLabel) otpSubmitLabel.textContent = 'Verifying code...';
+
+    try {
+      const { data, error } = await (authClient as any).emailOtp.verifyEmail({
+        email: pendingEmail,
+        otp,
+      });
+
+      if (error) throw new Error(error.message || 'Invalid or expired verification code.');
+
+      const user = data?.user || { email: pendingEmail, emailVerified: true };
+      user.emailVerified = true;
+      persistSession(user);
+
+      showSuccess('Email verified successfully! Welcome to Career Hound.');
+      setTimeout(() => {
+        const nextUrl = new URLSearchParams(window.location.search).get('next');
+        window.location.href = nextUrl || '/job-search/all?onboarding=completed';
+      }, 700);
+
+    } catch (err: any) {
+      showError(err.message || 'Invalid verification code. Please check your email or click Resend.');
+      if (otpSubmitBtn) otpSubmitBtn.disabled = false;
+      if (otpSubmitLabel) otpSubmitLabel.textContent = 'Confirm Code & Sign In →';
+    }
+  });
+
+  document.getElementById('btn-resend-otp')?.addEventListener('click', async () => {
+    if (!pendingEmail) return;
+    try {
+      await (authClient as any).emailOtp.sendVerificationOtp({
+        email: pendingEmail,
+        type: 'email-verification',
+      });
+      showSuccess(`New 6-digit verification code sent to ${pendingEmail}! Check your inbox.`);
+    } catch (err: any) {
+      showError(err.message || 'Failed to resend verification code.');
+    }
+  });
+
+  document.getElementById('btn-back-to-signup')?.addEventListener('click', () => {
+    switchTab('signup');
   });
 
   // ── Auto-detect parameters (e.g. ?mode=signup or ?tab=signup or ?onboarding=completed) ────

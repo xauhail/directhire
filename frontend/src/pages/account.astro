@@ -128,13 +128,29 @@ import Layout from "../layouts/Layout.astro";
             <p class="text-xs text-amber-700">Please verify your email address (<strong id="banner-email-text" class="text-amber-950"></strong>) to secure your account in our database.</p>
           </div>
         </div>
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex items-center gap-2 shrink-0 flex-wrap">
+          <div id="account-otp-box" class="hidden items-center gap-1.5">
+            <input
+              id="account-otp-input"
+              type="text"
+              maxlength="6"
+              placeholder="6-digit code"
+              class="px-3 py-1.5 rounded-xl border border-amber-300 text-xs font-mono font-bold w-28 text-center bg-white shadow-2xs focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+            <button
+              id="btn-account-submit-otp"
+              type="button"
+              class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-2xs transition-colors cursor-pointer"
+            >
+              Verify Code
+            </button>
+          </div>
           <button
             id="btn-send-verification-email"
             type="button"
             class="px-3.5 py-1.5 rounded-xl bg-white border border-amber-300 hover:bg-amber-100 text-amber-900 font-bold text-xs shadow-2xs transition-colors cursor-pointer"
           >
-            Send Verification Link
+            Send 6-Digit Code
           </button>
           <button
             id="btn-verify-now-instant"
@@ -836,22 +852,61 @@ import Layout from "../layouts/Layout.astro";
       applyEmailVerifiedUI(Boolean(user.emailVerified));
     }
 
+    const accountOtpBox = document.getElementById("account-otp-box");
+    const accountOtpInput = document.getElementById("account-otp-input") as HTMLInputElement;
+    const btnAccountSubmitOtp = document.getElementById("btn-account-submit-otp") as HTMLButtonElement;
+
     if (btnSendVerificationEmail) {
       btnSendVerificationEmail.addEventListener("click", async () => {
         btnSendVerificationEmail.disabled = true;
         btnSendVerificationEmail.textContent = "Sending...";
         try {
-          await authClient.sendVerificationEmail({
+          await (authClient as any).emailOtp.sendVerificationOtp({
             email: user.email,
-            callbackURL: window.location.origin + "/account?verified=true",
+            type: "email-verification",
           });
-          btnSendVerificationEmail.textContent = "✓ Link Sent!";
-          btnSendVerificationEmail.classList.add("bg-emerald-50", "text-emerald-800", "border-emerald-300");
-          alert(`Verification email dispatched to ${user.email}! Click the link in your email, or use "Verify Now (Instant)" for direct database verification.`);
+          btnSendVerificationEmail.disabled = false;
+          btnSendVerificationEmail.textContent = "Resend Code";
+          if (accountOtpBox) {
+            accountOtpBox.classList.remove("hidden");
+            accountOtpBox.style.display = "flex";
+          }
+          if (accountOtpInput) accountOtpInput.focus();
+          alert(`6-digit verification code sent to ${user.email} from auth@mail.myneon.app! Enter the code to verify.`);
         } catch (err: any) {
           btnSendVerificationEmail.disabled = false;
-          btnSendVerificationEmail.textContent = "Send Link";
-          alert(err.message || "Failed to send verification link.");
+          btnSendVerificationEmail.textContent = "Send 6-Digit Code";
+          alert(err.message || "Failed to send verification code.");
+        }
+      });
+    }
+
+    if (btnAccountSubmitOtp) {
+      btnAccountSubmitOtp.addEventListener("click", async () => {
+        const otp = accountOtpInput?.value?.trim();
+        if (!otp || otp.length < 6) {
+          alert("Please enter the complete 6-digit code.");
+          return;
+        }
+
+        btnAccountSubmitOtp.disabled = true;
+        btnAccountSubmitOtp.textContent = "Checking...";
+        try {
+          const { data, error } = await (authClient as any).emailOtp.verifyEmail({
+            email: user.email,
+            otp,
+          });
+
+          if (error) throw new Error(error.message || "Invalid verification code.");
+
+          user.emailVerified = true;
+          localStorage.setItem("ch_user", JSON.stringify(user));
+          applyEmailVerifiedUI(true);
+          alert("🎉 Email verified successfully via Neon Auth!");
+        } catch (err: any) {
+          btnAccountSubmitOtp.disabled = false;
+          btnAccountSubmitOtp.textContent = "Verify Code";
+          alert(err.message || "Invalid or expired code.");
         }
       });
     }

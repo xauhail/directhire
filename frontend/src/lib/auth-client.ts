@@ -1,46 +1,30 @@
 /**
- * Better Auth — Frontend Client
+ * Neon Auth (Managed Better Auth) — Frontend Client
  *
- * This module exposes a typed auth client that communicates with the
- * Better Auth backend running at http://localhost:4000/api/auth/*.
+ * Connected directly to Neon Auth instance:
+ * https://ep-jolly-union-b48km1q7.neonauth.c-6.us-east-2.aws.neon.tech/neondb/auth
  *
- * Usage in any Astro page script or component:
- *
- *   import { authClient } from '../lib/auth-client';
- *
- *   // Sign up
- *   const { data, error } = await authClient.signUp.email({
- *     name: 'Alex Johnson',
- *     email: 'alex@example.com',
- *     password: 'SecurePass123!',
- *   });
- *
- *   // Sign in
- *   const { data, error } = await authClient.signIn.email({
- *     email: 'alex@example.com',
- *     password: 'SecurePass123!',
- *   });
- *
- *   // Get current session
- *   const session = await authClient.getSession();
- *
- *   // Sign out
- *   await authClient.signOut();
- *
- * Better Auth automatically manages session cookies (httpOnly).
- * No manual token storage in localStorage is needed for secure auth.
+ * Configured with:
+ * - Email / Password authentication
+ * - Email OTP (Verification code) via Neon's shared email provider (auth@mail.myneon.app)
+ * - Session tracking
  */
 
 import { createAuthClient } from 'better-auth/client';
+import { emailOTPClient } from 'better-auth/client/plugins';
+
+export const NEON_AUTH_URL =
+  (import.meta as any).env?.PUBLIC_NEON_AUTH_URL ||
+  'https://ep-jolly-union-b48km1q7.neonauth.c-6.us-east-2.aws.neon.tech/neondb/auth';
 
 export const authClient = createAuthClient({
-  // Uses http://localhost:4000 in local dev, and current origin on Cloudflare Pages
-  baseURL: typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? ((import.meta as any).env?.PUBLIC_API_URL || 'http://localhost:4000')
-    : ((import.meta as any).env?.PUBLIC_API_URL || undefined),
+  baseURL: NEON_AUTH_URL,
+  plugins: [
+    emailOTPClient(),
+  ],
 });
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Authentication Helpers ───────────────────────────────────────────────────
 
 /** Get the current session. Returns null if not authenticated. */
 export async function getSession() {
@@ -62,6 +46,22 @@ export async function signInWithEmail(email: string, password: string) {
 /** Sign up with name + email + password. */
 export async function signUpWithEmail(name: string, email: string, password: string) {
   return authClient.signUp.email({ name, email, password });
+}
+
+/** Send 6-digit email verification OTP via Neon Auth (auth@mail.myneon.app) */
+export async function sendVerificationOtp(email: string) {
+  return (authClient as any).emailOtp.sendVerificationOtp({
+    email,
+    type: 'email-verification',
+  });
+}
+
+/** Verify email with 6-digit OTP code */
+export async function verifyEmailOtp(email: string, otp: string) {
+  return (authClient as any).emailOtp.verifyEmail({
+    email,
+    otp,
+  });
 }
 
 /** Sign out the current user. */
