@@ -84,8 +84,16 @@ export const auth = betterAuth({
   // ── Email & Password ───────────────────────────────────────────────────────
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false, // Set true in production
+    requireEmailVerification: false,
     minPasswordLength: 8,
+  },
+
+  emailVerification: {
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url, token }) => {
+      console.log(`[Better Auth Backend] Verification link for ${user.email}: ${url} (Token: ${token})`);
+    },
   },
 
   // ── Session Configuration ─────────────────────────────────────────────────

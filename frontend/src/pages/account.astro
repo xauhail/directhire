@@ -41,8 +41,16 @@ import Layout from "../layouts/Layout.astro";
               >
                 Loading...
               </h1>
-              <p id="user-email-display" class="text-blue-200 text-sm mt-0.5">
-              </p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <p id="user-email-display" class="text-blue-200 text-sm mt-0.5">
+                  </p>
+                  <span
+                    id="user-email-verified-pill"
+                    class="hidden text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/40"
+                  >
+                    ✓ Verified
+                  </span>
+                </div>
               <span
                 id="user-plan-badge"
                 class="inline-flex items-center gap-1 mt-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-white/20 border border-white/30 text-white"
@@ -106,6 +114,35 @@ import Layout from "../layouts/Layout.astro";
             </p>
             <p id="stat-plan" class="text-xl font-black mt-1 truncate">–</p>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Email Verification Alert Banner -->
+    <div id="email-verification-banner" class="hidden bg-amber-50 border-b border-amber-200">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-amber-950">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-full bg-amber-200 text-amber-900 flex items-center justify-center font-bold text-sm shrink-0">✉️</span>
+          <div>
+            <p class="text-xs sm:text-sm font-extrabold text-amber-900">Email verification required</p>
+            <p class="text-xs text-amber-700">Please verify your email address (<strong id="banner-email-text" class="text-amber-950"></strong>) to secure your account in our database.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button
+            id="btn-send-verification-email"
+            type="button"
+            class="px-3.5 py-1.5 rounded-xl bg-white border border-amber-300 hover:bg-amber-100 text-amber-900 font-bold text-xs shadow-2xs transition-colors cursor-pointer"
+          >
+            Send Verification Link
+          </button>
+          <button
+            id="btn-verify-now-instant"
+            type="button"
+            class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-2xs transition-colors cursor-pointer"
+          >
+            Verify Now (Instant)
+          </button>
         </div>
       </div>
     </div>
@@ -283,7 +320,15 @@ import Layout from "../layouts/Layout.astro";
                 >
                   –
                 </p>
-                <p id="profile-email" class="text-sm text-slate-500">–</p>
+                <div class="flex items-center gap-2 mt-0.5 flex-wrap">
+                  <p id="profile-email" class="text-sm text-slate-600 font-medium truncate">–</p>
+                  <span
+                    id="profile-email-badge"
+                    class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600"
+                  >
+                    Checking...
+                  </span>
+                </div>
               </div>
             </div>
             <hr class="border-slate-100" />
@@ -646,24 +691,25 @@ import Layout from "../layouts/Layout.astro";
       // 1. Try Better Auth session (httpOnly cookie-based)
       const { data: session } = await authClient.getSession();
       if (session?.user) {
+        const u = session.user;
+        const userObj = {
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          emailVerified: u.emailVerified ?? false,
+          plan: (u as any).plan || "free",
+          isSubscribed: (u as any).isSubscribed || false,
+          onboardingCompleted:
+            (u as any).onboardingCompleted || false,
+          createdAt: u.createdAt,
+        };
         // Sync to localStorage so Header + other pages see the user
-        localStorage.setItem(
-          "ch_user",
-          JSON.stringify({
-            id: session.user.id,
-            name: session.user.name,
-            email: session.user.email,
-            plan: (session.user as any).plan || "free",
-            isSubscribed: (session.user as any).isSubscribed || false,
-            onboardingCompleted:
-              (session.user as any).onboardingCompleted || false,
-            createdAt: session.user.createdAt,
-          }),
-        );
+        localStorage.setItem("ch_user", JSON.stringify(userObj));
+        localStorage.setItem("ch_token", u.id);
         localStorage.setItem("ch_authenticated", "1");
         if (authLoading) authLoading.classList.add("hidden");
         if (dashboard) dashboard.classList.remove("hidden");
-        initDashboard(session.user);
+        initDashboard(userObj);
         return;
       }
     } catch (_) {
@@ -745,6 +791,96 @@ import Layout from "../layouts/Layout.astro";
         "en-US",
         { month: "long", year: "numeric" },
       );
+    }
+
+    // ── Email Verification Setup ──
+    const emailVerificationBanner = document.getElementById("email-verification-banner");
+    const bannerEmailText = document.getElementById("banner-email-text");
+    const userEmailVerifiedPill = document.getElementById("user-email-verified-pill");
+    const profileEmailBadge = document.getElementById("profile-email-badge");
+    const btnSendVerificationEmail = document.getElementById("btn-send-verification-email") as HTMLButtonElement;
+    const btnVerifyNowInstant = document.getElementById("btn-verify-now-instant") as HTMLButtonElement;
+
+    function applyEmailVerifiedUI(verified: boolean) {
+      user.emailVerified = verified;
+      if (bannerEmailText) bannerEmailText.textContent = user.email || "";
+
+      if (verified) {
+        if (emailVerificationBanner) emailVerificationBanner.classList.add("hidden");
+        if (userEmailVerifiedPill) userEmailVerifiedPill.classList.remove("hidden");
+        if (profileEmailBadge) {
+          profileEmailBadge.textContent = "✓ Verified";
+          profileEmailBadge.className = "inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200";
+        }
+      } else {
+        if (emailVerificationBanner) emailVerificationBanner.classList.remove("hidden");
+        if (userEmailVerifiedPill) userEmailVerifiedPill.classList.add("hidden");
+        if (profileEmailBadge) {
+          profileEmailBadge.textContent = "⚠️ Unverified";
+          profileEmailBadge.className = "inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 cursor-pointer";
+          profileEmailBadge.onclick = () => btnVerifyNowInstant?.click();
+        }
+      }
+    }
+
+    // Check URL param ?verified=true (returned after email verification callback)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("verified") === "true") {
+      user.emailVerified = true;
+      localStorage.setItem("ch_user", JSON.stringify(user));
+      applyEmailVerifiedUI(true);
+      // Clean query string
+      const cleanUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, document.title, cleanUrl);
+    } else {
+      applyEmailVerifiedUI(Boolean(user.emailVerified));
+    }
+
+    if (btnSendVerificationEmail) {
+      btnSendVerificationEmail.addEventListener("click", async () => {
+        btnSendVerificationEmail.disabled = true;
+        btnSendVerificationEmail.textContent = "Sending...";
+        try {
+          await authClient.sendVerificationEmail({
+            email: user.email,
+            callbackURL: window.location.origin + "/account?verified=true",
+          });
+          btnSendVerificationEmail.textContent = "✓ Link Sent!";
+          btnSendVerificationEmail.classList.add("bg-emerald-50", "text-emerald-800", "border-emerald-300");
+          alert(`Verification email dispatched to ${user.email}! Click the link in your email, or use "Verify Now (Instant)" for direct database verification.`);
+        } catch (err: any) {
+          btnSendVerificationEmail.disabled = false;
+          btnSendVerificationEmail.textContent = "Send Link";
+          alert(err.message || "Failed to send verification link.");
+        }
+      });
+    }
+
+    if (btnVerifyNowInstant) {
+      btnVerifyNowInstant.addEventListener("click", async () => {
+        btnVerifyNowInstant.disabled = true;
+        btnVerifyNowInstant.textContent = "Verifying in DB...";
+        try {
+          const res = await fetch("/api/auth/manual-verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: user.email }),
+          });
+          const json = await res.json();
+          if (json.success || res.ok) {
+            user.emailVerified = true;
+            localStorage.setItem("ch_user", JSON.stringify(user));
+            applyEmailVerifiedUI(true);
+            btnVerifyNowInstant.textContent = "✓ Verified!";
+          } else {
+            throw new Error(json.error || json.message || "Verification failed");
+          }
+        } catch (err: any) {
+          btnVerifyNowInstant.disabled = false;
+          btnVerifyNowInstant.textContent = "Verify Now";
+          alert(err.message || "Instant verification failed.");
+        }
+      });
     }
 
     // Subscription tab

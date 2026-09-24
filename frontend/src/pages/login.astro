@@ -216,17 +216,18 @@ import Layout from '../layouts/Layout.astro';
 
   // ── Persist user to localStorage for Header + Account page ────────────────
   function persistSession(user: any) {
+    localStorage.setItem('ch_token', user.id || 'authenticated');
+    localStorage.setItem('ch_authenticated', '1');
     localStorage.setItem('ch_user', JSON.stringify({
       id: user.id,
       name: user.name,
       email: user.email,
+      emailVerified: user.emailVerified ?? false,
       plan: (user as any).plan || 'free',
       isSubscribed: (user as any).isSubscribed || false,
       onboardingCompleted: (user as any).onboardingCompleted || false,
       createdAt: user.createdAt,
     }));
-    // Better Auth uses httpOnly cookies — mark as authenticated
-    localStorage.setItem('ch_authenticated', '1');
   }
 
   // ── Sign In ────────────────────────────────────────────────────────────────

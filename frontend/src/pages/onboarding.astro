@@ -1003,7 +1003,7 @@ Full Stack Software Engineer with 5+ years of experience building high-scale dis
           resumeText,
         };
 
-        // Cache onboarding profile in localStorage so signup & pricing can access it immediately
+        // Cache onboarding profile in localStorage so jobs & account can access it immediately
         try {
           localStorage.setItem("ch_onboarding_completed", "true");
           localStorage.setItem(
@@ -1013,27 +1013,28 @@ Full Stack Software Engineer with 5+ years of experience building high-scale dis
           if (currentUser) {
             currentUser.onboardingCompleted = true;
             localStorage.setItem("ch_user", JSON.stringify(currentUser));
+            if (currentUser.id) localStorage.setItem("ch_token", currentUser.id);
+            localStorage.setItem("ch_authenticated", "1");
           }
           if (resumeText) localStorage.setItem("ch_resume_text", resumeText);
         } catch (_) {}
 
-        try {
-          await submitOnboarding(onboardingPayload);
-        } catch (err) {
-          // non-blocking
-        }
+        // Non-blocking background submission (does not freeze or delay the UI)
+        submitOnboarding(onboardingPayload).catch(() => {});
 
-        // Smart routing: if already subscribed -> direct to jobs, if free member -> pricing, if guest -> signup
+        // Instant smooth feedback & immediate routing
+        btnNext.innerHTML = "<span>✓ Matching 2,400+ Verified Jobs...</span>";
         const primaryRole = Array.from(selectedRoles)[0] || "";
-        if (currentUser) {
-          if (currentUser.isSubscribed || currentUser.plan !== "free") {
-            window.location.href = "/job-search/all";
+
+        setTimeout(() => {
+          if (currentUser) {
+            // Take user directly to their matched direct-company jobs
+            window.location.href = `/job-search/all?onboarding=completed&role=${encodeURIComponent(primaryRole)}`;
           } else {
-            window.location.href = "/pricing?onboarding=completed";
+            // Guest -> signup with onboarding profile pre-attached
+            window.location.href = `/login?mode=signup&onboarding=completed&role=${encodeURIComponent(primaryRole)}`;
           }
-        } else {
-          window.location.href = `/login?mode=signup&onboarding=completed&role=${encodeURIComponent(primaryRole)}`;
-        }
+        }, 350);
       }
     });
   }

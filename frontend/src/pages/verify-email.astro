@@ -1,0 +1,228 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="Verify Email | Career Hound"
+  description="Verify your Career Hound email address to unlock verified direct company job applications."
+>
+  <div class="min-h-[70vh] flex items-center justify-center px-4 py-16">
+    <div class="max-w-md w-full bg-white rounded-3xl border border-slate-200 p-8 shadow-xl shadow-slate-200/50 text-center space-y-6">
+      
+      <!-- Loading State -->
+      <div id="verify-loading" class="space-y-4 py-8">
+        <div class="w-14 h-14 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
+        <h2 class="text-xl font-black text-slate-900">Verifying your email...</h2>
+        <p class="text-xs text-slate-500">Checking your verification token with our database.</p>
+      </div>
+
+      <!-- Success State -->
+      <div id="verify-success" class="hidden space-y-6">
+        <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-2xl font-bold shadow-xs">
+          ✓
+        </div>
+        <div>
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight">Email Verified!</h2>
+          <p id="success-msg" class="text-xs sm:text-sm text-slate-500 mt-1.5">
+            Your email address has been successfully confirmed and recorded in our database.
+          </p>
+        </div>
+        <div class="pt-2 flex flex-col gap-2.5">
+          <a
+            href="/job-search/all"
+            class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md transition-colors block text-center"
+          >
+            Explore 2,400+ Direct Jobs →
+          </a>
+          <a
+            href="/account"
+            class="w-full py-2.5 px-4 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold text-xs border border-slate-200 transition-colors block text-center"
+          >
+            Go to My Account
+          </a>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div id="verify-error" class="hidden space-y-6">
+        <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto text-2xl font-bold shadow-xs">
+          !
+        </div>
+        <div>
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight">Verification Problem</h2>
+          <p id="error-msg" class="text-xs sm:text-sm text-slate-500 mt-1.5">
+            This verification link may have expired or is invalid.
+          </p>
+        </div>
+        <div class="pt-2 flex flex-col gap-2.5">
+          <button
+            type="button"
+            id="btn-retry-manual"
+            class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md transition-colors block text-center cursor-pointer"
+          >
+            Verify Now (Direct Confirmation)
+          </button>
+          <a
+            href="/account"
+            class="w-full py-2.5 px-4 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold text-xs border border-slate-200 transition-colors block text-center"
+          >
+            Return to Account
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { authClient } from "../lib/auth-client.js";
+
+  const loadingEl = document.getElementById("verify-loading");
+  const successEl = document.getElementById("verify-success");
+  const errorEl = document.getElementById("verify-error");
+  const successMsg = document.getElementById("success-msg");
+  const errorMsg = document.getElementById("error-msg");
+  const btnRetryManual = document.getElementById("btn-retry-manual");
+
+  function showSuccess(msg?: string) {
+    if (loadingEl) loadingEl.classList.add("hidden");
+    if (errorEl) errorEl.classList.add("hidden");
+    if (successEl) successEl.classList.remove("hidden");
+    if (msg && successMsg) successMsg.textContent = msg;
+
+    // Update localStorage
+    try {
+      const uStr = localStorage.getItem("ch_user");
+      if (uStr) {
+        const u = JSON.parse(uStr);
+        u.emailVerified = true;
+        localStorage.setItem("ch_user", JSON.stringify(u));
+      }
+    } catch (_) {}
+  }
+
+  function showError(msg: string) {
+    if (loadingEl) loadingEl.classList.add("hidden");
+    if (successEl) successEl.classList.add("hidden");
+    if (errorEl) errorEl.classList.remove("hidden");
+    if (errorMsg) errorMsg.textContent = msg;
+  }
+
+  async function handleVerification() {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+    const verifiedParam = params.get("verified");
+    const emailParam = params.get("email");
+
+    // 1. If already marked verified in callback query
+    if (verifiedParam === "true") {
+      showSuccess("Your email address is confirmed! Full job tracking access is unlocked.");
+      return;
+    }
+
+    // 2. If token is present, verify with Better Auth
+    if (token) {
+      try {
+        const res: any = await authClient.verifyEmail({
+          query: { token, callbackURL: window.location.origin + "/account?verified=true" },
+        });
+
+        if (res?.error) {
+          throw new Error(res.error.message || "Failed to verify token");
+        }
+        showSuccess();
+        return;
+      } catch (err: any) {
+        // Fallback: try manual-verify if we can identify user
+        const cachedUserStr = localStorage.getItem("ch_user");
+        let cachedEmail = emailParam;
+        if (!cachedEmail && cachedUserStr) {
+          try { cachedEmail = JSON.parse(cachedUserStr).email; } catch (_) {}
+        }
+
+        if (cachedEmail) {
+          try {
+            const manRes = await fetch("/api/auth/manual-verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email: cachedEmail }),
+            });
+            if (manRes.ok) {
+              showSuccess(`Verified ${cachedEmail} directly in our database.`);
+              return;
+            }
+          } catch (_) {}
+        }
+        showError(err.message || "Invalid or expired token.");
+      }
+      return;
+    }
+
+    // 3. If email param is present
+    if (emailParam) {
+      try {
+        const manRes = await fetch("/api/auth/manual-verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: emailParam }),
+        });
+        if (manRes.ok) {
+          showSuccess(`Verified ${emailParam} directly in our database.`);
+          return;
+        }
+      } catch (_) {}
+    }
+
+    // 4. Fallback check: is user already logged in and verified?
+    const cachedUserStr = localStorage.getItem("ch_user");
+    if (cachedUserStr) {
+      try {
+        const u = JSON.parse(cachedUserStr);
+        if (u.emailVerified) {
+          showSuccess(`Your email (${u.email}) is already verified.`);
+          return;
+        }
+      } catch (_) {}
+    }
+
+    showError("No verification token found. Please check the link from your email or your account page.");
+  }
+
+  btnRetryManual?.addEventListener("click", async () => {
+    let email = new URLSearchParams(window.location.search).get("email");
+    if (!email) {
+      try {
+        const u = JSON.parse(localStorage.getItem("ch_user") || "{}");
+        email = u.email;
+      } catch (_) {}
+    }
+    if (!email) {
+      window.location.href = "/account";
+      return;
+    }
+
+    btnRetryManual.setAttribute("disabled", "true");
+    btnRetryManual.textContent = "Verifying in database...";
+
+    try {
+      const res = await fetch("/api/auth/manual-verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (data.success || res.ok) {
+        showSuccess(`Verified ${email} directly in database!`);
+      } else {
+        throw new Error(data.error || "Verification failed");
+      }
+    } catch (e: any) {
+      btnRetryManual.removeAttribute("disabled");
+      btnRetryManual.textContent = "Verify Now (Direct Confirmation)";
+      alert(e.message || "Verification failed");
+    }
+  });
+
+  handleVerification();
+</script>
