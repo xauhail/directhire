@@ -60,6 +60,9 @@ export async function onRequest(context: any) {
     const hasSessionCookie = cookieHeader.includes('better-auth.session_token') || cookieHeader.includes('ch_token');
     const isGuest = !isSubscribed && !isAuthHeader && !hasAuthToken && !hasSessionCookie;
 
+    // Both guests and users on the free plan are subject to preview limits
+    const isFreeOrGuest = !isSubscribed;
+
     let body: any = {};
     if (request.method === 'POST') {
       try {
@@ -76,10 +79,38 @@ export async function onRequest(context: any) {
       };
     }
 
-    const page = body.page || 1;
-    const pageSize = body.pageSize || 10;
+    const page = Math.max(1, body.page || 1);
+    const requestedPageSize = body.pageSize || 10;
     const query = (body.title || body.query || '').trim();
     const filters = body.filters || {};
+
+    const isCompanyQuery = Boolean(filters.companySlug || (filters.company && !query));
+    // Limit rule: Main feed is max 10 jobs; company "More" drawer is max 5 jobs
+    const previewLimit = isCompanyDrawerLimit(isCompanyQuery);
+
+    function isCompanyDrawerLimit(isComp: boolean): number {
+      return isComp ? 5 : 10;
+    }
+
+    // Free plan or guest user pagination restriction
+    if (isFreeOrGuest && page > 1) {
+      return new Response(JSON.stringify({
+        totalJobs: 0,
+        totalPages: 1,
+        page: 1,
+        pageSize: previewLimit,
+        hasMore: false,
+        items: [],
+        isGuest,
+        isSubscribed,
+        isPaywalled: true,
+        message: isCompanyQuery
+          ? 'Free plan and guests can view up to 5 jobs per company. Upgrade to Pro for complete access.'
+          : 'Free plan and guests can view up to 10 jobs. Upgrade to Pro for unlimited job listings.'
+      }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
     const db = getDb(env);
 
@@ -91,6 +122,17 @@ export async function onRequest(context: any) {
       const values: any[] = [];
       let idx = 1;
 
+      // 1. Company Filter (for Company "More" Drawer)
+      if (filters.companySlug) {
+        conditions.push(`company_slug = $${idx++}`);
+        values.push(filters.companySlug);
+      } else if (filters.company) {
+        conditions.push(`(company_name ILIKE $${idx} OR company_slug ILIKE $${idx})`);
+        values.push(`%${filters.company}%`);
+        idx++;
+      }
+
+      // 2. Full-text / Trigram Search
       if (query) {
         conditions.push(`(
           title ILIKE $${idx} OR 
@@ -103,6 +145,7 @@ export async function onRequest(context: any) {
         idx++;
       }
 
+      // 3. Remote / Workplace Arrangement
       if (filters.isRemoteOnly) {
         conditions.push(`(
           is_worldwide = true OR 
@@ -118,14 +161,18 @@ export async function onRequest(context: any) {
         conditions.push(`(${arrConditions.join(' OR ')})`);
       }
 
-      if (filters.categories && filters.categories.length > 0) {
-        const catConditions = filters.categories.map((c: string) => {
-          values.push(c);
-          return `taxonomy = $${idx++}`;
+      // 4. Categories / Taxonomy
+      const rawCats = filters.categories || filters.taxonomies;
+      if (rawCats && rawCats.length > 0) {
+        const cats = Array.isArray(rawCats) ? rawCats : [rawCats];
+        const catConditions = cats.map((c: string) => {
+          values.push(c.toLowerCase());
+          return `LOWER(taxonomy) = $${idx++}`;
         });
         conditions.push(`(${catConditions.join(' OR ')})`);
       }
 
+      // 5. Countries
       if (filters.countries && filters.countries.length > 0) {
         const countryConditions = filters.countries.map((c: string) => {
           values.push(`%${c}%`);
@@ -134,13 +181,27 @@ export async function onRequest(context: any) {
         conditions.push(`(is_worldwide = true OR ${countryConditions.join(' OR ')})`);
       }
 
+      // 6. Salary Filter
+      if (filters.salaryMinimum && Number(filters.salaryMinimum) > 0) {
+        conditions.push(`(salary_max >= $${idx} OR salary_min >= $${idx})`);
+        values.push(Number(filters.salaryMinimum));
+        idx++;
+      }
+
+      // 7. Date Posted Filter
+      if (filters.daysAgo && !isNaN(Number(filters.daysAgo))) {
+        conditions.push(`published_at >= NOW() - INTERVAL '${Number(filters.daysAgo)} days'`);
+      }
+
       const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
+      // Count Query
       const countSql = `SELECT COUNT(*) FROM jobs ${whereClause}`;
       const countRes = await db.query(countSql, values);
       const totalJobs = parseInt(countRes.rows[0].count, 10);
 
       // Pagination
+      const pageSize = isFreeOrGuest ? previewLimit : requestedPageSize;
       const offset = (page - 1) * pageSize;
       const dataSql = `
         SELECT * FROM jobs 
@@ -152,35 +213,24 @@ export async function onRequest(context: any) {
 
       let items = dataRes.rows.map(mapRowToJobItem);
 
-      // Free user lock limit: maximum 5 jobs unlocked if not subscribed
-      const FREE_PREVIEW_LIMIT = 5;
-      let hasMore = totalJobs > (offset + items.length);
-
-      if (isGuest && (offset >= FREE_PREVIEW_LIMIT || items.length > FREE_PREVIEW_LIMIT)) {
-        items = items.map((job, i) => {
-          const absoluteIndex = offset + i;
-          if (absoluteIndex >= FREE_PREVIEW_LIMIT) {
-            return {
-              ...job,
-              isLocked: true,
-              applicationUrl: null,
-              descriptionExcerpt: job.descriptionExcerpt.slice(0, 80) + '... (Sign in or subscribe to unlock)',
-            };
-          }
-          return job;
-        });
-        hasMore = true;
+      // Enforce strict cap: Free plan or guest never sees more than previewLimit (10 for search, 5 for company)
+      if (isFreeOrGuest) {
+        items = items.slice(0, previewLimit);
       }
+
+      const hasMore = isFreeOrGuest ? false : totalJobs > (offset + items.length);
 
       return new Response(JSON.stringify({
         totalJobs,
-        totalPages: Math.ceil(totalJobs / pageSize),
+        totalPages: isFreeOrGuest ? 1 : Math.ceil(totalJobs / pageSize),
         page,
         pageSize,
         hasMore,
         items,
         isGuest,
         isSubscribed,
+        isPaywalled: isFreeOrGuest && totalJobs > previewLimit,
+        previewLimit,
       }), {
         headers: { 'Content-Type': 'application/json' },
       });
@@ -194,7 +244,7 @@ export async function onRequest(context: any) {
       pageSize: 10,
       hasMore: false,
       items: [],
-      warning: 'Neon database not connected yet. Please set DATABASE_URL in Cloudflare Pages environment variables.',
+      warning: 'Database not connected yet.',
     }), {
       headers: { 'Content-Type': 'application/json' },
     });

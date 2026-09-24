@@ -1,4 +1,5 @@
 import { getDb } from '../../_lib/db';
+import { isWebhookEventProcessed, recordWebhookEvent } from '../../_lib/idempotency';
 
 export async function onRequestPost(context: any) {
   const { request, env } = context;
@@ -16,7 +17,29 @@ export async function onRequestPost(context: any) {
     const customerEmail = payload?.data?.customer?.email || payload?.data?.email;
     const subscriptionId = payload?.data?.subscription_id || payload?.data?.id;
 
+    // Determine unique event ID for webhook idempotency
+    const eventId = payload?.webhook_id ||
+      payload?.event_id ||
+      payload?.data?.id ||
+      request.headers.get('webhook-id') ||
+      request.headers.get('x-dodo-webhook-id') ||
+      (customerEmail ? `${customerEmail}_${eventType}_${subscriptionId || 'sub'}` : null);
+
     const db = getDb(env);
+
+    if (db && eventId) {
+      // 1. Check idempotency: if event already processed, acknowledge immediately without duplicate writes
+      const alreadyProcessed = await isWebhookEventProcessed(db, eventId);
+      if (alreadyProcessed) {
+        return new Response(JSON.stringify({ 
+          received: true, 
+          deduplicated: true, 
+          message: 'Webhook event already processed previously.' 
+        }), {
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+    }
 
     if (db && customerEmail) {
       if (eventType === 'payment.succeeded' || eventType === 'subscription.active' || eventType === 'subscription.renewed') {
@@ -43,6 +66,11 @@ export async function onRequestPost(context: any) {
             "updatedAt" = NOW()
           WHERE LOWER(email) = LOWER($1)
         `, [customerEmail]);
+      }
+
+      // 2. Record this event as processed in idempotency table
+      if (eventId) {
+        await recordWebhookEvent(db, eventId, eventType, payload);
       }
     }
 

@@ -401,17 +401,21 @@ export class JobService {
           if (count > 1) moreJobsCountByCompany[slug] = count - 1;
         }
 
-        const returnedItems = isGuest
-          ? (page === 1 ? items.slice(0, 5) : [])
+        const isFreeOrGuest = !isSubscribed;
+        const isCompanyQuery = Boolean(filters?.companySlug || (filters?.company && !query));
+        const previewLimit = isCompanyQuery ? 5 : 10;
+
+        const returnedItems = isFreeOrGuest
+          ? (page === 1 ? items.slice(0, previewLimit) : [])
           : items;
 
         return {
           items: returnedItems,
           page,
-          pageSize: isGuest ? 5 : pageSize,
+          pageSize: isFreeOrGuest ? previewLimit : pageSize,
           totalJobs,
-          hasMore: isGuest ? false : (offset + items.length < totalJobs),
-          isPaywalled: isGuest && totalJobs > 5,
+          hasMore: isFreeOrGuest ? false : (offset + items.length < totalJobs),
+          isPaywalled: isFreeOrGuest && totalJobs > previewLimit,
           moreJobsCountByCompany,
         };
       } catch (err) {
