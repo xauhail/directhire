@@ -395,8 +395,12 @@ import Layout from "../../layouts/Layout.astro";
       resultsCard.classList.add("hidden");
 
       try {
+        const endpoint = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
+          ? 'http://localhost:4000/api/tools/ghost-detector'
+          : '/api/tools/ghost-detector';
+
         const response = await fetch(
-          "http://localhost:4000/api/tools/ghost-detector",
+          endpoint,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

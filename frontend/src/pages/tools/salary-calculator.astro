@@ -192,7 +192,10 @@ import Layout from '../../layouts/Layout.astro';
     const country = countrySelect?.value || 'United States';
 
     try {
-      const res = await fetch(`http://localhost:4000/api/tools/salary-benchmark?role=${encodeURIComponent(role)}&experienceYears=${exp}&country=${encodeURIComponent(country)}`);
+      const baseUrl = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
+        ? 'http://localhost:4000'
+        : '';
+      const res = await fetch(`${baseUrl}/api/tools/salary-benchmark?role=${encodeURIComponent(role)}&experienceYears=${exp}&country=${encodeURIComponent(country)}`);
       const data = await res.json();
 
       if (data.percentiles) {

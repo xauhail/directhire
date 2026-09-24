@@ -247,7 +247,11 @@ import Layout from '../../layouts/Layout.astro';
       resultsCard.classList.add('hidden');
 
       try {
-        const response = await fetch('http://localhost:4000/api/tools/generate-outreach', {
+        const endpoint = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
+          ? 'http://localhost:4000/api/tools/generate-outreach'
+          : '/api/tools/generate-outreach';
+
+        const response = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ role, company, recruiterName, tone, pitch }),

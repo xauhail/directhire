@@ -96,7 +96,11 @@ const {
             }
           } catch (_) {}
 
-          const res = await fetch('http://localhost:4000/api/checkout', {
+          const checkoutEndpoint = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
+            ? 'http://localhost:4000/api/checkout'
+            : '/api/checkout';
+
+          const res = await fetch(checkoutEndpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ planTier, email }),
