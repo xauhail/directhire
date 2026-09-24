@@ -3,22 +3,32 @@ import { getDb } from './db';
 
 let cachedAuth: any = null;
 let cachedUri: string | null = null;
+let cachedBaseURL: string | null = null;
 
 export function getAuth(env: any, requestOrigin?: string) {
   const uri = env?.DATABASE_URL;
-  if (cachedAuth && cachedUri === uri) {
+  const baseURL = requestOrigin || env?.BETTER_AUTH_URL || 'https://careerhound-7sx.pages.dev';
+
+  if (cachedAuth && cachedUri === uri && cachedBaseURL === baseURL) {
     return cachedAuth;
   }
 
   const pool = getDb(env);
-  const baseURL = env?.BETTER_AUTH_URL || requestOrigin || 'http://localhost:4321';
   const secret = env?.BETTER_AUTH_SECRET || 'e89fc5c72199f34586da234a946890fa24177b96b0eeefda96ef2cf3f225e364';
 
   cachedUri = uri;
+  cachedBaseURL = baseURL;
   cachedAuth = betterAuth({
     ...(pool ? { database: pool } : {}),
     secret,
     baseURL,
+    trustedOrigins: [
+      'https://careerhound-7sx.pages.dev',
+      'https://careerhound.pages.dev',
+      ...(requestOrigin ? [requestOrigin] : []),
+      'http://localhost:4321',
+      'http://localhost:4000',
+    ],
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: false,

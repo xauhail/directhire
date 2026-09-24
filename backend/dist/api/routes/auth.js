@@ -3,14 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authRoutes = void 0;
 const auth_js_1 = require("../../auth.js");
 const authRoutes = async (server) => {
-    // ─── Login Fallback / Demo Account Handler ──────────────────────────────
+    // ─── Direct Login Handler (Better Auth backed) ─────────────────────────
     server.post('/api/auth/login', async (req, reply) => {
         const { email, password } = req.body || {};
         if (!email || !password) {
             return reply.status(400).send({ error: 'Email and password are required' });
         }
         const cleanEmail = email.trim().toLowerCase();
-        // 1. Try Better Auth first
         try {
             const signInRes = await auth_js_1.auth.api.signInEmail({
                 body: { email: cleanEmail, password },
@@ -33,43 +32,9 @@ const authRoutes = async (server) => {
                 });
             }
         }
-        catch (_) {
-            // Fall through to database check
-        }
-        // 2. Direct PostgreSQL demo credentials check
-        if (auth_js_1.db) {
-            try {
-                const userRes = await auth_js_1.db.query('SELECT id, name, email, plan, "isSubscribed", "onboardingCompleted" FROM "user" WHERE LOWER(email) = $1', [cleanEmail]);
-                if (userRes.rows.length > 0) {
-                    const dbUser = userRes.rows[0];
-                    // Check demo passwords
-                    const isDemoMatch = (cleanEmail === 'test@careerhound.io' && password === 'Career2024!') ||
-                        (cleanEmail === 'demo@careerhound.io' && password === 'Demo1234!') ||
-                        (password === 'Career2024!' || password === 'Demo1234!');
-                    if (isDemoMatch) {
-                        // Check if onboarding profile exists
-                        const onbRes = await auth_js_1.db.query('SELECT id FROM onboarding_profiles WHERE user_id = $1 OR LOWER(email) = $2', [dbUser.id, cleanEmail]);
-                        const hasOnboarded = dbUser.onboardingCompleted || onbRes.rows.length > 0;
-                        const sessionToken = `ch_sess_${dbUser.id}_${Date.now()}`;
-                        return reply.send({
-                            success: true,
-                            token: sessionToken,
-                            user: {
-                                id: dbUser.id,
-                                name: dbUser.name,
-                                email: dbUser.email,
-                                plan: dbUser.plan || 'free',
-                                isSubscribed: !!dbUser.isSubscribed,
-                                onboardingCompleted: hasOnboarded,
-                            },
-                            redirectTo: hasOnboarded ? '/job-search/all' : '/onboarding',
-                        });
-                    }
-                }
-            }
-            catch (err) {
-                server.log.error(err, '[Auth] DB login error');
-            }
+        catch (err) {
+            server.log.warn({ err: err.message }, '[Auth] Sign in failed');
+            return reply.status(401).send({ error: 'Invalid email or password' });
         }
         return reply.status(401).send({ error: 'Invalid email or password' });
     });
@@ -138,30 +103,6 @@ const authRoutes = async (server) => {
             return reply.status(400).send({ error: err.message || 'Registration failed' });
         }
         return reply.status(500).send({ error: 'Failed to create user' });
-    });
-    // ─── Test credentials info (dev only) ──────────────────────────────────
-    server.get('/api/auth/test-credentials', async (_req, reply) => {
-        return reply.send({
-            message: 'Career Hound Test Credentials (PostgreSQL-backed)',
-            accounts: [
-                {
-                    email: 'test@careerhound.io',
-                    password: 'Career2024!',
-                    plan: 'Pro Monthly (Subscribed)',
-                    isSubscribed: true,
-                    onboardingCompleted: true,
-                    note: 'Fully onboarded, paid Pro user. Accesses all features directly.',
-                },
-                {
-                    email: 'demo@careerhound.io',
-                    password: 'Demo1234!',
-                    plan: 'Free Preview',
-                    isSubscribed: false,
-                    onboardingCompleted: false,
-                    note: 'Free user. Walks through onboarding and 5-job preview limit.',
-                },
-            ],
-        });
     });
 };
 exports.authRoutes = authRoutes;

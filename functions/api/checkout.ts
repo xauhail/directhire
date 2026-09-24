@@ -12,7 +12,6 @@ export async function onRequestPost(context: any) {
     let productId = env.DODO_PRODUCT_WEEKLY || 'pdt_0NoCoSmvftI788ZiRmxcg';
     if (planTier === 'monthly') productId = env.DODO_PRODUCT_MONTHLY || 'pdt_0NoCoSp04hYLAtmjbseJt';
     if (planTier === 'yearly') productId = env.DODO_PRODUCT_YEARLY || 'pdt_0No0Hg5BSrOkY9wb34YxP';
-    if (planTier === 'lifetime') productId = env.DODO_PRODUCT_LIFETIME || 'pdt_0No0FXkAoGrUaCMWsT6Jz';
 
     const origin = new URL(request.url).origin;
     const finalReturnUrl = returnUrl || `${origin}/search?payment_status=success&tier=${planTier}`;

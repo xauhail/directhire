@@ -49,7 +49,7 @@ export const checkoutRoutes: FastifyPluginAsync = async (server: FastifyInstance
     });
   });
   // Create Dodo Payments checkout session
-  server.post<{ Body: { planTier: 'weekly' | 'monthly' | 'yearly' | 'lifetime'; email: string; name?: string; returnUrl?: string } }>(
+  server.post<{ Body: { planTier: 'weekly' | 'monthly' | 'yearly'; email: string; name?: string; returnUrl?: string } }>(
     '/api/checkout',
     async (req, reply) => {
       try {

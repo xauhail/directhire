@@ -15,7 +15,7 @@ if (config.dodoPaymentsApiKey) {
 }
 
 export interface CheckoutSessionOptions {
-  planTier: 'weekly' | 'monthly' | 'yearly' | 'lifetime';
+  planTier: 'weekly' | 'monthly' | 'yearly';
   customerEmail: string;
   customerName?: string;
   returnUrl?: string;
@@ -39,7 +39,6 @@ export class DodoService {
     let productId = config.dodoWeeklyProductId;
     if (planTier === 'monthly') productId = config.dodoMonthlyProductId;
     if (planTier === 'yearly') productId = config.dodoYearlyProductId;
-    if (planTier === 'lifetime') productId = config.dodoLifetimeProductId;
 
     if (dodoClient && config.dodoPaymentsApiKey) {
       try {

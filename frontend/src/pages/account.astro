@@ -713,11 +713,11 @@ import Layout from "../layouts/Layout.astro";
 
     const isSubscribed = user.isSubscribed || user.plan !== "free";
     const planLabel = isSubscribed
-      ? user.plan === "pro_monthly"
-        ? "Pro Monthly"
-        : user.plan === "yearly" || user.plan === "lifetime"
+      ? user.plan === "weekly"
+        ? "Weekly Pass"
+        : user.plan === "yearly"
           ? "1-Year Pass"
-          : "Pro"
+          : "Pro Monthly"
       : "Free Plan";
 
     if (userPlanBadge) {

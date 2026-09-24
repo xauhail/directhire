@@ -36,7 +36,9 @@ const hasPlaceholderPassword = config.databaseUrl?.includes(':password@');
 if (config.databaseUrl && !hasPlaceholderPassword) {
   pool = new Pool({
     connectionString: config.databaseUrl,
-    ssl: config.environment === 'production' ? { rejectUnauthorized: false } : false,
+    ssl: (config.databaseUrl?.includes('neon.tech') || config.databaseUrl?.includes('sslmode=require') || config.environment === 'production')
+      ? { rejectUnauthorized: false }
+      : false,
     max: 10,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 5000,
@@ -111,6 +113,8 @@ export const auth = betterAuth({
   // ── Trusted Origins (CORS for auth cookies) ───────────────────────────────
   trustedOrigins: [
     config.frontendUrl,
+    'https://careerhound-7sx.pages.dev',
+    'https://careerhound.pages.dev',
     'http://localhost:4321',
     'http://localhost:4000',
   ],

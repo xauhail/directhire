@@ -12,7 +12,7 @@
     "db:seed": "npm --prefix backend run db:seed",
     "db:setup-neon": "npm --prefix backend run db:setup-neon",
     "db:ingest": "npm --prefix backend run db:ingest",
-    "deploy:pages": "npm --prefix frontend run build && npx wrangler pages deploy frontend/dist"
+    "deploy:pages": "npm --prefix frontend run build && npx wrangler pages deploy frontend/dist --cwd frontend --project-name careerhound --branch main --commit-dirty=true"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

@@ -144,16 +144,6 @@ import Layout from '../layouts/Layout.astro';
         </p>
       </form>
 
-      <!-- Demo credentials (dev helper) -->
-      <details class="text-[11px] text-slate-400 cursor-pointer select-none border-t border-slate-100 pt-3">
-        <summary class="hover:text-slate-600 transition-colors text-center">Testing? View demo credentials</summary>
-        <div class="mt-2 p-3 bg-slate-50 rounded-lg text-left space-y-1.5 font-mono">
-          <div><span class="text-slate-600 font-semibold">Pro user:</span> test@careerhound.io / Career2024!</div>
-          <div><span class="text-slate-600 font-semibold">Free user:</span> demo@careerhound.io / Demo1234!</div>
-          <p class="text-[10px] text-slate-400 mt-2 font-sans">These use the legacy in-memory fallback. Set DATABASE_URL in backend/.env to use Better Auth with PostgreSQL.</p>
-        </div>
-      </details>
-
       <p class="text-center text-[11px] text-slate-400">
         Subscriptions securely processed by Dodo Payments.
       </p>
@@ -259,26 +249,7 @@ import Layout from '../layouts/Layout.astro';
       const { data, error } = await authClient.signIn.email({ email, password });
 
       if (error) {
-        // Fallback to legacy in-memory auth for demo accounts
-        const res = await fetch('http://localhost:4000/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
-        });
-        const legacyData = await res.json();
-        if (!res.ok) throw new Error(legacyData.error || error.message || 'Invalid credentials');
-
-        // Legacy path — store in localStorage
-        localStorage.setItem('ch_token', legacyData.token);
-        localStorage.setItem('ch_user', JSON.stringify(legacyData.user));
-        localStorage.setItem('ch_authenticated', '1');
-
-        const nextUrl = new URLSearchParams(window.location.search).get('next');
-        const isSubscribed = legacyData.user?.isSubscribed || legacyData.user?.plan !== 'free';
-        const hasOnboarded = legacyData.user?.onboardingCompleted || localStorage.getItem('ch_onboarding_completed') === 'true';
-        const redirectTo = nextUrl || (isSubscribed ? '/job-search/all' : (hasOnboarded ? '/account' : '/onboarding'));
-        window.location.href = redirectTo;
-        return;
+        throw new Error(error.message || 'Invalid email or password.');
       }
 
       // Better Auth path — session cookie set automatically

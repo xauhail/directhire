@@ -37,7 +37,9 @@ const hasPlaceholderPassword = env_js_1.config.databaseUrl?.includes(':password@
 if (env_js_1.config.databaseUrl && !hasPlaceholderPassword) {
     exports.db = pool = new pg_1.Pool({
         connectionString: env_js_1.config.databaseUrl,
-        ssl: env_js_1.config.environment === 'production' ? { rejectUnauthorized: false } : false,
+        ssl: (env_js_1.config.databaseUrl?.includes('neon.tech') || env_js_1.config.databaseUrl?.includes('sslmode=require') || env_js_1.config.environment === 'production')
+            ? { rejectUnauthorized: false }
+            : false,
         max: 10,
         idleTimeoutMillis: 30000,
         connectionTimeoutMillis: 5000,
@@ -104,6 +106,8 @@ exports.auth = (0, better_auth_1.betterAuth)({
     // ── Trusted Origins (CORS for auth cookies) ───────────────────────────────
     trustedOrigins: [
         env_js_1.config.frontendUrl,
+        'https://careerhound-7sx.pages.dev',
+        'https://careerhound.pages.dev',
         'http://localhost:4321',
         'http://localhost:4000',
     ],

@@ -25,7 +25,7 @@
 Your Neon Serverless PostgreSQL database has already been connected and fully initialized!
 - **Database URL**: `postgresql://neondb_owner:npg_dk4c2HBROTgE@ep-jolly-union-b48km1q7-pooler.c-6.us-east-2.aws.neon.tech/neondb?sslmode=require`
 - **Tables Created**: `jobs`, `onboarding_profiles`, `user`, `session`, `account`, `verification`, `jwks`, `oauthClient`, etc.
-- **Data Seeded**: 50+ verified direct ATS jobs, demo accounts (`test@careerhound.io` & `demo@careerhound.io`), and onboarding preferences.
+- **Data Seeded**: 180+ verified direct ATS jobs from Greenhouse and Ashby, ready for live candidate registrations.
 
 ---
 
@@ -48,13 +48,12 @@ Your Neon Serverless PostgreSQL database has already been connected and fully in
 | :--- | :--- | :--- |
 | `DATABASE_URL` | `postgresql://neondb_owner:npg_dk4c2HBROTgE@ep-jolly-union-b48km1q7-pooler.c-6.us-east-2.aws.neon.tech/neondb?sslmode=require` | Your active Neon database |
 | `BETTER_AUTH_SECRET` | `e89fc5c72199f34586da234a946890fa24177b96b0eeefda96ef2cf3f225e364` | Session signing key |
-| `BETTER_AUTH_URL` | `https://careerhound.pages.dev` | Replace with your custom domain if added |
+| `BETTER_AUTH_URL` | `https://careerhound-7sx.pages.dev` | Replace with your custom domain if added |
 | `DODO_PAYMENTS_API_KEY` | `foZur3iZfSq5RRFD.Pd4SJ2ti63yvIAmE424UP9W_5sn4QIwDs9-EYoti0AYEMsPo` | Live API key |
 | `DODO_PAYMENTS_MODE` | `live_mode` | Live checkout |
 | `DODO_PRODUCT_WEEKLY` | `pdt_0NoCoSmvftI788ZiRmxcg` | Weekly Pass ($9.99/wk) |
 | `DODO_PRODUCT_MONTHLY` | `pdt_0NoCoSp04hYLAtmjbseJt` | Monthly Pro ($29/mo) |
 | `DODO_PRODUCT_YEARLY` | `pdt_0No0Hg5BSrOkY9wb34YxP` | 1-Year Pass ($99/yr) |
-| `DODO_PRODUCT_LIFETIME` | `pdt_0No0FXkAoGrUaCMWsT6Jz` | Lifetime Pass ($149) |
 
 7. Click **Save and Deploy**.
 

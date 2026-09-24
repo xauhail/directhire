@@ -31,8 +31,6 @@ class DodoService {
             productId = env_js_1.config.dodoMonthlyProductId;
         if (planTier === 'yearly')
             productId = env_js_1.config.dodoYearlyProductId;
-        if (planTier === 'lifetime')
-            productId = env_js_1.config.dodoLifetimeProductId;
         if (dodoClient && env_js_1.config.dodoPaymentsApiKey) {
             try {
                 const payload = {

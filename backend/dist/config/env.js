@@ -15,10 +15,9 @@ exports.config = {
     dodoPaymentsWebhookKey: process.env.DODO_PAYMENTS_WEBHOOK_KEY || '',
     dodoPaymentsMode: (process.env.DODO_PAYMENTS_MODE || 'test_mode'),
     // Plans / Product IDs
-    dodoWeeklyProductId: process.env.DODO_PRODUCT_WEEKLY || 'pdt_0No0FXmULGw2BF8fiwET3',
-    dodoMonthlyProductId: process.env.DODO_PRODUCT_MONTHLY || 'pdt_0No0FV3a1U5Rkaz1CI1EI',
-    dodoYearlyProductId: process.env.DODO_PRODUCT_YEARLY || process.env.DODO_PRODUCT_LIFETIME || 'pdt_0No0Hg5BSrOkY9wb34YxP',
-    dodoLifetimeProductId: process.env.DODO_PRODUCT_LIFETIME || 'pdt_0No0FXkAoGrUaCMWsT6Jz',
+    dodoWeeklyProductId: process.env.DODO_PRODUCT_WEEKLY || 'pdt_0NoCoSmvftI788ZiRmxcg',
+    dodoMonthlyProductId: process.env.DODO_PRODUCT_MONTHLY || 'pdt_0NoCoSp04hYLAtmjbseJt',
+    dodoYearlyProductId: process.env.DODO_PRODUCT_YEARLY || 'pdt_0No0Hg5BSrOkY9wb34YxP',
     // App URLs
     frontendUrl: process.env.FRONTEND_URL || 'http://localhost:4321',
     // Redis for BullMQ

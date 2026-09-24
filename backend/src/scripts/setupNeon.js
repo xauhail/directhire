@@ -209,19 +209,8 @@ async function main() {
     const countRes = await pool.query('SELECT COUNT(*) FROM jobs');
     console.log(`✅ Successfully seeded ${countRes.rows[0].count} verified jobs!`);
 
-    // 5. Seed Demo Accounts
-    console.log('\n👤 Seeding demo users in Neon...');
-    await pool.query(`
-      INSERT INTO "user" ("id", "name", "email", "emailVerified", "plan", "isSubscribed", "onboardingCompleted", "subscriptionId")
-      VALUES 
-        ('usr_test_pro', 'Alex Johnson', 'test@careerhound.io', true, 'pro_monthly', true, true, 'sub_active_pro_monthly'),
-        ('usr_demo_free', 'Jordan Smith', 'demo@careerhound.io', true, 'free', false, false, NULL)
-      ON CONFLICT ("email") DO UPDATE SET
-        "plan" = EXCLUDED."plan",
-        "isSubscribed" = EXCLUDED."isSubscribed",
-        "onboardingCompleted" = EXCLUDED."onboardingCompleted";
-    `);
-    console.log('✅ Demo accounts seeded (test@careerhound.io & demo@careerhound.io).');
+    // 5. Schema and verified jobs ready for production
+    console.log('✅ Database schema verified. Production accounts ready for live user registration.');
 
     console.log('\n🎉 ALL DONE! Your Neon database is completely set up and ready for Cloudflare deployment!\n');
   } catch (err) {
