@@ -687,7 +687,10 @@ const ALL_SEED_JOBS = [...FINANCE_JOBS, ...CROSS_CATEGORY_JOBS];
 
 async function seed() {
   const uri = process.env.DATABASE_URL || 'postgresql://postgres:50h41L%40$$@localhost:5432/careerhound';
-  const client = new Client({ connectionString: uri });
+  const client = new Client({ 
+    connectionString: uri,
+    ssl: uri.includes('neon.tech') || uri.includes('sslmode=require') ? { rejectUnauthorized: false } : false
+  });
 
   try {
     await client.connect();
@@ -754,4 +757,8 @@ async function seed() {
   }
 }
 
-seed();
+module.exports = { ALL_SEED_JOBS, seed };
+
+if (require.main === module) {
+  seed();
+}

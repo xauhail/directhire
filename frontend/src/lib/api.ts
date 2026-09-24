@@ -1,6 +1,6 @@
-const BACKEND_URL = typeof window !== 'undefined' && window.location.hostname === 'localhost'
-  ? 'http://localhost:4000'
-  : 'http://localhost:4000';
+const BACKEND_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? ((import.meta as any).env?.PUBLIC_API_URL || 'http://localhost:4000')
+  : ((import.meta as any).env?.PUBLIC_API_URL || '');
 
 export async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${BACKEND_URL}${endpoint}`;

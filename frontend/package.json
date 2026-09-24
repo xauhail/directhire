@@ -12,6 +12,7 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",
     "@astrojs/tailwind": "^5.1.5",
+    "@neondatabase/serverless": "^1.1.0",
     "astro": "^5.1.6",
     "better-auth": "^1.7.5",
     "lucide-astro": "^0.471.0",

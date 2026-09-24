@@ -2,7 +2,11 @@ import { config } from '../../dist/config/env.js';
 import pg from 'pg';
 
 async function migrateOnboarding() {
-  const pool = new pg.Pool({ connectionString: config.databaseUrl });
+  const uri = config.databaseUrl || process.env.DATABASE_URL;
+  const pool = new pg.Pool({ 
+    connectionString: uri,
+    ssl: (uri && (uri.includes('neon.tech') || uri.includes('sslmode=require'))) ? { rejectUnauthorized: false } : false
+  });
   try {
     console.log('[Migration] Connecting to PostgreSQL at:', config.databaseUrl.replace(/:[^:@]+@/, ':***@'));
     

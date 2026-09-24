@@ -9,7 +9,9 @@
     "dev:frontend": "npm --prefix frontend run dev",
     "build": "npm --prefix backend run build && npm --prefix frontend run build",
     "db:migrate": "npm --prefix backend run db:migrate",
-    "db:seed": "npm --prefix backend run db:seed"
+    "db:seed": "npm --prefix backend run db:seed",
+    "db:setup-neon": "npm --prefix backend run db:setup-neon",
+    "deploy:pages": "npm --prefix frontend run build && npx wrangler pages deploy frontend/dist"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

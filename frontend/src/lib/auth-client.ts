@@ -34,8 +34,10 @@
 import { createAuthClient } from 'better-auth/client';
 
 export const authClient = createAuthClient({
-  // The Better Auth backend URL
-  baseURL: 'http://localhost:4000',
+  // Uses http://localhost:4000 in local dev, and current origin on Cloudflare Pages
+  baseURL: typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? ((import.meta as any).env?.PUBLIC_API_URL || 'http://localhost:4000')
+    : ((import.meta as any).env?.PUBLIC_API_URL || undefined),
 });
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

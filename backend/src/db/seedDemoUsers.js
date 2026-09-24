@@ -3,7 +3,11 @@ import { auth } from '../../dist/auth.js';
 import pg from 'pg';
 
 async function seedDemoUsers() {
-  const pool = new pg.Pool({ connectionString: config.databaseUrl });
+  const uri = config.databaseUrl || process.env.DATABASE_URL;
+  const pool = new pg.Pool({ 
+    connectionString: uri,
+    ssl: (uri && (uri.includes('neon.tech') || uri.includes('sslmode=require'))) ? { rejectUnauthorized: false } : false
+  });
 
   try {
     console.log('[Seed] Connecting to PostgreSQL to sync demo accounts...');

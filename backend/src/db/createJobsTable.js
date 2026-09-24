@@ -1,8 +1,12 @@
+require('dotenv').config({ path: '.env' });
 const { Client } = require('pg');
 
 async function createJobsTable() {
-  const uri = 'postgresql://postgres:50h41L%40$$@localhost:5432/careerhound';
-  const client = new Client({ connectionString: uri });
+  const uri = process.env.DATABASE_URL || 'postgresql://postgres:50h41L%40$$@localhost:5432/careerhound';
+  const client = new Client({ 
+    connectionString: uri,
+    ssl: uri.includes('neon.tech') || uri.includes('sslmode=require') ? { rejectUnauthorized: false } : false
+  });
 
   try {
     await client.connect();
