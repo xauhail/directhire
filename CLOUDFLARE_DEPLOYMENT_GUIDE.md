@@ -16,19 +16,12 @@ This guide walks you through deploying the complete **Career Hound** platform (A
 
 ---
 
-## ⚡ Step 1: Create Free Database on Neon.tech (Takes 60 seconds)
+## ✅ Step 1: Database Setup on Neon (COMPLETED!)
 
-1. Open **[console.neon.tech](https://console.neon.tech)** and sign in with GitHub or Google (free).
-2. Click **Create Project**, name it `careerhound`, and select the region closest to your target audience (e.g., `US East - Ohio` or `Frankfurt`).
-3. Under **Connection Details**, copy your connection string:
-   ```text
-   postgresql://alex:AbCdEf1234@ep-cool-butterfly-123456.us-east-2.aws.neon.tech/neondb?sslmode=require
-   ```
-4. Run the 1-click database setup script from your terminal:
-   ```bash
-   node backend/src/scripts/setupNeon.js "PASTE_YOUR_NEON_CONNECTION_STRING_HERE"
-   ```
-   *This automatically creates all Better Auth tables, sets up the `jobs` catalog, indexes, and seeds 50+ verified direct ATS jobs and demo accounts.*
+Your Neon Serverless PostgreSQL database has already been connected and fully initialized!
+- **Database URL**: `postgresql://neondb_owner:npg_dk4c2HBROTgE@ep-jolly-union-b48km1q7-pooler.c-6.us-east-2.aws.neon.tech/neondb?sslmode=require`
+- **Tables Created**: `jobs`, `onboarding_profiles`, `user`, `session`, `account`, `verification`, `jwks`, `oauthClient`, etc.
+- **Data Seeded**: 50+ verified direct ATS jobs, demo accounts (`test@careerhound.io` & `demo@careerhound.io`), and onboarding preferences.
 
 ---
 
@@ -49,7 +42,7 @@ This guide walks you through deploying the complete **Career Hound** platform (A
 
 | Variable Name | Value | Note |
 | :--- | :--- | :--- |
-| `DATABASE_URL` | *Your Neon PostgreSQL connection string* | Must include `?sslmode=require` |
+| `DATABASE_URL` | `postgresql://neondb_owner:npg_dk4c2HBROTgE@ep-jolly-union-b48km1q7-pooler.c-6.us-east-2.aws.neon.tech/neondb?sslmode=require` | Your active Neon database |
 | `BETTER_AUTH_SECRET` | `e89fc5c72199f34586da234a946890fa24177b96b0eeefda96ef2cf3f225e364` | Session signing key |
 | `BETTER_AUTH_URL` | `https://careerhound.pages.dev` | Replace with your custom domain if added |
 | `DODO_PAYMENTS_API_KEY` | `foZur3iZfSq5RRFD.Pd4SJ2ti63yvIAmE424UP9W_5sn4QIwDs9-EYoti0AYEMsPo` | Live API key |
