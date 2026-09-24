@@ -50,7 +50,7 @@ const {
     <!-- Global Footer -->
     <Footer />
 
-    <!-- Direct Dodo Payments Checkout Redirection (No Popup Modal) -->
+    <!-- Direct Secure Checkout Redirection (No Popup Modal) -->
     <script>
       function resetCheckoutButtons() {
         document.querySelectorAll('[data-trigger-checkout]').forEach(el => {
@@ -63,7 +63,7 @@ const {
         });
       }
 
-      // Restore button state whenever the user navigates back from Dodo Checkout
+      // Restore button state whenever the user navigates back from checkout
       window.addEventListener('pageshow', () => resetCheckoutButtons());
       window.addEventListener('focus', () => resetCheckoutButtons());
       document.addEventListener('visibilitychange', () => {
@@ -83,7 +83,7 @@ const {
         const originalContent = activeBtn ? (activeBtn.getAttribute('data-original-html') || activeBtn.innerHTML) : '';
         if (activeBtn) {
           activeBtn.setAttribute('disabled', 'true');
-          activeBtn.innerHTML = '<span class="inline-flex items-center justify-center gap-2"><svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg><span>Loading Dodo Checkout...</span></span>';
+          activeBtn.innerHTML = '<span class="inline-flex items-center justify-center gap-2"><svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg><span>Loading Secure Checkout...</span></span>';
         }
 
         try {
@@ -112,11 +112,11 @@ const {
             setTimeout(() => resetCheckoutButtons(), 1500);
             window.location.href = data.checkoutUrl;
           } else {
-            throw new Error(data?.error || 'Failed to initialize Dodo Payments session.');
+            throw new Error(data?.error || 'Failed to initialize secure checkout session.');
           }
         } catch (err: any) {
           resetCheckoutButtons();
-          alert(err.message || 'Unable to open Dodo Payments checkout.');
+          alert(err.message || 'Unable to open secure checkout.');
         }
       };
 

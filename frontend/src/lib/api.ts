@@ -89,7 +89,7 @@ export async function getSalaryBenchmark(role: string, experienceYears: number, 
   return fetchApi<any>(`/api/tools/salary-benchmark?role=${encodeURIComponent(role)}&experienceYears=${experienceYears}&country=${encodeURIComponent(country)}`);
 }
 
-// Dodo Payments Checkout
+// Secure Checkout
 export async function createCheckoutSession(planTier: string, email: string, name?: string) {
   return fetchApi<any>('/api/checkout', {
     method: 'POST',

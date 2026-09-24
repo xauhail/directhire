@@ -5,7 +5,7 @@ const contactSchema = {
   "@context": "https://schema.org",
   "@type": "ContactPage",
   "name": "Contact Us | Career Hound",
-  "description": "Get in touch with Career Hound support for inquiries on direct-to-company job feeds, Dodo Payments billing, or saved jobs.",
+  "description": "Get in touch with Career Hound support for inquiries on direct-to-company job feeds, subscription billing, or saved jobs.",
   "mainEntity": {
     "@type": "Organization",
     "name": "Career Hound",
@@ -17,7 +17,7 @@ const contactSchema = {
 
 <Layout
   title="Contact Us | Career Hound"
-  description="Need help with your Career Hound account, Dodo Payments subscription, or saved jobs? Our team replies in under 2 hours."
+  description="Need help with your Career Hound account, billing & subscription, or saved jobs? Our team replies in under 2 hours."
   jsonLd={contactSchema}
 >
   <!-- Hero Section -->
@@ -31,7 +31,7 @@ const contactSchema = {
         How can we <span class="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 bg-clip-text text-transparent">help you today?</span>
       </h1>
       <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
-        Have questions about your direct job search, saved job alerts, or Dodo Payments billing? Send us a message or reach out directly.
+        Have questions about your direct job search, saved job alerts, or subscription billing? Send us a message or reach out directly.
       </p>
     </div>
   </section>
@@ -77,9 +77,9 @@ const contactSchema = {
               </svg>
             </div>
             <div>
-              <h3 class="font-bold text-slate-900 text-base">Billing & Merchant of Record</h3>
+              <h3 class="font-bold text-slate-900 text-base">Billing & Payments Support</h3>
               <p class="text-xs text-slate-500 mt-0.5">
-                Payments and subscriptions are securely processed by <strong>Dodo Payments</strong>.
+                Payments and subscriptions are securely processed with 256-bit SSL encryption.
               </p>
               <a href="mailto:billing@careerhound.io" class="text-sm font-bold text-emerald-600 hover:text-emerald-700 hover:underline mt-2 inline-block">
                 billing@careerhound.io
@@ -164,7 +164,7 @@ const contactSchema = {
                 id="subject"
                 class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="Billing & Subscription (Dodo Payments)">Billing & Subscription (Dodo Payments)</option>
+                <option value="Billing & Subscription">Billing & Subscription</option>
                 <option value="Direct ATS Applications & Tracking">Direct ATS Applications & Tracking</option>
                 <option value="Job Search Filters & Feeds">Job Search Filters & Feeds</option>
                 <option value="Report Inactive / Closed Listing">Report Inactive / Closed Listing</option>
