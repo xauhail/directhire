@@ -1,0 +1,29 @@
+name: Daily ATS Job Ingestion
+
+on:
+  schedule:
+    # Runs every day at 06:00 UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI anytime
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Backend Dependencies
+        run: npm --prefix backend install
+
+      - name: Ingest Fresh Direct ATS Jobs into Neon
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npm --prefix backend run db:ingest
