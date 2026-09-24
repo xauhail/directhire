@@ -84,7 +84,10 @@ export async function onRequest(context: any) {
     const db = getDb(env);
 
     if (db) {
-      const conditions: string[] = [];
+      const conditions: string[] = [
+        "application_url IS NOT NULL AND application_url != '' AND application_url != '#' AND application_url LIKE 'http%'",
+        "id NOT LIKE 'ch-%'"
+      ];
       const values: any[] = [];
       let idx = 1;
 

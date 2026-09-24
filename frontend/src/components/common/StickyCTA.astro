@@ -14,16 +14,16 @@ const {
 
 <aside 
   id="sticky-top-cta" 
-  class="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white text-xs sm:text-sm py-2 px-4 shadow-sm relative z-30 transition-all"
+  class="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white text-xs sm:text-sm py-2 px-4 shadow-sm relative z-30 transition-all duration-500 ease-in-out max-h-20 opacity-100 overflow-hidden"
   aria-label="Promotional Announcement"
 >
   <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
     <div class="flex items-center gap-2 flex-1 justify-center sm:justify-start">
-      <span class="flex h-2 w-2 relative">
+      <span class="flex h-2 w-2 relative shrink-0">
         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
         <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
       </span>
-      <span class="font-medium text-blue-50">{text}</span>
+      <span class="font-medium text-blue-50 leading-tight">{text}</span>
     </div>
 
     <div class="flex items-center gap-3 shrink-0">
@@ -37,7 +37,7 @@ const {
       <button 
         type="button" 
         id="dismiss-sticky-cta" 
-        class="text-blue-200 hover:text-white p-0.5 rounded transition-colors"
+        class="text-blue-200 hover:text-white p-1 rounded transition-colors cursor-pointer"
         aria-label="Dismiss banner"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -50,11 +50,64 @@ const {
 </aside>
 
 <script>
-  const banner = document.getElementById('sticky-top-cta');
-  const dismissBtn = document.getElementById('dismiss-sticky-cta');
-  if (banner && dismissBtn) {
-    dismissBtn.addEventListener('click', () => {
+  function initStickyBanner() {
+    const banner = document.getElementById('sticky-top-cta');
+    const dismissBtn = document.getElementById('dismiss-sticky-cta');
+    if (!banner) return;
+
+    // Check if dismissed previously in this session
+    if (sessionStorage.getItem('ch_top_banner_dismissed') === '1') {
       banner.style.display = 'none';
+      return;
+    }
+
+    let isDismissed = false;
+
+    function hideBanner(saveSession = false) {
+      if (isDismissed) return;
+      isDismissed = true;
+      if (saveSession) {
+        sessionStorage.setItem('ch_top_banner_dismissed', '1');
+      }
+
+      // Smooth collapse animation
+      banner.style.maxHeight = '0px';
+      banner.style.paddingTop = '0px';
+      banner.style.paddingBottom = '0px';
+      banner.style.opacity = '0';
+      banner.style.pointerEvents = 'none';
+
+      setTimeout(() => {
+        banner.style.display = 'none';
+      }, 520);
+    }
+
+    // 1. Dismiss button click
+    dismissBtn?.addEventListener('click', () => {
+      hideBanner(true);
     });
+
+    // 2. Hide when user scrolls down
+    let scrollTimeout: any = null;
+    const onScroll = () => {
+      if (window.scrollY > 40) {
+        hideBanner(true);
+        window.removeEventListener('scroll', onScroll);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // 3. Auto-remove after 7 seconds
+    const autoTimer = setTimeout(() => {
+      hideBanner(false);
+      window.removeEventListener('scroll', onScroll);
+    }, 7000);
+  }
+
+  // Run on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initStickyBanner);
+  } else {
+    initStickyBanner();
   }
 </script>

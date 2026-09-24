@@ -227,8 +227,8 @@ function formatTimeAgo(iso: string): string {
     <div class="lg:flex lg:gap-8 items-start">
       
       <!-- ─── LEFT SIDEBAR FILTERS (Desktop) ─── -->
-      <aside class="hidden lg:block w-[300px] shrink-0 sticky top-24 space-y-4">
-        <div class="bg-white rounded-xl shadow-xs border border-slate-200 p-5 space-y-5">
+      <aside id="desktop-filters-sidebar" class="hidden lg:block w-[300px] shrink-0 sticky top-24 space-y-4">
+        <div id="filters-container" class="bg-white rounded-xl shadow-xs border border-slate-200 p-5 space-y-5">
           <div class="flex items-center justify-between pb-3 border-b border-slate-100">
             <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Filters</h2>
             <button
@@ -552,12 +552,12 @@ function formatTimeAgo(iso: string): string {
                 <div class="pt-2 flex items-center justify-between gap-3 border-t border-slate-100">
                   <div class="flex items-center gap-2">
                     <a
-                      href={job.applicationUrl || "#"}
-                      target="_blank"
+                      href={job.applicationUrl && job.applicationUrl.startsWith("http") ? job.applicationUrl : "#"}
+                      target={job.applicationUrl && job.applicationUrl.startsWith("http") ? "_blank" : undefined}
                       rel="noopener noreferrer"
                       class="btn-apply-direct inline-flex items-center justify-center gap-1.5 px-5 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs transition-colors"
                       data-job-id={job.id}
-                      data-url={job.applicationUrl}
+                      data-url={job.applicationUrl || "#"}
                     >
                       <span>Apply Directly</span>
                       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -748,27 +748,27 @@ function formatTimeAgo(iso: string): string {
   </main>
 
   <!-- ─── MOBILE FILTER DRAWER (Off-Canvas Sheet) ─── -->
-  <div id="mobile-filter-drawer" class="hidden fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
-    <div id="mobile-drawer-backdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity"></div>
-    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
-      <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
-        <div class="flex items-center justify-between p-4 border-b border-slate-200">
+  <div id="mobile-filter-drawer" class="hidden fixed inset-0 z-[100] overflow-hidden" role="dialog" aria-modal="true">
+    <div id="mobile-drawer-backdrop" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm transition-opacity"></div>
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10 w-full sm:w-auto">
+      <div class="w-full sm:max-w-md bg-white shadow-2xl flex flex-col h-full relative z-10">
+        <div class="flex items-center justify-between p-4 border-b border-slate-200 bg-white">
           <h3 class="text-base font-bold text-slate-900">Filter Jobs</h3>
-          <button type="button" id="btn-close-mobile-drawer" class="p-2 text-slate-400 hover:text-slate-600">
+          <button type="button" id="btn-close-mobile-drawer" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors" aria-label="Close filters">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
         </div>
-        <div class="p-5 flex-1 overflow-y-auto space-y-6" id="mobile-drawer-content">
-          <!-- Populated from desktop filter logic -->
+        <div class="p-4 sm:p-5 flex-1 overflow-y-auto space-y-6 bg-white" id="mobile-drawer-content">
+          <!-- Populated by moving filtersContainer -->
         </div>
         <div class="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-3">
-          <button type="button" id="btn-mobile-clear-all" class="text-xs font-semibold text-slate-600 hover:text-slate-900">
+          <button type="button" id="btn-mobile-clear-all" class="text-xs font-semibold text-slate-600 hover:text-slate-900 px-3 py-2 rounded-lg hover:bg-slate-200 transition-colors cursor-pointer">
             Clear all
           </button>
-          <button type="button" id="btn-mobile-apply" class="px-6 py-2.5 rounded-lg bg-blue-600 text-white font-bold text-xs shadow-xs hover:bg-blue-700">
+          <button type="button" id="btn-mobile-apply" class="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-colors cursor-pointer">
             Apply Filters
           </button>
         </div>
@@ -1474,9 +1474,8 @@ function formatTimeAgo(iso: string): string {
         <div class="pt-2 flex items-center justify-between gap-3 border-t border-slate-100">
           <div class="flex items-center gap-2">
             <a
-              href="${job.applicationUrl || '#'}"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="${job.applicationUrl && job.applicationUrl.startsWith('http') ? job.applicationUrl : '#'}"
+              ${job.applicationUrl && job.applicationUrl.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''}
               class="btn-apply-direct inline-flex items-center justify-center gap-1.5 px-5 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs transition-colors"
               data-job-id="${job.id}"
               data-url="${job.applicationUrl || '#'}"
@@ -1922,9 +1921,15 @@ function formatTimeAgo(iso: string): string {
         const target = e.currentTarget as HTMLAnchorElement;
         const { isLoggedIn } = getAuthState();
         const appUrl = target.getAttribute("href") || target.dataset.url;
-        if (!isLoggedIn && (!appUrl || appUrl === "#" || appUrl.startsWith("javascript:"))) {
+        if (!isLoggedIn && (!appUrl || appUrl === "#" || !appUrl.startsWith("http"))) {
           e.preventDefault();
           openAuthGateModal("Sign in or create a free account to access direct ATS application links.");
+          return;
+        }
+
+        if (!appUrl || appUrl === "#" || !appUrl.startsWith("http")) {
+          e.preventDefault();
+          showToast("Direct application link is currently undergoing live verification.", false);
           return;
         }
 
@@ -2117,7 +2122,7 @@ function formatTimeAgo(iso: string): string {
               <div class="text-xs text-slate-500">${locStr}</div>
               <div class="pt-2 flex items-center justify-between border-t border-slate-100">
                 <span class="text-xs font-bold text-emerald-600">${j.salary?.max ? `${j.salary.currency || "$"}${j.salary.max.toLocaleString()}` : "Direct ATS"}</span>
-                <a href="${j.applicationUrl || '#'}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-colors">Apply Directly</a>
+                <a href="${j.applicationUrl && j.applicationUrl.startsWith('http') ? j.applicationUrl : '#'}" ${j.applicationUrl && j.applicationUrl.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''} class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-colors">Apply Directly</a>
               </div>
             </div>
           `;
@@ -2339,27 +2344,49 @@ function formatTimeAgo(iso: string): string {
 
   // Mobile Drawer
   const mobileDrawer = document.getElementById("mobile-filter-drawer");
-  document.getElementById("btn-mobile-filters")?.addEventListener("click", () => {
-    const content = document.getElementById("mobile-drawer-content");
-    const sidebar = document.querySelector("aside > div");
-    if (content && sidebar) {
-      content.innerHTML = sidebar.innerHTML;
+  const filtersContainer = document.getElementById("filters-container");
+  const desktopSidebar = document.getElementById("desktop-filters-sidebar");
+  const mobileContent = document.getElementById("mobile-drawer-content");
+
+  function openMobileDrawer() {
+    if (filtersContainer && mobileContent && filtersContainer.parentElement !== mobileContent) {
+      mobileContent.appendChild(filtersContainer);
     }
     mobileDrawer?.classList.remove("hidden");
-  });
-  document.getElementById("btn-close-mobile-drawer")?.addEventListener("click", () => {
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeMobileDrawer() {
     mobileDrawer?.classList.add("hidden");
-  });
-  document.getElementById("mobile-drawer-backdrop")?.addEventListener("click", () => {
-    mobileDrawer?.classList.add("hidden");
-  });
+    document.body.style.overflow = "";
+    if (window.innerWidth >= 1024 && filtersContainer && desktopSidebar && filtersContainer.parentElement !== desktopSidebar) {
+      desktopSidebar.appendChild(filtersContainer);
+    }
+  }
+
+  document.getElementById("btn-mobile-filters")?.addEventListener("click", openMobileDrawer);
+  document.getElementById("btn-close-mobile-drawer")?.addEventListener("click", closeMobileDrawer);
+  document.getElementById("mobile-drawer-backdrop")?.addEventListener("click", closeMobileDrawer);
+
   document.getElementById("btn-mobile-apply")?.addEventListener("click", () => {
-    mobileDrawer?.classList.add("hidden");
+    closeMobileDrawer();
     onFilterChange();
   });
+
   document.getElementById("btn-mobile-clear-all")?.addEventListener("click", () => {
     resetAllFilters();
-    mobileDrawer?.classList.add("hidden");
+    closeMobileDrawer();
+  });
+
+  // Restore filtersContainer to desktop sidebar when resized to desktop (>= 1024px)
+  window.addEventListener("resize", () => {
+    if (window.innerWidth >= 1024) {
+      if (filtersContainer && desktopSidebar && filtersContainer.parentElement !== desktopSidebar) {
+        desktopSidebar.appendChild(filtersContainer);
+      }
+      mobileDrawer?.classList.add("hidden");
+      document.body.style.overflow = "";
+    }
   });
 
   // History PopState (Browser Back/Forward without page reload)

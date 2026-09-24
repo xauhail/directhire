@@ -191,7 +191,10 @@ export class JobService {
     // If PostgreSQL pool is available, query directly
     if (db) {
       try {
-        const conditions: string[] = [];
+        const conditions: string[] = [
+          "application_url IS NOT NULL AND application_url != '' AND application_url != '#' AND application_url LIKE 'http%'",
+          "id NOT LIKE 'ch-%'"
+        ];
         const values: any[] = [];
         let idx = 1;
 

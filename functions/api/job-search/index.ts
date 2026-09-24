@@ -4,7 +4,7 @@ function mapRowToJobItem(row: any) {
   const locations = Array.isArray(row.locations)
     ? row.locations
     : (typeof row.locations === 'string' ? JSON.parse(row.locations) : ['Worldwide']);
-    
+
   const employmentTypes = Array.isArray(row.employment_types)
     ? row.employment_types
     : (typeof row.employment_types === 'string' ? JSON.parse(row.employment_types) : ['full-time']);
@@ -84,7 +84,10 @@ export async function onRequest(context: any) {
     const db = getDb(env);
 
     if (db) {
-      const conditions: string[] = [];
+      const conditions: string[] = [
+        "application_url IS NOT NULL AND application_url != '' AND application_url != '#' AND application_url LIKE 'http%'",
+        "id NOT LIKE 'ch-%'"
+      ];
       const values: any[] = [];
       let idx = 1;
 
