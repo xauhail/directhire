@@ -1,6 +1,10 @@
 # Deploy Career Hound to Cloudflare (100% Free Forever)
 
-This guide walks you through deploying the complete **Career Hound** platform (Astro Frontend + Edge API Functions + Neon PostgreSQL + Dodo Payments) onto Cloudflare for **$0/month**.
+> 🚀 **LIVE DEPLOYMENT STATUS: ACTIVE & RUNNING!**  
+> **Production URL**: [https://careerhound-7sx.pages.dev](https://careerhound-7sx.pages.dev)  
+> **Preview URL**: [https://bf5d531c.careerhound-7sx.pages.dev](https://bf5d531c.careerhound-7sx.pages.dev)  
+> **Health Check**: [https://careerhound-7sx.pages.dev/api/health](https://careerhound-7sx.pages.dev/api/health)  
+> **Dodo Webhook**: `https://careerhound-7sx.pages.dev/api/webhooks/dodo`  
 
 ---
 
