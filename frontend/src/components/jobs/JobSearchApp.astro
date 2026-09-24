@@ -608,14 +608,14 @@ function formatTimeAgo(iso: string): string {
                   <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
-                <span>Free Preview (First 10 of {initialTotal.toLocaleString()}+ Jobs)</span>
+                <span class="paywall-badge-text">Free Preview (First 10 of {initialTotal.toLocaleString()}+ Jobs)</span>
               </div>
 
-              <h3 class="text-2xl sm:text-3xl font-black text-white tracking-tight leading-snug">
+              <h3 class="paywall-title-text text-2xl sm:text-3xl font-black text-white tracking-tight leading-snug">
                 Unlock 100,000+ Direct ATS Jobs & Apply Instantly
               </h3>
 
-              <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl mx-auto">
+              <p class="paywall-desc-text text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl mx-auto">
                 You are viewing the free 10 job preview. Apply directly on company career portals before roles get flooded by crowded LinkedIn applicant queues.
               </p>
 
@@ -638,10 +638,10 @@ function formatTimeAgo(iso: string): string {
                 </div>
               </div>
 
-              <div class="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <div id="ssr-paywall-actions" class="paywall-actions pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <a
                   href="/login?tab=signup&next=/job-search/all"
-                  class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs sm:text-sm shadow-lg shadow-blue-600/30 hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 text-center"
+                  class="paywall-guest-link w-full sm:w-auto px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs sm:text-sm shadow-lg shadow-blue-600/30 hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 text-center"
                 >
                   <span>Create Free Account</span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
@@ -649,7 +649,7 @@ function formatTimeAgo(iso: string): string {
 
                 <a
                   href="/login?next=/job-search/all"
-                  class="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 transition-all flex items-center justify-center gap-2 text-center"
+                  class="paywall-guest-link w-full sm:w-auto px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 transition-all flex items-center justify-center gap-2 text-center"
                 >
                   <span>Sign In</span>
                 </a>
@@ -658,7 +658,7 @@ function formatTimeAgo(iso: string): string {
                   type="button"
                   data-trigger-checkout
                   data-tier="monthly"
-                  class="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-md hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
+                  class="btn-trigger-checkout-dynamic w-full sm:w-auto px-5 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-md hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
                 >
                   <span>Go Pro ($29/mo)</span>
                   <span class="text-[10px] font-bold bg-slate-900/20 px-1.5 py-0.5 rounded">Fast Track</span>
@@ -890,7 +890,7 @@ function formatTimeAgo(iso: string): string {
         </div>
       </div>
 
-      <div class="pt-2 space-y-2.5">
+      <div id="auth-gate-guest-actions" class="pt-2 space-y-2.5">
         <a
           href="/login?tab=signup&next=/job-search/all"
           class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 text-center"
@@ -915,6 +915,24 @@ function formatTimeAgo(iso: string): string {
           <span>Unlock Pro Access ($29/mo)</span>
         </button>
       </div>
+
+      <div id="auth-gate-user-actions" class="hidden pt-2 space-y-2.5">
+        <button
+          type="button"
+          data-trigger-checkout
+          data-tier="monthly"
+          class="w-full py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
+        >
+          <span>Upgrade to Pro ($29/mo)</span>
+        </button>
+
+        <a
+          href="/account"
+          class="w-full py-2.5 px-4 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200 transition-all flex items-center justify-center gap-2 text-center"
+        >
+          <span>Manage Account & Saved Jobs</span>
+        </a>
+      </div>
     </div>
   </div>
 </Layout>
@@ -937,12 +955,123 @@ function formatTimeAgo(iso: string): string {
     return { isLoggedIn, isSubscribed, user };
   }
 
+  // Dynamic Paywall Synchronizer (Adapts card for Guest vs Signed-in Free Plan vs Pro)
+  function updatePaywallUI() {
+    const { isLoggedIn, isSubscribed, user } = getAuthState();
+
+    if (isSubscribed) {
+      document.getElementById("ssr-paywall-card")?.remove();
+      document.getElementById("ssr-blurred-teasers")?.remove();
+      document.getElementById("client-paywall-card")?.remove();
+      document.getElementById("client-blurred-teasers")?.remove();
+      return;
+    }
+
+    const paywallCards = [
+      document.getElementById("ssr-paywall-card"),
+      document.getElementById("client-paywall-card")
+    ].filter(Boolean) as HTMLElement[];
+
+    for (const card of paywallCards) {
+      const badge = card.querySelector(".paywall-badge-text");
+      const title = card.querySelector(".paywall-title-text");
+      const desc = card.querySelector(".paywall-desc-text");
+      const actions = card.querySelector(".paywall-actions") || card.querySelector("#ssr-paywall-actions");
+
+      if (isLoggedIn) {
+        if (badge) badge.textContent = `Free Plan (Previewing 10 of ${totalJobs.toLocaleString() || '157'}+ Jobs)`;
+        if (title) title.textContent = `Upgrade to Pro to Unlock All 100,000+ Direct ATS Jobs`;
+        if (desc) desc.textContent = `You are signed in on the Free Plan. Upgrade to CareerHound Pro for full access to all verified ATS jobs, direct application links, and salary filters.`;
+        if (actions) {
+          actions.innerHTML = `
+            <div class="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/10 px-4 py-3 rounded-xl border border-white/15 text-xs text-blue-200 font-medium">
+              <span>Signed in as <strong class="text-white font-bold">${user?.email || 'Free Member'}</strong></span>
+            </div>
+
+            <button
+              type="button"
+              data-trigger-checkout
+              data-tier="monthly"
+              class="btn-trigger-checkout-dynamic w-full sm:w-auto px-7 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-md hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
+            >
+              <span>Upgrade to Pro ($29/mo)</span>
+              <span class="text-[10px] font-bold bg-slate-900/20 px-1.5 py-0.5 rounded">Fast Track</span>
+            </button>
+
+            <a
+              href="/account"
+              class="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 transition-all flex items-center justify-center gap-2 text-center"
+            >
+              <span>My Account</span>
+            </a>
+          `;
+        }
+      } else {
+        if (badge) badge.textContent = `Free Preview (First 10 of ${totalJobs.toLocaleString() || '157'}+ Jobs)`;
+        if (title) title.textContent = `Unlock 100,000+ Direct ATS Jobs & Apply Instantly`;
+        if (desc) desc.textContent = `You are viewing the free 10 job preview. Apply directly on company career portals before roles get flooded by crowded LinkedIn applicant queues.`;
+        if (actions) {
+          actions.innerHTML = `
+            <a
+              href="/login?tab=signup&next=/job-search/all"
+              class="paywall-guest-link w-full sm:w-auto px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs sm:text-sm shadow-lg shadow-blue-600/30 hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 text-center"
+            >
+              <span>Create Free Account</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </a>
+
+            <a
+              href="/login?next=/job-search/all"
+              class="paywall-guest-link w-full sm:w-auto px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 transition-all flex items-center justify-center gap-2 text-center"
+            >
+              <span>Sign In</span>
+            </a>
+
+            <button
+              type="button"
+              data-trigger-checkout
+              data-tier="monthly"
+              class="btn-trigger-checkout-dynamic w-full sm:w-auto px-5 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-md hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
+            >
+              <span>Go Pro ($29/mo)</span>
+              <span class="text-[10px] font-bold bg-slate-900/20 px-1.5 py-0.5 rounded">Fast Track</span>
+            </button>
+          `;
+        }
+      }
+
+      // Re-bind dynamic checkout buttons
+      card.querySelectorAll(".btn-trigger-checkout-dynamic").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          if ((window as any).triggerCheckout) {
+            (window as any).triggerCheckout("monthly", btn as HTMLButtonElement);
+          } else {
+            window.location.href = "/pricing";
+          }
+        });
+      });
+    }
+  }
+
   // Auth Gate Modal helpers
   const authGateModal = document.getElementById("auth-gate-modal");
   const authGateReason = document.getElementById("auth-gate-reason");
   const btnCloseAuthGate = document.getElementById("btn-close-auth-gate");
 
   function openAuthGateModal(reason?: string) {
+    const { isLoggedIn } = getAuthState();
+    const guestActions = document.getElementById("auth-gate-guest-actions");
+    const userActions = document.getElementById("auth-gate-user-actions");
+
+    if (isLoggedIn) {
+      guestActions?.classList.add("hidden");
+      userActions?.classList.remove("hidden");
+    } else {
+      guestActions?.classList.remove("hidden");
+      userActions?.classList.add("hidden");
+    }
+
     if (authGateReason && reason) {
       authGateReason.textContent = reason;
     }
@@ -2228,7 +2357,39 @@ function formatTimeAgo(iso: string): string {
       nextBtn.innerHTML = `Next →`;
       nextBtn.title = initialAuth.isLoggedIn ? "Upgrade to Pro to unlock page 2" : "Log in or sign up to unlock page 2";
     }
+    // Update SSR paywall card immediately to show user state (Signed in on Free Plan vs Guest)
+    updatePaywallUI();
   }
+
+  // Background Better Auth session sync
+  authClient.getSession().then((sessionRes: any) => {
+    if (sessionRes?.data?.user) {
+      const u = sessionRes.data.user;
+      let cached: any = {};
+      try { cached = JSON.parse(localStorage.getItem('ch_user') || '{}'); } catch (_) {}
+      const mergedUser = {
+        ...cached,
+        id: u.id,
+        name: u.name || cached.name,
+        email: u.email || cached.email,
+        emailVerified: u.emailVerified ?? cached.emailVerified ?? false,
+        plan: (u as any).plan || cached.plan || 'free',
+        isSubscribed: (u as any).isSubscribed ?? cached.isSubscribed ?? false,
+      };
+      localStorage.setItem('ch_user', JSON.stringify(mergedUser));
+      localStorage.setItem('ch_token', u.id);
+      localStorage.setItem('ch_authenticated', '1');
+
+      if (mergedUser.isSubscribed) {
+        document.getElementById("ssr-paywall-card")?.remove();
+        document.getElementById("ssr-blurred-teasers")?.remove();
+        performSearch(currentPage, false);
+      } else {
+        updatePaywallUI();
+        if (nextBtn) nextBtn.title = "Upgrade to Pro to unlock page 2";
+      }
+    }
+  }).catch(() => {});
 
   if (isSavedMode) {
     renderSavedJobsView();
