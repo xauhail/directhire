@@ -1,8 +1,8 @@
 {
-  "name": "careerhound",
+  "name": "jobsnation",
   "version": "1.0.0",
   "private": true,
-  "description": "Career Hound - 1:1 Direct ATS Job Board",
+  "description": "Jobs Nation - 1:1 Direct ATS Job Board (jobsnation.co)",
   "scripts": {
     "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
     "dev:backend": "npm --prefix backend run dev",
@@ -12,13 +12,9 @@
     "db:seed": "npm --prefix backend run db:seed",
     "db:setup-neon": "npm --prefix backend run db:setup-neon",
     "db:ingest": "npm --prefix backend run db:ingest",
-    "deploy:pages": "npm --prefix frontend run build && npx wrangler pages deploy frontend/dist --cwd frontend --project-name careerhound --branch main --commit-dirty=true"
+    "deploy:pages": "npm --prefix frontend run build && npx wrangler pages deploy frontend/dist --cwd frontend --project-name jobsnation --branch main --commit-dirty=true"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
-  },
-  "dependencies": {
-    "@neondatabase/serverless": "^1.1.0",
-    "better-auth": "^1.7.5"
   }
 }

@@ -48,12 +48,33 @@ export const checkoutRoutes: FastifyPluginAsync = async (server: FastifyInstance
       ]
     });
   });
-  // Create Dodo Payments checkout session
-  server.post<{ Body: { planTier: 'weekly' | 'monthly' | 'yearly'; email: string; name?: string; returnUrl?: string } }>(
+  // Server-side in-memory Idempotency Cache (10 min TTL)
+  const idempotencyCache = new Map<string, { data: any; expiresAt: number }>();
+
+  function cleanExpiredIdempotency() {
+    const now = Date.now();
+    for (const [key, val] of idempotencyCache.entries()) {
+      if (val.expiresAt < now) idempotencyCache.delete(key);
+    }
+  }
+
+  // Create Dodo Payments checkout session with idempotency guarantee
+  server.post<{ Body: { planTier: 'weekly' | 'monthly' | 'yearly'; email: string; name?: string; returnUrl?: string; idempotencyKey?: string } }>(
     '/api/checkout',
     async (req, reply) => {
       try {
+        cleanExpiredIdempotency();
+
+        const idempKey = (req.headers['idempotency-key'] as string) || req.body?.idempotencyKey || '';
         const { planTier = 'monthly', email = '', name, returnUrl } = req.body || {};
+
+        // If idempotent key exists and already processed, return cached response immediately
+        if (idempKey && idempotencyCache.has(idempKey)) {
+          const cached = idempotencyCache.get(idempKey)!;
+          if (cached.expiresAt > Date.now()) {
+            return reply.send(cached.data);
+          }
+        }
 
         const session = await DodoService.createCheckoutSession({
           planTier,
@@ -62,10 +83,19 @@ export const checkoutRoutes: FastifyPluginAsync = async (server: FastifyInstance
           returnUrl,
         });
 
-        return reply.send({
+        const responsePayload = {
           success: true,
           ...session,
-        });
+        };
+
+        if (idempKey) {
+          idempotencyCache.set(idempKey, {
+            data: responsePayload,
+            expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
+          });
+        }
+
+        return reply.send(responsePayload);
       } catch (err: any) {
         server.log.error(err);
         return reply.status(500).send({ error: 'Failed to create checkout session', message: err.message });

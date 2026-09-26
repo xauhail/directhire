@@ -49,20 +49,45 @@ const checkoutRoutes = async (server) => {
             ]
         });
     });
-    // Create Dodo Payments checkout session
+    // Server-side in-memory Idempotency Cache (10 min TTL)
+    const idempotencyCache = new Map();
+    function cleanExpiredIdempotency() {
+        const now = Date.now();
+        for (const [key, val] of idempotencyCache.entries()) {
+            if (val.expiresAt < now)
+                idempotencyCache.delete(key);
+        }
+    }
+    // Create Dodo Payments checkout session with idempotency guarantee
     server.post('/api/checkout', async (req, reply) => {
         try {
+            cleanExpiredIdempotency();
+            const idempKey = req.headers['idempotency-key'] || req.body?.idempotencyKey || '';
             const { planTier = 'monthly', email = '', name, returnUrl } = req.body || {};
+            // If idempotent key exists and already processed, return cached response immediately
+            if (idempKey && idempotencyCache.has(idempKey)) {
+                const cached = idempotencyCache.get(idempKey);
+                if (cached.expiresAt > Date.now()) {
+                    return reply.send(cached.data);
+                }
+            }
             const session = await dodoService_js_1.DodoService.createCheckoutSession({
                 planTier,
                 customerEmail: email,
                 customerName: name,
                 returnUrl,
             });
-            return reply.send({
+            const responsePayload = {
                 success: true,
                 ...session,
-            });
+            };
+            if (idempKey) {
+                idempotencyCache.set(idempKey, {
+                    data: responsePayload,
+                    expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
+                });
+            }
+            return reply.send(responsePayload);
         }
         catch (err) {
             server.log.error(err);

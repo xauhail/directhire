@@ -9,8 +9,8 @@ export interface Props {
 }
 
 const {
-  title = "Career Hound: Find jobs not on LinkedIn/Indeed",
-  description = "Career Hound is a job search tool that finds jobs by scraping company websites directly. Skip the 200+ applicant queues and recruiter middlemen.",
+  title = "Jobs Nation: Find jobs not on LinkedIn/Indeed",
+  description = "Jobs Nation is a job search tool that finds jobs by indexing company career portals directly. Skip the 200+ applicant queues and recruiter middlemen.",
   canonicalUrl = Astro.url.href,
   ogImage = "/logo-blue.png",
   type = "website",
@@ -21,12 +21,12 @@ const {
 const orgSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "Career Hound",
-  "url": "https://careerhound.io",
-  "logo": "https://careerhound.io/logo-blue.png",
+  "name": "Jobs Nation",
+  "url": "https://jobsnation.co",
+  "logo": "https://jobsnation.co/logo-blue.png",
   "sameAs": [
-    "https://x.com/careerhoundio",
-    "https://www.facebook.com/profile.php?id=61558625172134"
+    "https://x.com/jobsnationco",
+    "https://www.facebook.com/profile.php?id=jobsnation"
   ]
 };
 
@@ -36,6 +36,11 @@ const schemasToRender = Array.isArray(jsonLd)
     ? [orgSchema, jsonLd] 
     : [orgSchema];
 ---
+
+<!-- Preconnect & Core Web Vitals Font Optimization -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
 
 <!-- Core Meta Tags -->
 <meta charset="UTF-8" />
@@ -51,7 +56,7 @@ const schemasToRender = Array.isArray(jsonLd)
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={ogImage} />
-<meta property="og:site_name" content="Career Hound" />
+<meta property="og:site_name" content="Jobs Nation" />
 
 <!-- Twitter / X -->
 <meta name="twitter:card" content="summary_large_image" />
@@ -62,7 +67,8 @@ const schemasToRender = Array.isArray(jsonLd)
 
 <!-- Favicon & Icons -->
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="icon" type="image/png" href="/favicon.ico" />
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="apple-touch-icon" href="/logo-blue.png" />
 
 <!-- Structured Data (JSON-LD) for Rich Google Snippets -->
 {schemasToRender.map(schema => (

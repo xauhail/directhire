@@ -1,0 +1,21 @@
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Cache static hashed assets for 1 year (Max Core Web Vitals score)
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Brand assets & favicons
+/favicon.*
+  Cache-Control: public, max-age=86400
+/logo-blue.*
+  Cache-Control: public, max-age=86400
+
+# HTML & API endpoints
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+/api/*
+  Cache-Control: no-store, no-cache, must-revalidate

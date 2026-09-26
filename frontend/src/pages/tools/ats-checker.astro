@@ -4,14 +4,14 @@ import Layout from '../../layouts/Layout.astro';
 const toolSchema = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "Free ATS Resume Scanner | Career Hound",
+  "name": "Free ATS Resume Scanner | Jobs Nation",
   "applicationCategory": "BusinessApplication",
-  "description": "Free ATS resume scanner and keyword matcher powered by Career Hound AI."
+  "description": "Free ATS resume scanner and keyword matcher powered by Jobs Nation AI."
 };
 ---
 
 <Layout 
-  title="Free ATS Resume Checker & Keyword Matcher | Career Hound"
+  title="Free ATS Resume Checker & Keyword Matcher | Jobs Nation"
   description="Scan your resume against any job description for free. Get an instant match score, missing hard skills, and bullet rewrites."
   jsonLd={toolSchema}
 >
@@ -20,7 +20,7 @@ const toolSchema = {
     <!-- Hero Title -->
     <div class="text-center max-w-2xl mx-auto space-y-3">
       <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-bold uppercase tracking-wider">
-        <span>100% Free • Powered by Career Hound AI</span>
+        <span>100% Free • Powered by Jobs Nation AI</span>
       </div>
       <h1 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
         Free ATS Resume Scanner & Matcher
@@ -126,7 +126,7 @@ const toolSchema = {
       <div class="p-6 rounded-2xl bg-gradient-to-r from-blue-700 to-indigo-800 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="space-y-1 text-center sm:text-left">
           <h4 class="font-bold text-base text-white">Ready to apply directly to verified hiring teams?</h4>
-          <p class="text-xs text-blue-100">Career Hound indexes active Greenhouse, Lever, and Ashby postings updated every 10 minutes.</p>
+          <p class="text-xs text-blue-100">Jobs Nation indexes active Greenhouse, Lever, and Ashby postings updated every 10 minutes.</p>
         </div>
         <a href="/search" class="px-6 py-3 rounded-full bg-white text-blue-700 hover:bg-blue-50 font-bold text-xs shrink-0 shadow-md">
           Browse Direct ATS Jobs →
@@ -158,7 +158,7 @@ const toolSchema = {
       const jobTitle = (document.getElementById('job-title-input') as HTMLInputElement)?.value;
 
       btn.setAttribute('disabled', 'true');
-      btn.innerHTML = '<span>Scanning with Career Hound AI...</span>';
+      btn.innerHTML = '<span>Scanning with Jobs Nation AI...</span>';
 
       try {
         const data = await getAtsScore(resumeText, jobDescription, jobTitle);

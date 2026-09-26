@@ -1,16 +1,16 @@
 ---
-import SEOHead from '../components/seo/SEOHead.astro';
-import Header from '../components/common/Header.astro';
-import Footer from '../components/common/Footer.astro';
-import StickyCTA from '../components/common/StickyCTA.astro';
-import '../styles/global.css';
+import SEOHead from "../components/seo/SEOHead.astro";
+import Header from "../components/common/Header.astro";
+import Footer from "../components/common/Footer.astro";
+import StickyCTA from "../components/common/StickyCTA.astro";
+import "../styles/global.css";
 
 export interface Props {
   title?: string;
   description?: string;
   canonicalUrl?: string;
   jsonLd?: Record<string, any> | Array<Record<string, any>>;
-  headerVariant?: 'light' | 'transparent';
+  headerVariant?: "light" | "transparent";
   hideStickyCTA?: boolean;
 }
 
@@ -19,7 +19,7 @@ const {
   description,
   canonicalUrl,
   jsonLd,
-  headerVariant = 'light',
+  headerVariant = "light",
   hideStickyCTA = false,
 } = Astro.props;
 ---
@@ -27,15 +27,16 @@ const {
 <!doctype html>
 <html lang="en" class="scroll-smooth bg-canvas">
   <head>
-    <SEOHead 
+    <SEOHead
       title={title}
       description={description}
       canonicalUrl={canonicalUrl}
       jsonLd={jsonLd}
     />
   </head>
-  <body class="min-h-screen flex flex-col antialiased text-slate-900 bg-canvas selection:bg-blue-600 selection:text-white">
-    
+  <body
+    class="min-h-screen flex flex-col antialiased text-slate-900 bg-canvas selection:bg-blue-600 selection:text-white"
+  >
     <!-- Global Sticky Top Conversion Banner -->
     {!hideStickyCTA && <StickyCTA />}
 
@@ -53,77 +54,106 @@ const {
     <!-- Direct Secure Checkout Redirection (No Popup Modal) -->
     <script>
       function resetCheckoutButtons() {
-        document.querySelectorAll('[data-trigger-checkout]').forEach(el => {
+        document.querySelectorAll("[data-trigger-checkout]").forEach((el) => {
           const btn = el as HTMLButtonElement;
-          const orig = btn.getAttribute('data-original-html');
+          const orig = btn.getAttribute("data-original-html");
           if (orig) {
             btn.innerHTML = orig;
-            btn.removeAttribute('disabled');
+            btn.removeAttribute("disabled");
           }
         });
       }
 
       // Restore button state whenever the user navigates back from checkout
-      window.addEventListener('pageshow', () => resetCheckoutButtons());
-      window.addEventListener('focus', () => resetCheckoutButtons());
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') resetCheckoutButtons();
+      window.addEventListener("pageshow", () => resetCheckoutButtons());
+      window.addEventListener("focus", () => resetCheckoutButtons());
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") resetCheckoutButtons();
       });
 
       // Save initial button HTML on load
-      document.querySelectorAll('[data-trigger-checkout]').forEach(el => {
+      document.querySelectorAll("[data-trigger-checkout]").forEach((el) => {
         const btn = el as HTMLButtonElement;
-        if (!btn.getAttribute('data-original-html')) {
-          btn.setAttribute('data-original-html', btn.innerHTML);
+        if (!btn.getAttribute("data-original-html")) {
+          btn.setAttribute("data-original-html", btn.innerHTML);
         }
       });
 
-      (window as any).triggerCheckout = async function(planTier = 'monthly', clickedBtn?: HTMLButtonElement | null) {
-        const activeBtn = clickedBtn || (document.activeElement as HTMLButtonElement | null);
-        const originalContent = activeBtn ? (activeBtn.getAttribute('data-original-html') || activeBtn.innerHTML) : '';
+      let isCheckoutInFlight = false;
+
+      (window as any).triggerCheckout = async function (
+        planTier = "monthly",
+        clickedBtn?: HTMLButtonElement | null,
+      ) {
+        if (isCheckoutInFlight) return; // Prevent duplicate race-condition clicks
+        isCheckoutInFlight = true;
+
+        const activeBtn =
+          clickedBtn || (document.activeElement as HTMLButtonElement | null);
+        const originalContent = activeBtn
+          ? activeBtn.getAttribute("data-original-html") || activeBtn.innerHTML
+          : "";
         if (activeBtn) {
-          activeBtn.setAttribute('disabled', 'true');
-          activeBtn.innerHTML = '<span class="inline-flex items-center justify-center gap-2"><svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg><span>Loading Secure Checkout...</span></span>';
+          activeBtn.setAttribute("disabled", "true");
+          activeBtn.innerHTML =
+            '<span class="inline-flex items-center justify-center gap-2"><svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg><span>Loading Secure Checkout...</span></span>';
         }
 
         try {
-          let email = '';
+          let email = "";
           try {
-            const userStr = localStorage.getItem('ch_user');
+            const userStr = localStorage.getItem("jn_user") || localStorage.getItem("ch_user");
             if (userStr) {
               const u = JSON.parse(userStr);
               if (u?.email) email = u.email;
             }
           } catch (_) {}
 
-          const checkoutEndpoint = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
-            ? 'http://localhost:4000/api/checkout'
-            : '/api/checkout';
+          // Generate unique client-side idempotency token
+          const idempotencyKey = typeof crypto !== "undefined" && crypto.randomUUID
+            ? crypto.randomUUID()
+            : `idemp_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+
+          const checkoutEndpoint =
+            typeof window !== "undefined" &&
+            (window.location.hostname === "localhost" ||
+              window.location.hostname === "127.0.0.1")
+              ? "http://localhost:4000/api/checkout"
+              : "/api/checkout";
 
           const res = await fetch(checkoutEndpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ planTier, email }),
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Idempotency-Key": idempotencyKey,
+            },
+            body: JSON.stringify({ planTier, email, idempotencyKey }),
           });
 
           const data = await res.json();
           if (data?.checkoutUrl) {
-            // Give brief delay before redirect so if user hits Back, pageshow will restore
-            setTimeout(() => resetCheckoutButtons(), 1500);
+            // Brief delay before redirect; reset flag if user navigates back
+            setTimeout(() => {
+              isCheckoutInFlight = false;
+              resetCheckoutButtons();
+            }, 1500);
             window.location.href = data.checkoutUrl;
           } else {
-            throw new Error(data?.error || 'Failed to initialize secure checkout session.');
+            throw new Error(
+              data?.error || "Failed to initialize secure checkout session.",
+            );
           }
         } catch (err: any) {
+          isCheckoutInFlight = false;
           resetCheckoutButtons();
-          alert(err.message || 'Unable to open secure checkout.');
+          alert(err.message || "Unable to open secure checkout.");
         }
       };
 
-      document.querySelectorAll('[data-trigger-checkout]').forEach(el => {
-        el.addEventListener('click', (e) => {
+      document.querySelectorAll("[data-trigger-checkout]").forEach((el) => {
+        el.addEventListener("click", (e) => {
           e.preventDefault();
-          const tier = el.getAttribute('data-tier') || 'monthly';
+          const tier = el.getAttribute("data-tier") || "monthly";
           (window as any).triggerCheckout(tier, el as HTMLButtonElement);
         });
       });

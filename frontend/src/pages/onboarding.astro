@@ -4,7 +4,7 @@ import Layout from "../layouts/Layout.astro";
 const onboardingSchema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Personalized Job Match | Career Hound",
+  name: "Personalized Job Match | Jobs Nation",
   description:
     "Onboarding to personalize your direct-company job search and alerts.",
 };
@@ -29,13 +29,13 @@ const defaultRoles = [
 ---
 
 <Layout
-  title="Personalized Job Match | Career Hound"
+  title="Personalized Job Match | Jobs Nation"
   description="Calibrate your job search in 2 minutes to discover hidden roles matching your exact requirements."
   jsonLd={onboardingSchema}
   hideStickyCTA={true}
 >
   <div class="max-w-2xl mx-auto px-4 py-12 sm:py-16">
-    <h1 class="sr-only">Career Hound Personalized Job Match Onboarding</h1>
+    <h1 class="sr-only">Jobs Nation Personalized Job Match Onboarding</h1>
 
     <!-- Progress Indicator Bar -->
     <div class="mb-8">
@@ -62,7 +62,7 @@ const defaultRoles = [
       class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-xl shadow-slate-200/50 space-y-8"
     >
       <!-- Already Onboarded Alert Banner -->
-      <div id="already-onboarded-banner" class="hidden p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs mb-4">
+      <div id="already-onboarded-banner" class="hidden p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs [&:not(.hidden)]:flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs mb-4">
         <div class="flex items-center gap-2.5">
           <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">✓</span>
           <div>
@@ -354,7 +354,7 @@ const defaultRoles = [
               />
             </div>
             <p class="text-[11px] text-slate-400 mt-1">
-              Tip: Direct company jobs on Career Hound typically pay 15–20%
+              Tip: Direct company jobs on Jobs Nation typically pay 15–20%
               higher by cutting recruiter agency cuts.
             </p>
           </div>
@@ -508,7 +508,7 @@ const defaultRoles = [
           </p>
           <div
             id="file-name-display"
-            class="hidden text-xs font-bold text-emerald-600 bg-emerald-50 py-1.5 px-3 rounded-full inline-block"
+            class="hidden text-xs font-bold text-emerald-600 bg-emerald-50 py-1.5 px-3 rounded-full [&:not(.hidden)]:inline-block"
           >
           </div>
         </div>

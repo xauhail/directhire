@@ -110,7 +110,7 @@ async function main() {
     // ── Start server ──────────────────────────────────────────────────────────
     try {
         const address = await server.listen({ port: env_js_1.config.port, host: env_js_1.config.host });
-        console.log(`🚀 Career Hound Fastify Backend running at ${address}`);
+        console.log(`🚀 Jobs Nation Fastify Backend running at ${address}`);
         console.log(`🔐 Better Auth: ${env_js_1.config.databaseUrl ? 'PostgreSQL connected' : '⚠️  No DATABASE_URL — using in-memory fallback'}`);
         console.log(`📚 Astro MCP: configured at .agents/mcp_config.json`);
     }

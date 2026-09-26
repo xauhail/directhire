@@ -5,6 +5,8 @@ export async function onRequestPost(context: any) {
     const body: any = await request.json().catch(() => ({}));
     const { planTier = 'monthly', email = '', name, returnUrl } = body;
 
+    const idempKey = request.headers.get('idempotency-key') || body.idempotencyKey || '';
+
     const apiKey = env.DODO_PAYMENTS_API_KEY || 'foZur3iZfSq5RRFD.Pd4SJ2ti63yvIAmE424UP9W_5sn4QIwDs9-EYoti0AYEMsPo';
     const isLive = (env.DODO_PAYMENTS_MODE || 'live_mode') === 'live_mode';
     const baseUrl = isLive ? 'https://live.dodopayments.com' : 'https://test.dodopayments.com';
@@ -30,12 +32,17 @@ export async function onRequestPost(context: any) {
           };
         }
 
+        const dodoHeaders: Record<string, string> = {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        };
+        if (idempKey) {
+          dodoHeaders['Idempotency-Key'] = idempKey;
+        }
+
         const dodoRes = await fetch(`${baseUrl}/checkouts`, {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-          },
+          headers: dodoHeaders,
           body: JSON.stringify(payload),
         });
 

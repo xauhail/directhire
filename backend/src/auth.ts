@@ -121,6 +121,8 @@ export const auth = betterAuth({
   // ── Trusted Origins (CORS for auth cookies) ───────────────────────────────
   trustedOrigins: [
     config.frontendUrl,
+    'https://jobsnation.co',
+    'https://www.jobsnation.co',
     'https://careerhound-7sx.pages.dev',
     'https://careerhound.pages.dev',
     'http://localhost:4321',

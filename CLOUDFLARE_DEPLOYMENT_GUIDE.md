@@ -1,10 +1,10 @@
-# Deploy Career Hound to Cloudflare (100% Free Forever)
+# Deploy Jobs Nation to Cloudflare (jobsnation.co)
 
 > 🚀 **LIVE DEPLOYMENT STATUS: ACTIVE & RUNNING!**  
-> **Production URL**: [https://careerhound-7sx.pages.dev](https://careerhound-7sx.pages.dev)  
-> **Preview URL**: [https://bf5d531c.careerhound-7sx.pages.dev](https://bf5d531c.careerhound-7sx.pages.dev)  
-> **Health Check**: [https://careerhound-7sx.pages.dev/api/health](https://careerhound-7sx.pages.dev/api/health)  
-> **Dodo Webhook**: `https://careerhound-7sx.pages.dev/api/webhooks/dodo`  
+> **Production Custom Domain**: [https://jobsnation.co](https://jobsnation.co)  
+> **Pages URL**: [https://careerhound-7sx.pages.dev](https://careerhound-7sx.pages.dev)  
+> **Health Check**: `https://jobsnation.co/api/health`  
+> **Dodo Webhook**: `https://jobsnation.co/api/webhooks/dodo`  
 
 ---
 
@@ -31,12 +31,12 @@ Your Neon Serverless PostgreSQL database has already been connected and fully in
 
 ## ☁️ Step 2: Connect GitHub to Cloudflare Pages (Free)
 
-1. Log in to **[dash.cloudflare.com](https://dash.cloudflare.com)** (create a free account if you don't have one).
+1. Log in to **[dash.cloudflare.com](https://dash.cloudflare.com)**.
 2. In the left navigation menu, click **Workers & Pages**.
 3. Click **Create application** > Select the **Pages** tab > Click **Connect to Git**.
 4. Authorize GitHub and select your repository: **`xauhail/directhire`**.
 5. Configure the build settings:
-   - **Project name**: `careerhound` (or your preferred name)
+   - **Project name**: `jobsnation` (or `careerhound`)
    - **Production branch**: `main`
    - **Framework preset**: `Astro`
    - **Root directory**: `frontend`
@@ -48,11 +48,11 @@ Your Neon Serverless PostgreSQL database has already been connected and fully in
 | :--- | :--- | :--- |
 | `DATABASE_URL` | `postgresql://neondb_owner:npg_dk4c2HBROTgE@ep-jolly-union-b48km1q7-pooler.c-6.us-east-2.aws.neon.tech/neondb?sslmode=require` | Your active Neon database |
 | `BETTER_AUTH_SECRET` | `e89fc5c72199f34586da234a946890fa24177b96b0eeefda96ef2cf3f225e364` | Session signing key |
-| `BETTER_AUTH_URL` | `https://careerhound-7sx.pages.dev` | Replace with your custom domain if added |
+| `BETTER_AUTH_URL` | `https://jobsnation.co` | Your custom production domain |
 | `DODO_PAYMENTS_API_KEY` | `foZur3iZfSq5RRFD.Pd4SJ2ti63yvIAmE424UP9W_5sn4QIwDs9-EYoti0AYEMsPo` | Live API key |
 | `DODO_PAYMENTS_MODE` | `live_mode` | Live checkout |
-| `DODO_PRODUCT_WEEKLY` | `pdt_0NoCoSmvftI788ZiRmxcg` | Weekly Pass ($9.99/wk) |
-| `DODO_PRODUCT_MONTHLY` | `pdt_0NoCoSp04hYLAtmjbseJt` | Monthly Pro ($29/mo) |
+| `DODO_PRODUCT_WEEKLY` | `pdt_0NoCoSmvftI788ZiRmxcg` | Weekly Pass ($5.99/wk) |
+| `DODO_PRODUCT_MONTHLY` | `pdt_0NoCoSp04hYLAtmjbseJt` | Monthly Pro ($19.99/mo) |
 | `DODO_PRODUCT_YEARLY` | `pdt_0No0Hg5BSrOkY9wb34YxP` | 1-Year Pass ($99/yr) |
 
 7. Click **Save and Deploy**.

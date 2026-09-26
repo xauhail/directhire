@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout
-  title="Sign In to Career Hound | Career Hound"
+  title="Sign In to Jobs Nation | Jobs Nation"
   description="Sign in with Better Auth — secure email & password login with PostgreSQL-backed sessions."
 >
   <div class="min-h-[85vh] flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50/50 via-white to-slate-50">
@@ -11,10 +11,13 @@ import Layout from '../layouts/Layout.astro';
       
       <div class="text-center">
         <a href="/" class="inline-flex items-center gap-2 mb-6">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-500/20">
-            C
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
           </div>
-          <span class="text-xl font-extrabold text-slate-900 tracking-tight">Career Hound</span>
+          <span class="text-xl font-black text-slate-900 tracking-tight uppercase">JOBS NATION</span>
         </a>
         <h1 id="auth-title" class="text-2xl font-black text-slate-900 tracking-tight">Welcome back</h1>
         <p id="auth-subtitle" class="text-xs sm:text-sm text-slate-500 mt-2">
@@ -434,7 +437,7 @@ import Layout from '../layouts/Layout.astro';
       user.emailVerified = true;
       persistSession(user);
 
-      showSuccess('Email verified successfully! Welcome to Career Hound.');
+      showSuccess('Email verified successfully! Welcome to Jobs Nation.');
       setTimeout(() => {
         const nextUrl = new URLSearchParams(window.location.search).get('next');
         window.location.href = nextUrl || '/job-search/all?onboarding=completed';

@@ -80,8 +80,15 @@ exports.auth = (0, better_auth_1.betterAuth)({
     // ── Email & Password ───────────────────────────────────────────────────────
     emailAndPassword: {
         enabled: true,
-        requireEmailVerification: false, // Set true in production
+        requireEmailVerification: false,
         minPasswordLength: 8,
+    },
+    emailVerification: {
+        sendOnSignUp: true,
+        autoSignInAfterVerification: true,
+        sendVerificationEmail: async ({ user, url, token }) => {
+            console.log(`[Better Auth Backend] Verification link for ${user.email}: ${url} (Token: ${token})`);
+        },
     },
     // ── Session Configuration ─────────────────────────────────────────────────
     session: {
@@ -106,6 +113,8 @@ exports.auth = (0, better_auth_1.betterAuth)({
     // ── Trusted Origins (CORS for auth cookies) ───────────────────────────────
     trustedOrigins: [
         env_js_1.config.frontendUrl,
+        'https://jobsnation.co',
+        'https://www.jobsnation.co',
         'https://careerhound-7sx.pages.dev',
         'https://careerhound.pages.dev',
         'http://localhost:4321',

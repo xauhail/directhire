@@ -85,12 +85,8 @@ export async function onRequest(context: any) {
     const filters = body.filters || {};
 
     const isCompanyQuery = Boolean(filters.companySlug || (filters.company && !query));
-    // Limit rule: Main feed is max 10 jobs; company "More" drawer is max 5 jobs
-    const previewLimit = isCompanyDrawerLimit(isCompanyQuery);
-
-    function isCompanyDrawerLimit(isComp: boolean): number {
-      return isComp ? 5 : 10;
-    }
+    // Limit rule: Free preview is max 5 jobs
+    const previewLimit = 5;
 
     // Free plan or guest user pagination restriction
     if (isFreeOrGuest && page > 1) {
@@ -106,7 +102,7 @@ export async function onRequest(context: any) {
         isPaywalled: true,
         message: isCompanyQuery
           ? 'Free plan and guests can view up to 5 jobs per company. Upgrade to Pro for complete access.'
-          : 'Free plan and guests can view up to 10 jobs. Upgrade to Pro for unlimited job listings.'
+          : 'Free plan and guests can view up to 5 jobs. Upgrade to Pro for unlimited job listings.'
       }), {
         headers: { 'Content-Type': 'application/json' },
       });
@@ -213,7 +209,7 @@ export async function onRequest(context: any) {
 
       let items = dataRes.rows.map(mapRowToJobItem);
 
-      // Enforce strict cap: Free plan or guest never sees more than previewLimit (10 for search, 5 for company)
+      // Enforce strict cap: Free plan or guest never sees more than previewLimit (5 for search, 5 for company)
       if (isFreeOrGuest) {
         items = items.slice(0, previewLimit);
       }

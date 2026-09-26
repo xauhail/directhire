@@ -12,19 +12,19 @@ const { initialSlug = "all" } = Astro.props;
 const searchPageSchema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Search Verified Jobs Directly on Company Websites | Career Hound",
+  name: "Search Verified Jobs Directly on Company Websites | Jobs Nation",
   description:
     "Discover current open jobs directly from company career portals (Greenhouse, Lever, Ashby, Workday).",
   breadcrumb: {
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://careerhound.io/" },
-      { "@type": "ListItem", position: 2, name: "Job Search", item: "https://careerhound.io/job-search/all" },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://jobsnation.co/" },
+      { "@type": "ListItem", position: 2, name: "Job Search", item: "https://jobsnation.co/job-search/all" },
     ],
   },
 };
 
-// 33 Canonical CareerHound Categories
+// 33 Canonical Jobs Nation Categories
 const CATEGORY_OPTIONS = [
   { label: "Engineering", value: "engineering" },
   { label: "Software", value: "software" },
@@ -172,8 +172,8 @@ function formatTimeAgo(iso: string): string {
 
 <Layout
   title={initialCategories.length > 0 
-    ? `${CATEGORY_OPTIONS.find(c => c.value === initialCategories[0])?.label || "Category"} Jobs | Career Hound`
-    : "Search Jobs | Career Hound"}
+    ? `${CATEGORY_OPTIONS.find(c => c.value === initialCategories[0])?.label || "Category"} Jobs | Jobs Nation`
+    : "Search Jobs | Jobs Nation"}
   description="Search verified jobs posted directly on company career portals. No LinkedIn or Indeed middlemen."
   jsonLd={searchPageSchema}
 >
@@ -452,7 +452,7 @@ function formatTimeAgo(iso: string): string {
 
         <!-- Job Feed Container -->
         <div id="jobs-container" class="space-y-4">
-          {initialJobs.slice(0, 10).map((job) => {
+          {initialJobs.slice(0, 5).map((job) => {
             const companyName = job.company?.name || "Direct ATS Employer";
             const companyLogo = job.company?.logo || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=128&q=80";
             const locationStr = Array.isArray(job.locations) ? job.locations.join(" • ") : (job.locations || "Worldwide");
@@ -597,72 +597,71 @@ function formatTimeAgo(iso: string): string {
             );
           })}
 
-          <!-- SSR 10-Job Free Preview Paywall & Auth Gate Card -->
-          <div id="ssr-paywall-card" class="relative overflow-hidden rounded-2xl border-2 border-blue-600/80 bg-gradient-to-br from-slate-900 via-indigo-950 to-blue-950 text-white p-6 sm:p-8 shadow-xl mt-6">
-            <div class="absolute -top-24 -right-24 w-60 h-60 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-24 -left-24 w-60 h-60 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+          <!-- SSR 5-Job Free Preview Paywall & Auth Gate Card -->
+          <div id="ssr-paywall-card" class="relative overflow-hidden rounded-2xl border border-blue-500/30 bg-gradient-to-b from-slate-900 via-slate-900 to-indigo-950/90 text-white p-6 sm:p-8 shadow-2xl mt-6">
+            <div class="absolute -top-20 -right-20 w-52 h-52 bg-blue-500/15 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-52 h-52 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none"></div>
 
-            <div class="relative z-10 space-y-5 text-center max-w-2xl mx-auto">
-              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold uppercase tracking-wider">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400">
+            <div class="relative z-10 space-y-4 text-center max-w-xl mx-auto">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/30 text-blue-300 text-xs font-semibold">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400">
                   <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
-                <span class="paywall-badge-text">Free Preview (First 10 of {initialTotal.toLocaleString()}+ Jobs)</span>
+                <span class="paywall-badge-text">Free Preview • 5 of {initialTotal > 0 ? initialTotal.toLocaleString() : '45,000'}+ Direct Roles</span>
               </div>
 
-              <h3 class="paywall-title-text text-2xl sm:text-3xl font-black text-white tracking-tight leading-snug">
-                Unlock 100,000+ Direct ATS Jobs & Apply Instantly
+              <h3 class="paywall-title-text text-xl sm:text-2xl font-black text-white tracking-tight leading-tight">
+                Unlock 45,000+ Direct ATS Jobs & Apply Instantly
               </h3>
 
-              <p class="paywall-desc-text text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl mx-auto">
-                You are viewing the free 10 job preview. Apply directly on company career portals before roles get flooded by crowded LinkedIn applicant queues.
+              <p class="paywall-desc-text text-xs sm:text-sm text-slate-300 leading-relaxed max-w-md mx-auto">
+                You've reached the free preview limit. Apply directly on company career portals before roles get flooded by crowded 200+ LinkedIn queues.
               </p>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-left text-slate-200 pt-1">
-                <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg p-2.5">
-                  <span class="text-emerald-400 font-bold">✓</span>
-                  <span>Direct ATS application links (Greenhouse, Ashby, Lever)</span>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-left text-slate-300 max-w-lg mx-auto py-1">
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span>Direct Greenhouse, Lever & Ashby links</span>
                 </div>
-                <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg p-2.5">
-                  <span class="text-emerald-400 font-bold">✓</span>
-                  <span>Complete 33 category search and salary filters</span>
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span>Complete 33 category & salary filters</span>
                 </div>
-                <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg p-2.5">
-                  <span class="text-emerald-400 font-bold">✓</span>
-                  <span>Unlimited saved jobs and real-time candidate bookmarks</span>
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span>Unlimited saved jobs & bookmarks</span>
                 </div>
-                <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg p-2.5">
-                  <span class="text-emerald-400 font-bold">✓</span>
-                  <span>Daily early bird alerts for newly published roles</span>
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span>Daily early-bird alerts for new roles</span>
                 </div>
               </div>
 
-              <div id="ssr-paywall-actions" class="paywall-actions pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <a
-                  href="/login?tab=signup&next=/job-search/all"
-                  class="paywall-guest-link w-full sm:w-auto px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs sm:text-sm shadow-lg shadow-blue-600/30 hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 text-center"
-                >
-                  <span>Create Free Account</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-                </a>
-
-                <a
-                  href="/login?next=/job-search/all"
-                  class="paywall-guest-link w-full sm:w-auto px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 transition-all flex items-center justify-center gap-2 text-center"
-                >
-                  <span>Sign In</span>
-                </a>
-
+              <div id="ssr-paywall-actions" class="paywall-actions pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <button
                   type="button"
                   data-trigger-checkout
-                  data-tier="monthly"
-                  class="btn-trigger-checkout-dynamic w-full sm:w-auto px-5 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-md hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
+                  data-tier="weekly"
+                  class="btn-trigger-checkout-dynamic w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-600/30 hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
                 >
-                  <span>Go Pro ($29/mo)</span>
-                  <span class="text-[10px] font-bold bg-slate-900/20 px-1.5 py-0.5 rounded">Fast Track</span>
+                  <span>Unlock with Weekly Pass ($5.99/wk)</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
                 </button>
+
+                <a
+                  href="/login?tab=signup&next=/job-search/all"
+                  class="paywall-guest-link w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/15 transition-all flex items-center justify-center gap-1.5 text-center"
+                >
+                  <span>Create Free Account</span>
+                </a>
+
+                <a
+                  href="/pricing"
+                  class="text-xs text-blue-300 hover:text-white transition-colors underline-offset-4 hover:underline"
+                >
+                  All plans →
+                </a>
               </div>
             </div>
           </div>
@@ -733,7 +732,7 @@ function formatTimeAgo(iso: string): string {
           >
             ← Previous
           </button>
-          <span id="page-indicator">Page 1 of 1 <span class="text-blue-600 font-bold ml-1">(Free Preview: 10 Jobs)</span></span>
+          <span id="page-indicator">Page 1 of 1 <span class="text-blue-600 font-bold ml-1">(Free Preview: 5 Jobs)</span></span>
           <button
             type="button"
             id="btn-next-page"
@@ -801,7 +800,7 @@ function formatTimeAgo(iso: string): string {
   </div>
 
   <!-- ─── REPORT MODAL ─── -->
-  <div id="report-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+  <div id="report-modal" class="hidden fixed inset-0 z-50 [&:not(.hidden)]:flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200">
       <div class="flex items-center justify-between">
         <h3 class="text-base font-bold text-slate-900">Report Inactive or Broken Job</h3>
@@ -851,7 +850,7 @@ function formatTimeAgo(iso: string): string {
     <a href="/account#saved" id="toast-link" class="text-blue-400 hover:text-blue-300 underline font-bold ml-1">View in Account</a>
   </div>
   <!-- ─── AUTH GATE / PAYWALL MODAL ─── -->
-  <div id="auth-gate-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-opacity">
+  <div id="auth-gate-modal" class="hidden fixed inset-0 z-50 [&:not(.hidden)]:flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-opacity">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 sm:p-7 space-y-5 shadow-2xl border border-slate-200 relative overflow-hidden">
       <!-- Header accent border -->
       <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-500"></div>
@@ -872,7 +871,7 @@ function formatTimeAgo(iso: string): string {
       </div>
 
       <p id="auth-gate-reason" class="text-xs text-slate-600 leading-relaxed">
-        You are viewing the free 10 job preview. Create an account or sign in to browse page 2, save jobs, and access direct ATS applications.
+        You are viewing the free 5 job preview. Create an account or sign in to browse page 2, save jobs, and access direct ATS applications.
       </p>
 
       <div class="space-y-2 py-1 text-xs text-slate-700 font-medium">
@@ -909,10 +908,10 @@ function formatTimeAgo(iso: string): string {
         <button
           type="button"
           data-trigger-checkout
-          data-tier="monthly"
+          data-tier="weekly"
           class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-400 font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer text-center"
         >
-          <span>Unlock Pro Access ($29/mo)</span>
+          <span>Unlock Access — Weekly Pass ($5.99)</span>
         </button>
       </div>
 
@@ -920,24 +919,24 @@ function formatTimeAgo(iso: string): string {
         <button
           type="button"
           data-trigger-checkout
-          data-tier="monthly"
+          data-tier="weekly"
           class="w-full py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
         >
-          <span>Upgrade to Pro ($29/mo)</span>
+          <span>Get Weekly Pass ($5.99/wk)</span>
         </button>
 
         <a
-          href="/account"
+          href="/pricing"
           class="w-full py-2.5 px-4 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200 transition-all flex items-center justify-center gap-2 text-center"
         >
-          <span>Manage Account & Saved Jobs</span>
+          <span>Compare All Plans (From $5.99)</span>
         </a>
       </div>
     </div>
   </div>
 </Layout>
 
-<!-- Client Script for Full CareerHound Filter Engine & URL Sync -->
+<!-- Client Script for Full Jobs Nation Filter Engine & URL Sync -->
 <script>
   import { searchJobs } from "../../lib/api.js";
   import { authClient } from "../../lib/auth-client.js";
@@ -978,64 +977,69 @@ function formatTimeAgo(iso: string): string {
       const desc = card.querySelector(".paywall-desc-text");
       const actions = card.querySelector(".paywall-actions") || card.querySelector("#ssr-paywall-actions");
 
+      const countText = totalJobs > 0 ? totalJobs.toLocaleString() : '45,000';
       if (isLoggedIn) {
-        if (badge) badge.textContent = `Free Plan (Previewing 10 of ${totalJobs.toLocaleString() || '157'}+ Jobs)`;
-        if (title) title.textContent = `Upgrade to Pro to Unlock All 100,000+ Direct ATS Jobs`;
-        if (desc) desc.textContent = `You are signed in on the Free Plan. Upgrade to CareerHound Pro for full access to all verified ATS jobs, direct application links, and salary filters.`;
+        if (badge) badge.textContent = `Free Plan • Previewing 5 of ${countText}+ Direct Roles`;
+        if (title) title.textContent = `Upgrade to Unlock All ${countText}+ Direct ATS Jobs`;
+        if (desc) desc.textContent = `You are signed in on the Free Plan. Upgrade from just $5.99/wk for unlimited direct application links and real-time salary benchmarks.`;
         if (actions) {
           actions.innerHTML = `
-            <div class="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/10 px-4 py-3 rounded-xl border border-white/15 text-xs text-blue-200 font-medium">
-              <span>Signed in as <strong class="text-white font-bold">${user?.email || 'Free Member'}</strong></span>
-            </div>
+            <button
+              type="button"
+              data-trigger-checkout
+              data-tier="weekly"
+              class="btn-trigger-checkout-dynamic w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-600/30 hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
+            >
+              <span>Unlock Weekly Pass ($5.99/wk)</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </button>
 
             <button
               type="button"
               data-trigger-checkout
               data-tier="monthly"
-              class="btn-trigger-checkout-dynamic w-full sm:w-auto px-7 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-md hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
+              class="btn-trigger-checkout-dynamic w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/15 transition-all flex items-center justify-center gap-1.5 cursor-pointer text-center"
             >
-              <span>Upgrade to Pro ($29/mo)</span>
-              <span class="text-[10px] font-bold bg-slate-900/20 px-1.5 py-0.5 rounded">Fast Track</span>
+              <span>Monthly Pro ($19.99/mo)</span>
             </button>
 
             <a
-              href="/account"
-              class="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 transition-all flex items-center justify-center gap-2 text-center"
+              href="/pricing"
+              class="text-xs text-blue-300 hover:text-white transition-colors underline-offset-4 hover:underline"
             >
-              <span>My Account</span>
+              All plans →
             </a>
           `;
         }
       } else {
-        if (badge) badge.textContent = `Free Preview (First 10 of ${totalJobs.toLocaleString() || '157'}+ Jobs)`;
-        if (title) title.textContent = `Unlock 100,000+ Direct ATS Jobs & Apply Instantly`;
-        if (desc) desc.textContent = `You are viewing the free 10 job preview. Apply directly on company career portals before roles get flooded by crowded LinkedIn applicant queues.`;
+        if (badge) badge.textContent = `Free Preview • 5 of ${countText}+ Direct Roles`;
+        if (title) title.textContent = `Unlock ${countText}+ Direct ATS Jobs & Apply Instantly`;
+        if (desc) desc.textContent = `You've reached the free preview limit. Apply directly on company career portals before roles get flooded by crowded 200+ LinkedIn queues.`;
         if (actions) {
           actions.innerHTML = `
-            <a
-              href="/login?tab=signup&next=/job-search/all"
-              class="paywall-guest-link w-full sm:w-auto px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs sm:text-sm shadow-lg shadow-blue-600/30 hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 text-center"
-            >
-              <span>Create Free Account</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-            </a>
-
-            <a
-              href="/login?next=/job-search/all"
-              class="paywall-guest-link w-full sm:w-auto px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 transition-all flex items-center justify-center gap-2 text-center"
-            >
-              <span>Sign In</span>
-            </a>
-
             <button
               type="button"
               data-trigger-checkout
-              data-tier="monthly"
-              class="btn-trigger-checkout-dynamic w-full sm:w-auto px-5 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-md hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
+              data-tier="weekly"
+              class="btn-trigger-checkout-dynamic w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-600/30 hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
             >
-              <span>Go Pro ($29/mo)</span>
-              <span class="text-[10px] font-bold bg-slate-900/20 px-1.5 py-0.5 rounded">Fast Track</span>
+              <span>Unlock with Weekly Pass ($5.99/wk)</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
             </button>
+
+            <a
+              href="/login?tab=signup&next=/job-search/all"
+              class="paywall-guest-link w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/15 transition-all flex items-center justify-center gap-1.5 text-center"
+            >
+              <span>Create Free Account</span>
+            </a>
+
+            <a
+              href="/pricing"
+              class="text-xs text-blue-300 hover:text-white transition-colors underline-offset-4 hover:underline"
+            >
+              All plans →
+            </a>
           `;
         }
       }
@@ -1044,8 +1048,10 @@ function formatTimeAgo(iso: string): string {
       card.querySelectorAll(".btn-trigger-checkout-dynamic").forEach(btn => {
         btn.addEventListener("click", (e) => {
           e.preventDefault();
+          const targetBtn = btn as HTMLButtonElement;
+          const tier = targetBtn.getAttribute("data-tier") || "weekly";
           if ((window as any).triggerCheckout) {
-            (window as any).triggerCheckout("monthly", btn as HTMLButtonElement);
+            (window as any).triggerCheckout(tier, targetBtn);
           } else {
             window.location.href = "/pricing";
           }
@@ -1652,79 +1658,72 @@ function formatTimeAgo(iso: string): string {
     // If not subscribed (guest or free plan user), append high-converting Paywall CTA card + blurred teaser cards
     if (!isSubscribed) {
       const paywallCard = document.createElement("div");
+      const countDisplay = totalJobs > 0 ? totalJobs.toLocaleString() : '45,000';
       paywallCard.id = "client-paywall-card";
-      paywallCard.className = "relative overflow-hidden rounded-2xl border-2 border-blue-600/80 bg-gradient-to-br from-slate-900 via-indigo-950 to-blue-950 text-white p-6 sm:p-8 shadow-xl mt-6";
-      paywallCard.innerHTML = `
-        <div class="absolute -top-24 -right-24 w-60 h-60 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-24 -left-24 w-60 h-60 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+      paywallCard.className = "relative overflow-hidden rounded-2xl border border-blue-500/30 bg-gradient-to-b from-slate-900 via-slate-900 to-indigo-950/90 text-white p-6 sm:p-8 shadow-2xl mt-6";
+          const secondaryBtnHtml = !isLoggedIn
+            ? `<a href="/login?tab=signup&next=/job-search/all" class="paywall-guest-link w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/15 transition-all flex items-center justify-center gap-1.5 text-center"><span>Create Free Account</span></a>`
+            : `<button type="button" data-trigger-checkout data-tier="monthly" class="btn-trigger-checkout-dynamic w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/15 transition-all flex items-center justify-center gap-1.5 cursor-pointer text-center"><span>Monthly Pro ($19.99/mo)</span></button>`;
 
-        <div class="relative z-10 space-y-5 text-center max-w-2xl mx-auto">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold uppercase tracking-wider">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400">
+          paywallCard.innerHTML = `
+        <div class="absolute -top-20 -right-20 w-52 h-52 bg-blue-500/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-20 -left-20 w-52 h-52 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative z-10 space-y-4 text-center max-w-xl mx-auto">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/30 text-blue-300 text-xs font-semibold">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400">
               <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
               <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
             </svg>
-            <span>Free Preview (First 10 of ${totalJobs.toLocaleString() || '100,000'}+ Jobs)</span>
+            <span>Free Preview • 5 of ${countDisplay}+ Direct Roles</span>
           </div>
 
-          <h3 class="text-2xl sm:text-3xl font-black text-white tracking-tight leading-snug">
-            Unlock 100,000+ Direct ATS Jobs & Apply Instantly
+          <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight leading-tight">
+            Unlock ${countDisplay}+ Direct ATS Jobs & Apply Instantly
           </h3>
 
-          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl mx-auto">
-            You are viewing the free 10 job preview. Apply directly on company career portals before roles get flooded by crowded LinkedIn applicant queues.
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-md mx-auto">
+            You've reached the free preview limit. Apply directly on company career portals before roles get flooded by crowded 200+ LinkedIn queues.
           </p>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-left text-slate-200 pt-1">
-            <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg p-2.5">
-              <span class="text-emerald-400 font-bold">✓</span>
-              <span>Direct ATS application links (Greenhouse, Ashby, Lever)</span>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-left text-slate-300 max-w-lg mx-auto py-1">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span>Direct Greenhouse, Lever & Ashby links</span>
             </div>
-            <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg p-2.5">
-              <span class="text-emerald-400 font-bold">✓</span>
-              <span>Complete 33 category search and salary filters</span>
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span>Complete 33 category & salary filters</span>
             </div>
-            <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg p-2.5">
-              <span class="text-emerald-400 font-bold">✓</span>
-              <span>Unlimited saved jobs and real-time candidate bookmarks</span>
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span>Unlimited saved jobs & bookmarks</span>
             </div>
-            <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg p-2.5">
-              <span class="text-emerald-400 font-bold">✓</span>
-              <span>Daily early bird alerts for newly published roles</span>
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span>Daily early-bird alerts for new roles</span>
             </div>
           </div>
 
-          <div class="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
-            ${!isLoggedIn ? `
-              <a
-                href="/login?tab=signup&next=/job-search/all"
-                class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs sm:text-sm shadow-lg shadow-blue-600/30 hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 text-center"
-              >
-                <span>Create Free Account</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-              </a>
-
-              <a
-                href="/login?next=/job-search/all"
-                class="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 transition-all flex items-center justify-center gap-2 text-center"
-              >
-                <span>Sign In</span>
-              </a>
-            ` : `
-              <div class="text-xs text-blue-200 font-semibold px-3 py-2 bg-white/10 rounded-lg border border-white/15">
-                Current Plan: <strong class="text-white">Free Plan</strong> (10 Job Preview Limit)
-              </div>
-            `}
-
+          <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
             <button
               type="button"
               data-trigger-checkout
-              data-tier="monthly"
-              class="btn-trigger-checkout-dynamic w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-md hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
+              data-tier="weekly"
+              class="btn-trigger-checkout-dynamic w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-600/30 hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
             >
-              <span>Upgrade to Pro ($29/mo)</span>
-              <span class="text-[10px] font-bold bg-slate-900/20 px-1.5 py-0.5 rounded">Fast Track</span>
+              <span>Unlock with Weekly Pass ($5.99/wk)</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
             </button>
+
+            ${secondaryBtnHtml}
+
+            <a
+              href="/pricing"
+              class="text-xs text-blue-300 hover:text-white transition-colors underline-offset-4 hover:underline"
+            >
+              All plans →
+            </a>
           </div>
         </div>
       `;
@@ -1771,12 +1770,18 @@ function formatTimeAgo(iso: string): string {
       });
       jobsContainer.appendChild(teaserContainer);
 
-      // Bind dynamic checkout button
-      paywallCard.querySelector(".btn-trigger-checkout-dynamic")?.addEventListener("click", (e) => {
-        e.preventDefault();
-        if ((window as any).triggerCheckout) {
-          (window as any).triggerCheckout("monthly", e.currentTarget as HTMLButtonElement);
-        }
+      // Bind dynamic checkout buttons
+      paywallCard.querySelectorAll(".btn-trigger-checkout-dynamic").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          const targetBtn = btn as HTMLButtonElement;
+          const tier = targetBtn.getAttribute("data-tier") || "weekly";
+          if ((window as any).triggerCheckout) {
+            (window as any).triggerCheckout(tier, targetBtn);
+          } else {
+            window.location.href = "/pricing";
+          }
+        });
       });
     }
 
@@ -1882,7 +1887,7 @@ function formatTimeAgo(iso: string): string {
     if (activeDate) backendFilters.daysAgo = activeDate;
 
     const { isLoggedIn, isSubscribed } = getAuthState();
-    const effectivePageSize = isSubscribed ? 15 : 10;
+    const effectivePageSize = isSubscribed ? 15 : 5;
 
     try {
       const res = await searchJobs({
@@ -1899,7 +1904,7 @@ function formatTimeAgo(iso: string): string {
       allLoadedJobs = res.items || [];
 
       if (jobsCountNum) jobsCountNum.textContent = totalJobs.toLocaleString();
-      const jobsToDisplay = isSubscribed ? allLoadedJobs : allLoadedJobs.slice(0, 10);
+      const jobsToDisplay = isSubscribed ? allLoadedJobs : allLoadedJobs.slice(0, 5);
       renderJobs(jobsToDisplay);
 
       // Restore container opacity & interactivity
@@ -1908,9 +1913,9 @@ function formatTimeAgo(iso: string): string {
         jobsContainer.style.pointerEvents = "auto";
       }
 
-      // Pagination UI calculation (Free plan & guests limited to 10 jobs)
+      // Pagination UI calculation (Free plan & guests limited to 5 jobs)
       if (!isSubscribed) {
-        if (pageIndicator) pageIndicator.innerHTML = `Page 1 of 1 <span class="text-blue-600 font-bold ml-1">(Free Preview: 10 Jobs)</span>`;
+        if (pageIndicator) pageIndicator.innerHTML = `Page 1 of 1 <span class="text-blue-600 font-bold ml-1">(Free Preview: 5 Jobs)</span>`;
         if (prevBtn) prevBtn.disabled = true;
         if (nextBtn) {
           nextBtn.disabled = false;
@@ -2223,24 +2228,29 @@ function formatTimeAgo(iso: string): string {
               </svg>
               <span>+${lockedCount} More Openings Locked</span>
             </div>
-            <p class="text-xs text-slate-600">Free plan and guests can preview up to 5 verified ATS jobs per company. Upgrade to CareerHound Pro for full access to all ${compJobs.length} openings at ${name}.</p>
+            <p class="text-xs text-slate-600">Free plan and guests can preview up to 5 verified ATS jobs per company. Upgrade to Jobs Nation Pro for full access to all ${compJobs.length} openings at ${name}.</p>
             <div class="pt-1 flex flex-wrap items-center justify-center gap-2">
               ${!isLoggedIn ? `
                 <a href="/login?tab=signup&next=/job-search/all" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-colors">
                   <span>Sign Up Free</span>
                 </a>
               ` : ''}
-              <button type="button" data-trigger-checkout data-tier="monthly" class="btn-drawer-upgrade-pro inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer">
-                <span>Unlock All ${name} Openings</span>
+              <button type="button" data-trigger-checkout data-tier="weekly" class="btn-drawer-upgrade-pro inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer">
+                <span>Unlock All ${name} Openings ($5.99/wk)</span>
               </button>
+              <a href="/pricing" class="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors">
+                <span>All Plans</span>
+              </a>
             </div>
           </div>
         `;
 
         listEl.querySelector(".btn-drawer-upgrade-pro")?.addEventListener("click", (e) => {
           e.preventDefault();
+          const btn = e.currentTarget as HTMLButtonElement;
+          const tier = btn.getAttribute("data-tier") || "weekly";
           if ((window as any).triggerCheckout) {
-            (window as any).triggerCheckout("monthly", e.currentTarget as HTMLButtonElement);
+            (window as any).triggerCheckout(tier, btn);
           } else {
             window.location.href = "/pricing";
           }
@@ -2294,24 +2304,29 @@ function formatTimeAgo(iso: string): string {
                 </svg>
                 <span>+${lockedCount} More Openings Locked</span>
               </div>
-              <p class="text-xs text-slate-600">Free plan and guests can preview up to 5 verified ATS jobs per company. Upgrade to CareerHound Pro for full access to all open positions.</p>
+              <p class="text-xs text-slate-600">Free plan and guests can preview up to 5 verified ATS jobs per company. Upgrade to Jobs Nation Pro for full access to all open positions.</p>
               <div class="pt-1 flex flex-wrap items-center justify-center gap-2">
                 ${!isLoggedIn ? `
                   <a href="/login?tab=signup&next=/job-search/all" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-colors">
                     <span>Sign Up Free</span>
                   </a>
                 ` : ''}
-                <button type="button" data-trigger-checkout data-tier="monthly" class="btn-drawer-fallback-upgrade inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer">
-                  <span>Unlock All Openings ($29/mo)</span>
+                <button type="button" data-trigger-checkout data-tier="weekly" class="btn-drawer-fallback-upgrade inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer">
+                  <span>Unlock All Openings ($5.99/wk)</span>
                 </button>
+                <a href="/pricing" class="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors">
+                  <span>All Plans</span>
+                </a>
               </div>
             </div>
           `;
 
           listEl.querySelector(".btn-drawer-fallback-upgrade")?.addEventListener("click", (e) => {
             e.preventDefault();
+            const btn = e.currentTarget as HTMLButtonElement;
+            const tier = btn.getAttribute("data-tier") || "weekly";
             if ((window as any).triggerCheckout) {
-              (window as any).triggerCheckout("monthly", e.currentTarget as HTMLButtonElement);
+              (window as any).triggerCheckout(tier, btn);
             } else {
               window.location.href = "/pricing";
             }
@@ -2349,8 +2364,8 @@ function formatTimeAgo(iso: string): string {
     document.getElementById("ssr-blurred-teasers")?.remove();
     performSearch(currentPage, false);
   } else {
-    // Guest or Free Plan user: setup preview pagination state (max 10 jobs)
-    if (pageIndicator) pageIndicator.innerHTML = `Page 1 of 1 <span class="text-blue-600 font-bold ml-1">(Free Preview: 10 Jobs)</span>`;
+    // Guest or Free Plan user: setup preview pagination state (max 5 jobs)
+    if (pageIndicator) pageIndicator.innerHTML = `Page 1 of 1 <span class="text-blue-600 font-bold ml-1">(Free Preview: 5 Jobs)</span>`;
     if (prevBtn) prevBtn.disabled = true;
     if (nextBtn) {
       nextBtn.disabled = false;
@@ -2448,7 +2463,7 @@ function formatTimeAgo(iso: string): string {
     }
     if (!isSubscribed) {
       if ((window as any).triggerCheckout) {
-        (window as any).triggerCheckout("monthly", nextBtn);
+        (window as any).triggerCheckout("weekly", nextBtn);
       } else {
         window.location.href = "/pricing";
       }

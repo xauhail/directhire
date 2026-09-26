@@ -145,7 +145,10 @@ class JobService {
         // If PostgreSQL pool is available, query directly
         if (auth_js_1.db) {
             try {
-                const conditions = [];
+                const conditions = [
+                    "application_url IS NOT NULL AND application_url != '' AND application_url != '#' AND application_url LIKE 'http%'",
+                    "id NOT LIKE 'ch-%'"
+                ];
                 const values = [];
                 let idx = 1;
                 // 1. Text Query / Title Filter
@@ -346,16 +349,19 @@ class JobService {
                     if (count > 1)
                         moreJobsCountByCompany[slug] = count - 1;
                 }
-                const returnedItems = isGuest
-                    ? (page === 1 ? items.slice(0, 5) : [])
+                const isFreeOrGuest = !isSubscribed;
+                const isCompanyQuery = Boolean(filters?.companySlug || (filters?.company && !query));
+                const previewLimit = 5;
+                const returnedItems = isFreeOrGuest
+                    ? (page === 1 ? items.slice(0, previewLimit) : [])
                     : items;
                 return {
                     items: returnedItems,
                     page,
-                    pageSize: isGuest ? 5 : pageSize,
+                    pageSize: isFreeOrGuest ? previewLimit : pageSize,
                     totalJobs,
-                    hasMore: isGuest ? false : (offset + items.length < totalJobs),
-                    isPaywalled: isGuest && totalJobs > 5,
+                    hasMore: isFreeOrGuest ? false : (offset + items.length < totalJobs),
+                    isPaywalled: isFreeOrGuest && totalJobs > previewLimit,
                     moreJobsCountByCompany,
                 };
             }

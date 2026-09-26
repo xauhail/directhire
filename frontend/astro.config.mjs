@@ -3,7 +3,7 @@ import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://careerhound.io',
+  site: 'https://jobsnation.co',
   integrations: [
     tailwind({
       applyBaseStyles: false,
@@ -11,4 +11,5 @@ export default defineConfig({
     sitemap(),
   ],
   output: 'static',
+  compressHTML: true,
 });

@@ -1,7 +1,7 @@
 {
-  "name": "careerhound-backend",
+  "name": "jobsnation-backend",
   "version": "1.0.0",
-  "description": "Career Hound API Backend with Fastify, Dodo Payments, Gemini AI & Playwright Auto-Apply",
+  "description": "Jobs Nation API Backend with Fastify, Dodo Payments, Gemini AI & Playwright Auto-Apply",
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",

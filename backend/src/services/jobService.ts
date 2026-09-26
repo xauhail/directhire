@@ -403,7 +403,7 @@ export class JobService {
 
         const isFreeOrGuest = !isSubscribed;
         const isCompanyQuery = Boolean(filters?.companySlug || (filters?.company && !query));
-        const previewLimit = isCompanyQuery ? 5 : 10;
+        const previewLimit = 5;
 
         const returnedItems = isFreeOrGuest
           ? (page === 1 ? items.slice(0, previewLimit) : [])

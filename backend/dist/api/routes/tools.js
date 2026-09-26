@@ -117,7 +117,7 @@ const toolRoutes = async (server) => {
                 median: medianUSD,
                 p90,
             },
-            insight: `Companies applying on Career Hound offer direct compensation with zero recruiter-cut deduction, typically resulting in 15–20% higher take-home pay.`
+            insight: `Companies applying on Jobs Nation offer direct compensation with zero recruiter-cut deduction, typically resulting in 15–20% higher take-home pay.`
         });
     });
 };
