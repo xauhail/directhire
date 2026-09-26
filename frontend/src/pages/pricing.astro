@@ -86,6 +86,27 @@ const pricingSchema = {
       
       <!-- Interactive Account Status Banner (matches account#subscription) -->
       <div id="pricing-user-banner" class="max-w-6xl mx-auto mb-10">
+        <!-- Onboarding Completed: Choose Your Plan Banner -->
+        <div id="pricing-banner-onboarded" class="hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white rounded-2xl p-5 [&:not(.hidden)]:flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg mb-4 border border-blue-400/30">
+          <div class="flex items-center gap-3.5">
+            <div class="w-10 h-10 rounded-xl bg-white/20 border border-white/30 text-white flex items-center justify-center font-bold text-lg shrink-0">
+              ✓
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] font-bold uppercase tracking-wider bg-white/25 px-2.5 py-0.5 rounded-full">Step 3 of 3: Choose Your Access Plan</span>
+              </div>
+              <h4 class="text-base font-extrabold mt-1">Your Job Match Profile Is Configured!</h4>
+              <p class="text-xs text-blue-100 mt-0.5">Select a pass to unlock unlimited direct ATS links and AI applications, or continue with the Free Plan.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2.5 shrink-0">
+            <a href="/job-search/all?onboarding=completed" class="px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-xs border border-white/30 transition-all text-center">
+              Continue with Free Plan →
+            </a>
+          </div>
+        </div>
+
         <!-- Default: Visitor Free Plan Callout -->
         <div id="pricing-banner-visitor" class="bg-gradient-to-r from-blue-50 via-indigo-50/50 to-slate-50 border border-blue-200/80 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
           <div class="flex items-center gap-3.5">
@@ -670,9 +691,17 @@ const pricingSchema = {
     const visitorBanner = document.getElementById("pricing-banner-visitor");
     const freeUserBanner = document.getElementById("pricing-banner-free-user");
     const proUserBanner = document.getElementById("pricing-banner-pro-user");
+    const onboardedBanner = document.getElementById("pricing-banner-onboarded");
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const isOnboarding = urlParams.get("onboarding") === "completed" || localStorage.getItem("ch_onboarding_completed") === "true";
 
     if (!currentUser) {
-      // Visitor state: keep visitor banner visible
+      // Visitor state: if coming from onboarding, show onboarding banner
+      if (isOnboarding && onboardedBanner) {
+        if (visitorBanner) visitorBanner.classList.add("hidden");
+        onboardedBanner.classList.remove("hidden");
+      }
       return;
     }
 
@@ -681,6 +710,7 @@ const pricingSchema = {
     if (isSubscribed) {
       if (visitorBanner) visitorBanner.classList.add("hidden");
       if (freeUserBanner) freeUserBanner.classList.add("hidden");
+      if (onboardedBanner) onboardedBanner.classList.add("hidden");
       if (proUserBanner) {
         proUserBanner.classList.remove("hidden");
         const planBadge = document.getElementById("banner-pro-plan-badge");
@@ -703,7 +733,11 @@ const pricingSchema = {
       // Logged-in Free user
       if (visitorBanner) visitorBanner.classList.add("hidden");
       if (proUserBanner) proUserBanner.classList.add("hidden");
-      if (freeUserBanner) {
+
+      if (isOnboarding && onboardedBanner) {
+        if (freeUserBanner) freeUserBanner.classList.add("hidden");
+        onboardedBanner.classList.remove("hidden");
+      } else if (freeUserBanner) {
         freeUserBanner.classList.remove("hidden");
         const emailEl = document.getElementById("banner-user-email");
         const initialEl = document.getElementById("banner-user-initial");

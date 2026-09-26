@@ -102,7 +102,9 @@ const {
         try {
           let email = "";
           try {
-            const userStr = localStorage.getItem("jn_user") || localStorage.getItem("ch_user");
+            const userStr =
+              localStorage.getItem("jn_user") ||
+              localStorage.getItem("ch_user");
             if (userStr) {
               const u = JSON.parse(userStr);
               if (u?.email) email = u.email;
@@ -110,9 +112,10 @@ const {
           } catch (_) {}
 
           // Generate unique client-side idempotency token
-          const idempotencyKey = typeof crypto !== "undefined" && crypto.randomUUID
-            ? crypto.randomUUID()
-            : `idemp_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+          const idempotencyKey =
+            typeof crypto !== "undefined" && crypto.randomUUID
+              ? crypto.randomUUID()
+              : `idemp_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
           const checkoutEndpoint =
             typeof window !== "undefined" &&
@@ -130,7 +133,14 @@ const {
             body: JSON.stringify({ planTier, email, idempotencyKey }),
           });
 
-          const data = await res.json();
+          let data: any = null;
+          try {
+            const rawText = await res.text();
+            data = rawText ? JSON.parse(rawText) : null;
+          } catch (_) {
+            data = null;
+          }
+
           if (data?.checkoutUrl) {
             // Brief delay before redirect; reset flag if user navigates back
             setTimeout(() => {
@@ -140,7 +150,9 @@ const {
             window.location.href = data.checkoutUrl;
           } else {
             throw new Error(
-              data?.error || "Failed to initialize secure checkout session.",
+              data?.message ||
+                data?.error ||
+                `Failed to initialize checkout session (Server status ${res.status}).`,
             );
           }
         } catch (err: any) {

@@ -396,14 +396,11 @@ import Layout from '../layouts/Layout.astro';
       if (data?.user) persistSession(data.user);
 
       const nextUrl = new URLSearchParams(window.location.search).get('next');
-      if (nextUrl) {
-        showSuccess('Account created! Redirecting to jobs...');
-        setTimeout(() => window.location.href = nextUrl, 800);
-        return;
-      }
+      const isOnboarded = new URLSearchParams(window.location.search).get('onboarding') === 'completed' || localStorage.getItem('ch_onboarding_completed') === 'true';
+      const redirectTarget = nextUrl || (isOnboarded ? '/pricing?onboarding=completed' : '/job-search/all');
 
-      showSuccess('Account created! Redirecting to your jobs...');
-      setTimeout(() => window.location.href = '/job-search/all?onboarding=completed', 800);
+      showSuccess('Account created! Choose your plan to unlock direct jobs...');
+      setTimeout(() => window.location.href = redirectTarget, 800);
 
     } catch (err: any) {
       showError(err.message || 'Sign up failed. Please try again.');
@@ -445,7 +442,9 @@ import Layout from '../layouts/Layout.astro';
       showSuccess('Email verified successfully! Welcome to Jobs Nation.');
       setTimeout(() => {
         const nextUrl = new URLSearchParams(window.location.search).get('next');
-        window.location.href = nextUrl || '/job-search/all?onboarding=completed';
+        const isOnboarded = new URLSearchParams(window.location.search).get('onboarding') === 'completed' || localStorage.getItem('ch_onboarding_completed') === 'true';
+        const redirectTarget = nextUrl || (isOnboarded ? '/pricing?onboarding=completed' : '/job-search/all');
+        window.location.href = redirectTarget;
       }, 700);
 
     } catch (err: any) {
