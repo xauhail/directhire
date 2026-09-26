@@ -64,13 +64,13 @@ const defaultRoles = [
       <!-- Already Onboarded Alert Banner -->
       <div id="already-onboarded-banner" class="hidden p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs [&:not(.hidden)]:flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs mb-4">
         <div class="flex items-center gap-2.5">
-          <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">✓</span>
+          <span id="onboarded-banner-badge" class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">✓</span>
           <div>
-            <p class="font-bold text-emerald-900 text-sm">You have already configured your matching preferences!</p>
-            <p class="text-emerald-700 text-xs mt-0.5">Your profile is saved in our database. You can jump directly to your jobs or fine-tune preferences below.</p>
+            <p id="onboarded-banner-title" class="font-bold text-emerald-900 text-sm">You have already configured your matching preferences!</p>
+            <p id="onboarded-banner-desc" class="text-emerald-700 text-xs mt-0.5">Your profile is saved in our database. You can jump directly to your jobs or fine-tune preferences below.</p>
           </div>
         </div>
-        <a href="/job-search/all" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs whitespace-nowrap shadow-xs transition-colors shrink-0">
+        <a id="onboarded-banner-btn" href="/job-search/all" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs whitespace-nowrap shadow-xs transition-colors shrink-0">
           View Matched Jobs →
         </a>
       </div>
@@ -704,13 +704,65 @@ const defaultRoles = [
   if (cachedUserStr) {
     try { currentUser = JSON.parse(cachedUserStr); } catch (_) {}
   }
+  const isAuthenticated = !!(currentUser?.id || localStorage.getItem("ch_authenticated") === "1");
   const isAlreadyOnboarded =
     localStorage.getItem("ch_onboarding_completed") === "true" ||
     currentUser?.onboardingCompleted === true;
 
+  let primaryRole = "";
+  try {
+    const prof = JSON.parse(localStorage.getItem("ch_onboarding_profile") || "{}");
+    primaryRole = prof.targetTitles?.[0] || "";
+  } catch (_) {}
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const allowEdit = urlParams.get("edit") === "true" || urlParams.get("edit") === "1";
+
+  // Flow Optimization: If unauthenticated guest already completed onboarding and did not explicitly request ?edit=true,
+  // guide them straight to account creation so they can save their profile and unlock their feed.
+  if (isAlreadyOnboarded && !isAuthenticated && !allowEdit) {
+    window.location.href = `/login?mode=signup&onboarding=completed${primaryRole ? `&role=${encodeURIComponent(primaryRole)}` : ""}`;
+  }
+
   const alreadyOnboardedBanner = document.getElementById("already-onboarded-banner");
+  const bannerTitle = document.getElementById("onboarded-banner-title");
+  const bannerDesc = document.getElementById("onboarded-banner-desc");
+  const bannerBtn = document.getElementById("onboarded-banner-btn") as HTMLAnchorElement;
+  const bannerBadge = document.getElementById("onboarded-banner-badge");
+
   if (isAlreadyOnboarded && alreadyOnboardedBanner) {
     alreadyOnboardedBanner.classList.remove("hidden");
+
+    if (!isAuthenticated) {
+      // Guest: profile ready, but needs an account to save it permanently
+      alreadyOnboardedBanner.className =
+        "p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-950 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs mb-4";
+      if (bannerBadge) {
+        bannerBadge.className =
+          "w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shrink-0";
+      }
+      if (bannerTitle) {
+        bannerTitle.className = "font-bold text-blue-900 text-sm";
+        bannerTitle.textContent = "Your Job Match Profile Is Ready!";
+      }
+      if (bannerDesc) {
+        bannerDesc.className = "text-blue-700 text-xs mt-0.5";
+        bannerDesc.textContent =
+          "You have completed the calibration. Create your account to save your profile and unlock your personalized feed, or fine-tune preferences below.";
+      }
+      if (bannerBtn) {
+        bannerBtn.className =
+          "px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs whitespace-nowrap shadow-xs transition-colors shrink-0";
+        bannerBtn.textContent = "Create Account to Save Profile →";
+        bannerBtn.href = `/login?mode=signup&onboarding=completed${primaryRole ? `&role=${encodeURIComponent(primaryRole)}` : ""}`;
+      }
+    } else {
+      // Authenticated user: already has account in database
+      if (bannerBtn) {
+        bannerBtn.href = "/job-search/all";
+        bannerBtn.textContent = "View Matched Jobs →";
+      }
+    }
   }
 
   let currentStep = 1;

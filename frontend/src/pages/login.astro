@@ -36,14 +36,20 @@ import Layout from '../layouts/Layout.astro';
       </div>
 
       <!-- Onboarding completion callout banner -->
-      <div id="onboarding-banner" class="hidden p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-900 text-xs space-y-1 shadow-xs">
-        <div class="font-extrabold text-blue-700 flex items-center gap-1.5 text-sm">
-          <svg class="w-4 h-4 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
-          <span>Your Job Match Profile Is Ready</span>
+      <div id="onboarding-banner" class="hidden p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-900 text-xs space-y-2 shadow-xs">
+        <div class="font-extrabold text-blue-700 flex items-center justify-between gap-1.5 text-sm">
+          <div class="flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+            <span>Your Job Match Profile Is Ready</span>
+          </div>
+          <a href="/onboarding?edit=true" class="text-[11px] font-semibold text-blue-600 hover:text-blue-800 underline">Edit preferences</a>
         </div>
         <p class="text-slate-600 text-[11px] leading-relaxed">
-          Create your account to unlock your personalized direct-company feed and select your plan.
+          Create your account below to save your profile permanently and unlock your personalized feed.
         </p>
+        <div id="onboarding-role-tag" class="hidden inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-100/70 border border-blue-200 text-blue-800 text-[11px] font-bold">
+          Target Role: <span id="onboarding-role-text" class="text-blue-900"></span>
+        </div>
       </div>
 
       <!-- Error / Success banner -->
@@ -469,9 +475,19 @@ import Layout from '../layouts/Layout.astro';
   // ── Auto-detect parameters (e.g. ?mode=signup or ?tab=signup or ?onboarding=completed) ────
   const urlParams = new URLSearchParams(window.location.search);
   const onboardingBanner = document.getElementById('onboarding-banner');
+  const roleText = document.getElementById('onboarding-role-text');
+  const roleTag = document.getElementById('onboarding-role-tag');
+
   if (urlParams.get('mode') === 'signup' || urlParams.get('tab') === 'signup' || urlParams.get('onboarding') === 'completed') {
     switchTab('signup');
-    if (onboardingBanner && urlParams.get('onboarding') === 'completed') onboardingBanner.classList.remove('hidden');
+    if (onboardingBanner && urlParams.get('onboarding') === 'completed') {
+      onboardingBanner.classList.remove('hidden');
+      const roleParam = urlParams.get('role');
+      if (roleParam && roleText && roleTag) {
+        roleText.textContent = decodeURIComponent(roleParam);
+        roleTag.classList.remove('hidden');
+      }
+    }
   }
 
   // ── Auto-detect if already signed in ──────────────────────────────────────
