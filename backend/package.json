@@ -10,8 +10,7 @@
     "db:migrate": "better-auth migrate --yes",
     "db:generate": "better-auth generate",
     "db:seed": "node src/db/seedJobs.js",
-    "db:setup-neon": "node src/scripts/setupNeon.js",
-    "db:ingest": "node src/scripts/ingestJobs.js"
+    "db:setup-neon": "node src/scripts/setupNeon.js"
   },
   "dependencies": {
     "@better-auth/cimd": "^1.7.5",
