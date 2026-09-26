@@ -25,6 +25,7 @@ export function getAuth(env: any, requestOrigin?: string) {
     trustedOrigins: [
       'https://jobsnation.co',
       'https://www.jobsnation.co',
+      'https://jobsnation.pages.dev',
       'https://careerhound-7sx.pages.dev',
       'https://careerhound.pages.dev',
       ...(requestOrigin ? [requestOrigin] : []),

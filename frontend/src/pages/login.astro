@@ -373,8 +373,7 @@ import Layout from '../layouts/Layout.astro';
       const { data, error } = await authClient.signUp.email({
         name,
         email,
-        password,
-        callbackURL: window.location.origin + '/job-search/all?onboarding=completed'
+        password
       });
 
       if (error) throw new Error(error.message || 'Registration failed');

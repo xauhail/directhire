@@ -125,7 +125,7 @@ import Layout from "../layouts/Layout.astro";
     if (token) {
       try {
         const res: any = await authClient.verifyEmail({
-          query: { token, callbackURL: window.location.origin + "/account?verified=true" },
+          query: { token, callbackURL: "/account?verified=true" },
         });
 
         if (res?.error) {

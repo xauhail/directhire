@@ -123,6 +123,7 @@ export const auth = betterAuth({
     config.frontendUrl,
     'https://jobsnation.co',
     'https://www.jobsnation.co',
+    'https://jobsnation.pages.dev',
     'https://careerhound-7sx.pages.dev',
     'https://careerhound.pages.dev',
     'http://localhost:4321',
