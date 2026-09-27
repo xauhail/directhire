@@ -1,0 +1,34 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Jobs Nation",
+    "identifier": "did:web:jobsnation.co"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:jobsnation.co:api:job-search",
+      "displayName": "Direct Company Job Search API",
+      "type": "application/json",
+      "url": "https://jobsnation.co/api/job-search",
+      "description": "Query verified direct-to-company job postings indexed from company ATS boards without recruiter middlemen.",
+      "representativeQueries": [
+        "find remote software engineer jobs directly on greenhouse",
+        "search tech jobs without recruiter middlemen",
+        "unadvertised direct company job listings",
+        "verified Ashby and Lever jobs"
+      ]
+    },
+    {
+      "identifier": "urn:air:jobsnation.co:page:llms-txt",
+      "displayName": "Jobs Nation LLM Context and Overview",
+      "type": "text/markdown",
+      "url": "https://jobsnation.co/llms.txt",
+      "description": "Structured guide and resource index for AI agents discovering Jobs Nation services.",
+      "representativeQueries": [
+        "jobs nation capabilities and features",
+        "how does jobs nation index company career pages",
+        "bypass recruiter agency job applications"
+      ]
+    }
+  ]
+}

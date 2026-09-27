@@ -135,9 +135,9 @@ const currentPath = Astro.url.pathname;
               <button
                 type="button"
                 id="header-logout-btn"
-                class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 font-medium transition-colors text-left"
+                class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-700 hover:bg-red-50 font-medium transition-colors text-left"
               >
-                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                <svg class="w-4 h-4 text-red-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                 Sign Out
               </button>
             </div>
@@ -262,7 +262,7 @@ const currentPath = Astro.url.pathname;
     if (mobileAuthLinks) {
       mobileAuthLinks.innerHTML = `
         <a href="/account" class="block w-full text-center py-2.5 px-4 font-bold text-sm bg-blue-600 text-white rounded-lg shadow">My Account (${name})</a>
-        <button id="mobile-logout" type="button" class="block w-full text-center py-2.5 px-4 font-bold text-sm border border-slate-200 text-red-600 rounded-lg">Sign Out</button>
+        <button id="mobile-logout" type="button" class="block w-full text-center py-2.5 px-4 font-bold text-sm border border-slate-200 text-red-700 rounded-lg">Sign Out</button>
       `;
       document.getElementById('mobile-logout')?.addEventListener('click', doLogout);
     }
@@ -270,38 +270,56 @@ const currentPath = Astro.url.pathname;
 
   // 1. Instant synchronous check from localStorage (prevents flashing)
   const cachedUserStr = localStorage.getItem('ch_user');
+  const isAuthenticated = localStorage.getItem('ch_authenticated') === '1' || Boolean(cachedUserStr);
   if (cachedUserStr) {
     try {
       const cachedUser = JSON.parse(cachedUserStr);
       renderAuthenticated(cachedUser);
     } catch (_) {}
+  } else {
+    if (headerGuest) headerGuest.classList.remove('hidden');
+    if (headerAuth) headerAuth.classList.add('hidden');
   }
 
-  // 2. Background check with Better Auth to keep data, subscription, and email verification in sync
-  authClient.getSession().then((sessionRes: any) => {
-    if (sessionRes?.data?.user) {
-      const u = sessionRes.data.user;
-      let cached: any = {};
-      try { cached = JSON.parse(localStorage.getItem('ch_user') || '{}'); } catch (_) {}
+  // 2. Only check remote Better Auth session if user was previously authenticated
+  // Run during idle period so it never blocks initial render, LCP, or critical network chain
+  if (isAuthenticated) {
+    const syncSession = () => {
+      authClient.getSession().then((sessionRes: any) => {
+        if (sessionRes?.data?.user) {
+          const u = sessionRes.data.user;
+          let cached: any = {};
+          try { cached = JSON.parse(localStorage.getItem('ch_user') || '{}'); } catch (_) {}
 
-      const mergedUser = {
-        ...cached,
-        id: u.id,
-        name: u.name || cached.name,
-        email: u.email || cached.email,
-        emailVerified: u.emailVerified ?? cached.emailVerified ?? false,
-        plan: (u as any).plan || cached.plan || 'free',
-        isSubscribed: (u as any).isSubscribed ?? cached.isSubscribed ?? false,
-        onboardingCompleted: (u as any).onboardingCompleted ?? cached.onboardingCompleted ?? false,
-      };
+          const mergedUser = {
+            ...cached,
+            id: u.id,
+            name: u.name || cached.name,
+            email: u.email || cached.email,
+            emailVerified: u.emailVerified ?? cached.emailVerified ?? false,
+            plan: (u as any).plan || cached.plan || 'free',
+            isSubscribed: (u as any).isSubscribed ?? cached.isSubscribed ?? false,
+            onboardingCompleted: (u as any).onboardingCompleted ?? cached.onboardingCompleted ?? false,
+          };
 
-      localStorage.setItem('ch_user', JSON.stringify(mergedUser));
-      localStorage.setItem('ch_token', u.id);
-      localStorage.setItem('ch_authenticated', '1');
-      renderAuthenticated(mergedUser);
-    } else if (!cachedUserStr) {
-      if (headerGuest) headerGuest.classList.remove('hidden');
-      if (headerAuth) headerAuth.classList.add('hidden');
+          localStorage.setItem('ch_user', JSON.stringify(mergedUser));
+          localStorage.setItem('ch_token', u.id);
+          localStorage.setItem('ch_authenticated', '1');
+          renderAuthenticated(mergedUser);
+        } else {
+          localStorage.removeItem('ch_token');
+          localStorage.removeItem('ch_user');
+          localStorage.removeItem('ch_authenticated');
+          if (headerGuest) headerGuest.classList.remove('hidden');
+          if (headerAuth) headerAuth.classList.add('hidden');
+        }
+      }).catch(() => {});
+    };
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(syncSession, { timeout: 3000 });
+    } else {
+      setTimeout(syncSession, 2000);
     }
-  }).catch(() => {});
+  }
 </script>

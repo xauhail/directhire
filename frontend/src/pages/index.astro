@@ -18,7 +18,7 @@ if (featuredJobs.length === 0) {
   featuredJobs = [
     {
       title: "Staff Infrastructure Engineer (Distributed Systems)",
-      company: { name: "Stripe", logo: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=128&q=80" },
+      company: { name: "Stripe", logo: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=88&auto=format&fit=crop&q=75" },
       locations: ["San Francisco, CA", "Worldwide Remote"],
       workArrangement: "Remote Solely",
       salary: { min: 210000, max: 295000 },
@@ -26,7 +26,7 @@ if (featuredJobs.length === 0) {
     },
     {
       title: "Senior Full Stack Product Engineer",
-      company: { name: "Linear", logo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=128&q=80" },
+      company: { name: "Linear", logo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=88&auto=format&fit=crop&q=75" },
       locations: ["Worldwide Remote"],
       workArrangement: "Remote Solely",
       salary: { min: 175000, max: 235000 },
@@ -83,6 +83,16 @@ const softwareAppSchema = {
     "priceCurrency": "USD"
   }
 };
+
+function getOptimizedLogo(url: string) {
+  if (!url) return '';
+  if (url.includes('images.unsplash.com')) {
+    let clean = url.replace(/w=\d+/, 'w=88').replace(/q=\d+/, 'q=60');
+    if (!clean.includes('fm=')) clean += '&fm=webp';
+    return clean;
+  }
+  return url;
+}
 ---
 
 <Layout 
@@ -145,10 +155,10 @@ const softwareAppSchema = {
       <!-- Social Proof Stats & Avatars -->
       <div class="flex flex-col items-center gap-2 text-white">
         <div class="flex -space-x-2 overflow-hidden justify-center mb-1">
-          <img class="inline-block h-10 w-10 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=64&q=80" alt="User avatar" />
-          <img class="inline-block h-10 w-10 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=64&q=80" alt="User avatar" />
-          <img class="inline-block h-10 w-10 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&q=80" alt="User avatar" />
-          <img class="inline-block h-10 w-10 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=64&q=80" alt="User avatar" />
+          <img class="inline-block h-10 w-10 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=48&h=48&fit=crop&crop=faces&auto=format&fm=webp&q=50" width="40" height="40" alt="User avatar" decoding="async" />
+          <img class="inline-block h-10 w-10 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=48&h=48&fit=crop&crop=faces&auto=format&fm=webp&q=50" width="40" height="40" alt="User avatar" decoding="async" />
+          <img class="inline-block h-10 w-10 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=48&h=48&fit=crop&crop=faces&auto=format&fm=webp&q=50" width="40" height="40" alt="User avatar" decoding="async" />
+          <img class="inline-block h-10 w-10 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=48&h=48&fit=crop&crop=faces&auto=format&fm=webp&q=50" width="40" height="40" alt="User avatar" decoding="async" />
         </div>
         
         <div class="flex items-center gap-1 text-amber-300 text-sm">
@@ -163,6 +173,7 @@ const softwareAppSchema = {
 
       <!-- Live Product UI Mockup Preview -->
       <div class="mt-12 max-w-4xl mx-auto rounded-2xl bg-white/10 p-2 sm:p-3 backdrop-blur-lg border border-white/20 shadow-2xl">
+        <h2 class="sr-only">Live Verified Direct Company Openings</h2>
         <div class="rounded-xl overflow-hidden bg-white text-slate-900 border border-slate-200 text-left shadow-lg">
           <!-- Mock Header Bar -->
           <div class="bg-slate-50 border-b border-slate-200 px-4 py-3 flex items-center justify-between text-xs text-slate-500">
@@ -181,15 +192,18 @@ const softwareAppSchema = {
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-3.5 first:pt-0 last:pb-0">
                 <div class="flex items-start gap-3">
                   <img 
-                    src={job.company.logo} 
+                    src={getOptimizedLogo(job.company.logo)} 
                     alt={job.company.name} 
                     class="w-11 h-11 rounded-lg border border-slate-200 object-cover bg-slate-50 shrink-0" 
+                    width="44"
+                    height="44"
                     loading="lazy"
+                    decoding="async"
                   />
                   <div>
-                    <h4 class="font-bold text-slate-900 text-base hover:text-blue-600 transition-colors">
+                    <h3 class="font-bold text-slate-900 text-base hover:text-blue-600 transition-colors">
                       <a href="/search">{job.title}</a>
-                    </h4>
+                    </h3>
                     <p class="text-xs text-slate-500">{job.company.name} • {(job.locations || []).join(' • ')}</p>
                     <div class="flex flex-wrap gap-1.5 mt-2">
                       <span class="text-[11px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-100">
@@ -240,7 +254,7 @@ const softwareAppSchema = {
           <div>
             <div class="flex items-center justify-between pb-6 border-b border-slate-200">
               <span class="text-xl font-bold text-slate-800">LinkedIn / Indeed</span>
-              <span class="text-xs font-bold text-red-600 uppercase tracking-wider bg-red-100 px-2.5 py-1 rounded-full">Aggregators</span>
+              <span class="text-xs font-bold text-red-800 uppercase tracking-wider bg-red-100 border border-red-200 px-2.5 py-1 rounded-full">Aggregators</span>
             </div>
 
             <ul class="space-y-4 pt-6 text-sm text-slate-700">
@@ -426,16 +440,16 @@ const softwareAppSchema = {
           <div>
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-sm shadow-sm">MK</div>
+                <div class="w-10 h-10 rounded-full bg-blue-700 text-white font-bold flex items-center justify-center text-sm shadow-sm">MK</div>
                 <div>
-                  <h4 class="font-bold text-slate-900 text-sm">Maksym K.</h4>
+                  <h3 class="font-bold text-slate-900 text-sm">Maksym K.</h3>
                   <div class="flex items-center gap-1">
-                    <span class="text-amber-400 text-xs">★★★★★</span>
-                    <span class="text-[10px] text-slate-400 font-medium">Verified Google Review</span>
+                    <span class="text-amber-500 text-xs">★★★★★</span>
+                    <span class="text-[10px] text-slate-600 font-semibold">Verified Google Review</span>
                   </div>
                 </div>
               </div>
-              <svg class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -443,9 +457,9 @@ const softwareAppSchema = {
               "This tool is a game changer! I didn't realize how many jobs aren't listed on indeed or LinkedIn. Applied to 4 direct postings and got 2 interview invitations within a week."
             </p>
           </div>
-          <div class="pt-4 mt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500 font-medium">
+          <div class="pt-4 mt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-600 font-medium">
             <span>Software Engineer</span>
-            <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Offer Accepted</span>
+            <span class="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Offer Accepted</span>
           </div>
         </article>
 
@@ -454,16 +468,16 @@ const softwareAppSchema = {
           <div>
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-sm">HA</div>
+                <div class="w-10 h-10 rounded-full bg-indigo-700 text-white font-bold flex items-center justify-center text-sm shadow-sm">HA</div>
                 <div>
-                  <h4 class="font-bold text-slate-900 text-sm">Hassaan A.</h4>
+                  <h3 class="font-bold text-slate-900 text-sm">Hassaan A.</h3>
                   <div class="flex items-center gap-1">
-                    <span class="text-amber-400 text-xs">★★★★★</span>
-                    <span class="text-[10px] text-slate-400 font-medium">Verified Google Review</span>
+                    <span class="text-amber-500 text-xs">★★★★★</span>
+                    <span class="text-[10px] text-slate-600 font-semibold">Verified Google Review</span>
                   </div>
                 </div>
               </div>
-              <svg class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -471,9 +485,9 @@ const softwareAppSchema = {
               "It makes so much more sense to apply directly on the company website. Good stuff! Works as advertised, and finding verified direct ATS links saved me dozens of hours."
             </p>
           </div>
-          <div class="pt-4 mt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500 font-medium">
+          <div class="pt-4 mt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-600 font-medium">
             <span>Product Manager</span>
-            <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Offer Accepted</span>
+            <span class="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Offer Accepted</span>
           </div>
         </article>
 
@@ -482,16 +496,16 @@ const softwareAppSchema = {
           <div>
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-sm shadow-sm">MF</div>
+                <div class="w-10 h-10 rounded-full bg-emerald-700 text-white font-bold flex items-center justify-center text-sm shadow-sm">MF</div>
                 <div>
-                  <h4 class="font-bold text-slate-900 text-sm">Matthew F.</h4>
+                  <h3 class="font-bold text-slate-900 text-sm">Matthew F.</h3>
                   <div class="flex items-center gap-1">
-                    <span class="text-amber-400 text-xs">★★★★★</span>
-                    <span class="text-[10px] text-slate-400 font-medium">Verified Google Review</span>
+                    <span class="text-amber-500 text-xs">★★★★★</span>
+                    <span class="text-[10px] text-slate-600 font-semibold">Verified Google Review</span>
                   </div>
                 </div>
               </div>
-              <svg class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -499,9 +513,9 @@ const softwareAppSchema = {
               "On a hunt for a remote SDR/BDR role. Definitely many jobs that aren't on LinkedIn. It's cool! Reached the hiring team directly and signed an offer last Friday."
             </p>
           </div>
-          <div class="pt-4 mt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500 font-medium">
+          <div class="pt-4 mt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-600 font-medium">
             <span>Outbound SDR</span>
-            <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Offer Accepted</span>
+            <span class="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Offer Accepted</span>
           </div>
         </article>
 
@@ -510,16 +524,16 @@ const softwareAppSchema = {
           <div>
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-purple-600 text-white font-bold flex items-center justify-center text-sm shadow-sm">ER</div>
+                <div class="w-10 h-10 rounded-full bg-purple-700 text-white font-bold flex items-center justify-center text-sm shadow-sm">ER</div>
                 <div>
-                  <h4 class="font-bold text-slate-900 text-sm">Elena Rostova</h4>
+                  <h3 class="font-bold text-slate-900 text-sm">Elena Rostova</h3>
                   <div class="flex items-center gap-1">
-                    <span class="text-amber-400 text-xs">★★★★★</span>
-                    <span class="text-[10px] text-slate-400 font-medium">Verified Google Review</span>
+                    <span class="text-amber-500 text-xs">★★★★★</span>
+                    <span class="text-[10px] text-slate-600 font-semibold">Verified Google Review</span>
                   </div>
                 </div>
               </div>
-              <svg class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -527,9 +541,9 @@ const softwareAppSchema = {
               "Found 3 Greenhouse postings that had zero competition compared to the 800+ applicants on LinkedIn. The direct links bypassed agency recruiters entirely and I signed in 12 days."
             </p>
           </div>
-          <div class="pt-4 mt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500 font-medium">
+          <div class="pt-4 mt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-600 font-medium">
             <span>Senior Frontend Engineer</span>
-            <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Offer Accepted</span>
+            <span class="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Offer Accepted</span>
           </div>
         </article>
 
@@ -538,16 +552,16 @@ const softwareAppSchema = {
           <div>
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-cyan-600 text-white font-bold flex items-center justify-center text-sm shadow-sm">DC</div>
+                <div class="w-10 h-10 rounded-full bg-cyan-800 text-white font-bold flex items-center justify-center text-sm shadow-sm">DC</div>
                 <div>
-                  <h4 class="font-bold text-slate-900 text-sm">David Chen</h4>
+                  <h3 class="font-bold text-slate-900 text-sm">David Chen</h3>
                   <div class="flex items-center gap-1">
-                    <span class="text-amber-400 text-xs">★★★★★</span>
-                    <span class="text-[10px] text-slate-400 font-medium">Verified Google Review</span>
+                    <span class="text-amber-500 text-xs">★★★★★</span>
+                    <span class="text-[10px] text-slate-600 font-semibold">Verified Google Review</span>
                   </div>
                 </div>
               </div>
-              <svg class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -555,9 +569,9 @@ const softwareAppSchema = {
               "Applying directly on Ashby and Lever company career pages gave me immediate responses. Woke up on Wednesday morning with 4 interview requests in my inbox."
             </p>
           </div>
-          <div class="pt-4 mt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500 font-medium">
+          <div class="pt-4 mt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-600 font-medium">
             <span>AI / ML Engineer</span>
-            <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Offer Accepted</span>
+            <span class="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Offer Accepted</span>
           </div>
         </article>
 
@@ -566,16 +580,16 @@ const softwareAppSchema = {
           <div>
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-rose-600 text-white font-bold flex items-center justify-center text-sm shadow-sm">SJ</div>
+                <div class="w-10 h-10 rounded-full bg-rose-700 text-white font-bold flex items-center justify-center text-sm shadow-sm">SJ</div>
                 <div>
-                  <h4 class="font-bold text-slate-900 text-sm">Sarah Jenkins</h4>
+                  <h3 class="font-bold text-slate-900 text-sm">Sarah Jenkins</h3>
                   <div class="flex items-center gap-1">
-                    <span class="text-amber-400 text-xs">★★★★★</span>
-                    <span class="text-[10px] text-slate-400 font-medium">Verified Google Review</span>
+                    <span class="text-amber-500 text-xs">★★★★★</span>
+                    <span class="text-[10px] text-slate-600 font-semibold">Verified Google Review</span>
                   </div>
                 </div>
               </div>
-              <svg class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -583,9 +597,9 @@ const softwareAppSchema = {
               "The salary tool showed me the true 90th percentile band before my final round. I negotiated $185k base + equity without any agency middleman taking a cut. Worth every single penny."
             </p>
           </div>
-          <div class="pt-4 mt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500 font-medium">
+          <div class="pt-4 mt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-600 font-medium">
             <span>Director of Product</span>
-            <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Offer Accepted</span>
+            <span class="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Offer Accepted</span>
           </div>
         </article>
 
@@ -593,8 +607,8 @@ const softwareAppSchema = {
 
       <div class="text-center mt-10">
         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">
-          <span class="text-emerald-600">✓ 100% Real Candidate Reviews</span>
-          <span class="text-slate-300">•</span>
+          <span class="text-emerald-800">✓ 100% Real Candidate Reviews</span>
+          <span class="text-slate-400">•</span>
           <span>Verified through Google & Trustpilot Reviews</span>
         </div>
       </div>

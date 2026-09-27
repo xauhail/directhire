@@ -1,0 +1,24 @@
+# Jobs Nation - Direct Company ATS Job Platform
+
+> Jobs Nation indexes open headcount directly from company Applicant Tracking Systems (Greenhouse, Lever, Ashby, Workday, etc.), skipping recruiter middlemen, aggregator fees, and crowded 200+ applicant queues.
+
+Jobs Nation is designed for job seekers looking for verified, direct-to-company roles with higher interview conversion rates.
+
+## Core Capabilities
+
+- **Direct ATS Indexing**: Continual indexing of verified employer career portals to surface active positions before they are advertised on job boards.
+- **Anti-Ghost Verification**: Filtering out stale, phantom, and agency-harvested listings to ensure every posting represents an open, active headcount.
+- **Direct Application URLs**: Deep-linking straight to internal company application forms, eliminating agency gatekeepers.
+
+## Key Links
+
+- [Job Search](https://jobsnation.co/job-search/all): Search active unadvertised headcount across engineering, product, sales, marketing, and operations.
+- [Pricing & Membership Plans](https://jobsnation.co/pricing): Access verified direct employer application links, salary benchmarks, and daily direct job alerts.
+- [Candidate Onboarding](https://jobsnation.co/onboarding): Personalized job preference matching and tailored direct-hire recommendations.
+- [Free ATS Resume Scanner](https://jobsnation.co/tools/ats-checker): Free ATS resume scanner and keyword alignment tool.
+- [Ghost Job Detector](https://jobsnation.co/tools/ghost-job-detector): Verify whether an external job posting is an active role or stale listing.
+- [Recruiter Outreach Generator](https://jobsnation.co/tools/recruiter-outreach): Free cold outreach and LinkedIn connection note generator for hiring managers.
+- [Remote Salary Calculator](https://jobsnation.co/tools/salary-calculator): Benchmark remote compensation against direct hiring market standards.
+- [Terms of Service](https://jobsnation.co/terms-and-conditions): Terms governing access and membership.
+- [Privacy Policy](https://jobsnation.co/privacy-policy): Privacy and data processing practices.
+- [Contact Support](https://jobsnation.co/contact): Get in touch with the Jobs Nation support team.
