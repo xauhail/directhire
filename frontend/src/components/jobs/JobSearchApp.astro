@@ -445,6 +445,9 @@ function formatTimeAgo(iso: string): string {
         </div>
 
 
+        <!-- Serialized SSR initial jobs data for instant full-detail access -->
+        <script id="ssr-jobs-data" type="application/json" set:html={JSON.stringify(initialJobs)} />
+
         <!-- Job Feed Container -->
         <div id="jobs-container" class="space-y-4">
           {initialJobs.slice(0, 5).map((job) => {
@@ -454,6 +457,25 @@ function formatTimeAgo(iso: string): string {
             const salaryBadge = job.salary?.max 
               ? `${job.salary.currency || "$"}${job.salary.min ? job.salary.min.toLocaleString() + " - " : ""}${job.salary.max.toLocaleString()} (${job.salary.currency || "USD"})`
               : (job.salary?.min ? `${job.salary.currency || "$"}${job.salary.min.toLocaleString()}+` : "");
+
+            const ssrJobPayload = {
+              id: job.id,
+              title: job.title,
+              company: { name: companyName, logo: companyLogo, slug: job.company?.slug, industry: job.company?.industry },
+              locations: Array.isArray(job.locations) ? job.locations : [locationStr],
+              workArrangement: job.workArrangement,
+              salaryBadge: salaryBadge,
+              salary: job.salary,
+              applicationUrl: job.applicationUrl || '#',
+              descriptionExcerpt: job.descriptionExcerpt,
+              descriptionFull: job.descriptionFull || job.descriptionExcerpt,
+              experienceLevel: job.experienceLevel,
+              educationLevel: job.educationLevel,
+              published: job.published,
+              skills: job.skills,
+              directApplySource: job.directApplySource
+            };
+            const ssrJobJson = JSON.stringify(ssrJobPayload);
 
             return (
               <div class="job-card bg-white rounded-xl border border-slate-200 shadow-xs hover:shadow-md transition-all p-5 space-y-4" data-job-id={job.id}>
@@ -467,7 +489,7 @@ function formatTimeAgo(iso: string): string {
                       onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=128&q=80'"
                     />
                     <div class="min-w-0">
-                      <h3 class="text-base sm:text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors cursor-pointer truncate job-title-btn" data-job-id={job.id}>
+                      <h3 class="text-base sm:text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors cursor-pointer truncate job-title-btn" data-job-id={job.id} data-job-json={ssrJobJson}>
                         {job.title}
                       </h3>
                       <div class="flex flex-wrap items-center gap-2 mt-1 text-xs text-slate-500">
@@ -489,19 +511,7 @@ function formatTimeAgo(iso: string): string {
                     type="button"
                     class="btn-save-job p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-slate-50 transition-colors shrink-0 cursor-pointer"
                     data-job-id={job.id}
-                    data-job-json={JSON.stringify({
-                      id: job.id,
-                      title: job.title,
-                      company: { name: companyName, logo: companyLogo, slug: job.company?.slug },
-                      locations: Array.isArray(job.locations) ? job.locations : [locationStr],
-                      workArrangement: job.workArrangement,
-                      salaryBadge: salaryBadge,
-                      salary: job.salary,
-                      applicationUrl: job.applicationUrl || '#',
-                      descriptionExcerpt: job.descriptionExcerpt,
-                      published: job.published,
-                      skills: job.skills
-                    })}
+                    data-job-json={ssrJobJson}
                     aria-label="Save job"
                     title="Save this job"
                   >
@@ -553,26 +563,26 @@ function formatTimeAgo(iso: string): string {
                       class="btn-apply-direct inline-flex items-center justify-center gap-1.5 px-5 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs transition-colors"
                       data-job-id={job.id}
                       data-url={job.applicationUrl || "#"}
+                      data-job-json={ssrJobJson}
                     >
-                      <span>Apply Directly</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-sky-300">
+                        <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
                       </svg>
+                      <span>AI Apply</span>
                     </a>
 
                     <button
                       type="button"
-                      class="btn-more-jobs inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-semibold transition-colors"
+                      class="btn-more-jobs inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-semibold transition-colors cursor-pointer"
                       data-company-slug={job.company?.slug}
                       data-company-name={companyName}
                       data-job-id={job.id}
+                      data-job-json={ssrJobJson}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                        <polyline points="2 17 12 22 22 17"></polyline>
-                        <polyline points="2 12 12 17 22 12"></polyline>
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
                       </svg>
                       <span>More</span>
                     </button>
@@ -778,6 +788,169 @@ function formatTimeAgo(iso: string): string {
           <button type="button" id="btn-mobile-apply" class="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-colors cursor-pointer">
             Apply Filters
           </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── JOB DETAILS DRAWER (Full Job Description & Specifications) ─── -->
+  <div id="job-details-drawer" class="hidden fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
+    <div id="job-details-drawer-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"></div>
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10 w-full sm:w-auto">
+      <div class="w-full sm:w-[600px] md:w-[680px] bg-white shadow-2xl flex flex-col h-full relative z-10">
+        <!-- Drawer Header -->
+        <div class="flex items-start justify-between p-5 sm:p-6 border-b border-slate-200 bg-slate-50/90 gap-4 shrink-0">
+          <div class="flex items-start gap-3.5 min-w-0 flex-1">
+            <img
+              id="details-company-logo"
+              src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=128&q=80"
+              alt="Company Logo"
+              class="w-13 h-13 rounded-xl object-cover border border-slate-200 bg-white shrink-0 shadow-xs"
+            />
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-center gap-2 mb-1">
+                <span id="details-company-name" class="font-bold text-slate-800 text-sm">Company Name</span>
+                <span id="details-industry" class="text-[11px] px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 font-medium">Technology</span>
+                <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Verified Direct ATS</span>
+                </span>
+              </div>
+              <h2 id="details-job-title" class="text-lg sm:text-xl font-black text-slate-900 leading-snug break-words">
+                Job Title
+              </h2>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            id="btn-close-job-details"
+            class="p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200 transition-colors shrink-0 cursor-pointer"
+            aria-label="Close job details"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Scrollable Body -->
+        <div id="details-drawer-content" class="p-5 sm:p-6 flex-1 overflow-y-auto space-y-6">
+          <!-- Metadata Chips Bar -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-xs">
+            <div>
+              <span class="text-slate-400 text-[11px] uppercase tracking-wider font-semibold block mb-0.5">Location</span>
+              <span id="details-location" class="font-bold text-slate-800">Worldwide</span>
+            </div>
+            <div>
+              <span class="text-slate-400 text-[11px] uppercase tracking-wider font-semibold block mb-0.5">Workplace</span>
+              <span id="details-work-arrangement" class="font-bold text-slate-800">Remote OK</span>
+            </div>
+            <div>
+              <span class="text-slate-400 text-[11px] uppercase tracking-wider font-semibold block mb-0.5">Compensation</span>
+              <span id="details-salary" class="font-bold text-emerald-600">Competitive Salary</span>
+            </div>
+            <div>
+              <span class="text-slate-400 text-[11px] uppercase tracking-wider font-semibold block mb-0.5">Job Type</span>
+              <span id="details-employment-type" class="font-bold text-slate-800">Full-time</span>
+            </div>
+            <div>
+              <span class="text-slate-400 text-[11px] uppercase tracking-wider font-semibold block mb-0.5">Experience</span>
+              <span id="details-experience" class="font-bold text-slate-800">Mid-Senior Level</span>
+            </div>
+            <div>
+              <span class="text-slate-400 text-[11px] uppercase tracking-wider font-semibold block mb-0.5">Date Released</span>
+              <span id="details-date" class="font-bold text-blue-700">Recently</span>
+            </div>
+          </div>
+
+          <!-- Skills Badges -->
+          <div id="details-skills-section" class="space-y-2">
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Required Skills & Technologies</h3>
+            <div id="details-skills-list" class="flex flex-wrap gap-1.5">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Full Job Description -->
+          <div class="space-y-3 pt-2 border-t border-slate-100">
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>Full Job Description & Responsibilities</span>
+            </h3>
+            <div id="details-description" class="text-sm text-slate-700 leading-relaxed space-y-3 bg-white">
+              <!-- Full description HTML rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Direct ATS Assurance Banner -->
+          <div class="p-4 rounded-xl border border-blue-200 bg-blue-50/70 text-xs text-slate-700 space-y-1.5">
+            <div class="flex items-center gap-2 font-bold text-blue-900">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+              <span>Verified Direct-to-Company ATS Listing</span>
+            </div>
+            <p class="text-slate-600 leading-normal">
+              This application link routes directly to the company's internal Applicant Tracking System. No recruiter fees, no third-party candidate masking.
+            </p>
+          </div>
+        </div>
+
+        <!-- Sticky Drawer Footer with Action Buttons -->
+        <div class="p-4 sm:p-5 border-t border-slate-200 bg-white flex items-center justify-between gap-3 shrink-0 shadow-lg">
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              id="details-btn-save"
+              class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition-colors cursor-pointer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path>
+              </svg>
+              <span id="details-save-label">Save</span>
+            </button>
+            <button
+              type="button"
+              id="details-btn-share"
+              class="p-2.5 rounded-xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-600 transition-colors cursor-pointer"
+              title="Copy job link"
+              aria-label="Copy job link"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                <polyline points="16 6 12 2 8 6"></polyline>
+                <line x1="12" y1="2" x2="12" y2="15"></line>
+              </svg>
+            </button>
+          </div>
+
+          <a
+            id="details-btn-apply"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md transition-all cursor-pointer group"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-sky-300 group-hover:rotate-12 transition-transform">
+              <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+            </svg>
+            <span>AI Apply</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </a>
         </div>
       </div>
     </div>
@@ -1155,6 +1328,12 @@ function formatTimeAgo(iso: string): string {
   let currentPage = 1;
   let totalJobs = 0;
   let allLoadedJobs: any[] = [];
+  try {
+    const ssrJobsEl = document.getElementById("ssr-jobs-data");
+    if (ssrJobsEl && ssrJobsEl.textContent) {
+      allLoadedJobs = JSON.parse(ssrJobsEl.textContent);
+    }
+  } catch (_) {}
 
   // DOM Elements
   const searchForm = document.getElementById("search-form") as HTMLFormElement;
@@ -1539,16 +1718,21 @@ function formatTimeAgo(iso: string): string {
       const jobPayload = {
         id: job.id,
         title: job.title,
-        company: { name: companyName, logo: companyLogo, slug: job.company?.slug },
+        company: { name: companyName, logo: companyLogo, slug: job.company?.slug, industry: job.company?.industry },
         locations: Array.isArray(job.locations) ? job.locations : [locationStr],
         workArrangement: job.workArrangement,
         salaryBadge: salaryBadge,
         salary: job.salary,
         applicationUrl: job.applicationUrl || '#',
         descriptionExcerpt: job.descriptionExcerpt,
+        descriptionFull: job.descriptionFull || job.descriptionExcerpt,
+        experienceLevel: job.experienceLevel,
+        educationLevel: job.educationLevel,
         published: job.published,
-        skills: job.skills
+        skills: job.skills,
+        directApplySource: job.directApplySource
       };
+      const jobJsonStr = encodeURIComponent(JSON.stringify(jobPayload));
 
       const card = document.createElement("div");
       card.className = "job-card bg-white rounded-xl border border-slate-200 shadow-xs hover:shadow-md transition-all p-5 space-y-4";
@@ -1564,7 +1748,7 @@ function formatTimeAgo(iso: string): string {
               onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=128&q=80'"
             />
             <div class="min-w-0">
-              <h3 class="text-base sm:text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors cursor-pointer truncate job-title-btn" data-job-id="${job.id}">
+              <h3 class="text-base sm:text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors cursor-pointer truncate job-title-btn" data-job-id="${job.id}" data-job-json="${jobJsonStr}">
                 ${job.title}
               </h3>
               <div class="flex flex-wrap items-center gap-2 mt-1 text-xs text-slate-500">
@@ -1581,7 +1765,7 @@ function formatTimeAgo(iso: string): string {
             type="button"
             class="btn-save-job p-2 rounded-lg ${isSaved ? 'text-blue-600 bg-blue-50' : 'text-slate-400'} hover:text-blue-600 hover:bg-slate-50 transition-colors shrink-0 cursor-pointer"
             data-job-id="${job.id}"
-            data-job-json="${encodeURIComponent(JSON.stringify(jobPayload))}"
+            data-job-json="${jobJsonStr}"
             aria-label="Save job"
             title="${isSaved ? 'Saved to your bookmarks (click to remove)' : 'Save this job'}"
           >
@@ -1622,27 +1806,26 @@ function formatTimeAgo(iso: string): string {
               class="btn-apply-direct inline-flex items-center justify-center gap-1.5 px-5 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs transition-colors"
               data-job-id="${job.id}"
               data-url="${job.applicationUrl || '#'}"
-              data-job-json="${encodeURIComponent(JSON.stringify(jobPayload))}"
+              data-job-json="${jobJsonStr}"
             >
-              <span>Apply Directly</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                <polyline points="15 3 21 3 21 9"></polyline>
-                <line x1="10" y1="14" x2="21" y2="3"></line>
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-sky-300">
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
               </svg>
+              <span>AI Apply</span>
             </a>
 
             <button
               type="button"
-              class="btn-more-jobs inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-semibold transition-colors"
+              class="btn-more-jobs inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-semibold transition-colors cursor-pointer"
               data-company-slug="${job.company?.slug}"
               data-company-name="${companyName}"
               data-job-id="${job.id}"
+              data-job-json="${jobJsonStr}"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                <polyline points="2 17 12 22 22 17"></polyline>
-                <polyline points="2 12 12 17 22 12"></polyline>
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
               </svg>
               <span>More</span>
             </button>
@@ -1993,6 +2176,12 @@ function formatTimeAgo(iso: string): string {
     }
     const card = btn.closest(".job-card") as HTMLElement;
     const jId = btn.dataset.jobId || card?.dataset.jobId || "";
+
+    if (jId) {
+      const cached = allLoadedJobs.find((j: any) => j.id === jId);
+      if (cached) return cached;
+    }
+
     const title = card?.querySelector(".job-title-btn")?.textContent?.trim() || "Verified Direct ATS Job";
     const company = card?.querySelector(".font-semibold.text-slate-700")?.textContent?.trim() || "Direct ATS Employer";
     const appLink = (card?.querySelector(".btn-apply-direct") as HTMLAnchorElement)?.href || "#";
@@ -2009,14 +2198,14 @@ function formatTimeAgo(iso: string): string {
 
   // Bind Card Button Listeners
   function bindCardActions() {
-    // Title & More buttons
+    // Title & More buttons -> Open Full Job Details Drawer
     document.querySelectorAll(".job-title-btn, .btn-more-jobs").forEach(btn => {
       btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         const target = e.currentTarget as HTMLElement;
-        const jId = target.dataset.jobId;
-        const compSlug = target.dataset.companySlug;
-        const compName = target.dataset.companyName;
-        openCompanyDrawer(compSlug || "", compName || "Direct ATS Employer", jId);
+        const jobData = parseJobDataFromElement(target);
+        openJobDetailsDrawer(jobData);
       });
     });
 
@@ -2109,6 +2298,165 @@ function formatTimeAgo(iso: string): string {
         if (modal) modal.classList.remove("hidden");
       });
     });
+  }
+
+  // Helper to format full job description text with clean paragraph/list HTML
+  function formatJobDescription(desc: string): string {
+    if (!desc || !desc.trim()) {
+      return "<p class='text-slate-500 italic'>No detailed job description provided for this listing.</p>";
+    }
+    if (/<[a-z][\s\S]*>/i.test(desc)) {
+      return `<div class="job-html-content space-y-3 leading-relaxed">${desc}</div>`;
+    }
+    return desc
+      .split(/\n{2,}/)
+      .map(block => {
+        const trimmed = block.trim();
+        if (!trimmed) return "";
+        const lines = trimmed.split(/\n/);
+        const isBulletList = lines.every(l => /^[-*•\d+.]\s+/.test(l.trim()));
+        if (isBulletList) {
+          const listItems = lines.map(l => `<li class="ml-4 list-disc">${l.replace(/^[-*•\d+.]\s+/, "").trim()}</li>`).join("");
+          return `<ul class="my-2 space-y-1 text-slate-700">${listItems}</ul>`;
+        }
+        return `<p class="mb-3 text-slate-700 leading-relaxed">${trimmed.replace(/\n/g, "<br/>")}</p>`;
+      })
+      .filter(Boolean)
+      .join("");
+  }
+
+  // Job Details Drawer State
+  let activeDetailsJob: any = null;
+
+  function openJobDetailsDrawer(job: any) {
+    if (!job) return;
+    activeDetailsJob = job;
+
+    const drawer = document.getElementById("job-details-drawer");
+    if (!drawer) return;
+
+    // Company logo
+    const logoEl = document.getElementById("details-company-logo") as HTMLImageElement;
+    if (logoEl) {
+      logoEl.src = job.company?.logo || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=128&q=80";
+      logoEl.alt = job.company?.name || "Company Logo";
+    }
+
+    // Company name
+    const compNameEl = document.getElementById("details-company-name");
+    if (compNameEl) compNameEl.textContent = job.company?.name || "Direct ATS Employer";
+
+    // Industry
+    const industryEl = document.getElementById("details-industry");
+    if (industryEl) industryEl.textContent = job.company?.industry || "Technology";
+
+    // Job Title
+    const titleEl = document.getElementById("details-job-title");
+    if (titleEl) titleEl.textContent = job.title || "Job Details";
+
+    // Location
+    const locEl = document.getElementById("details-location");
+    const locStr = Array.isArray(job.locations) ? job.locations.join(" • ") : (job.locations || "Worldwide");
+    if (locEl) locEl.textContent = locStr;
+
+    // Work arrangement
+    const workEl = document.getElementById("details-work-arrangement");
+    if (workEl) workEl.textContent = job.workArrangement || "Verified Direct";
+
+    // Salary
+    const salaryEl = document.getElementById("details-salary");
+    let salaryText = job.salaryBadge || "Direct ATS Rate";
+    if (job.salary?.max) {
+      salaryText = `${job.salary.currency || "$"}${job.salary.min ? `${job.salary.min.toLocaleString()} - ` : ""}${job.salary.max.toLocaleString()} / yr`;
+    }
+    if (salaryEl) salaryEl.textContent = salaryText;
+
+    // Employment type
+    const empEl = document.getElementById("details-employment-type");
+    if (empEl) {
+      const empType = Array.isArray(job.employmentTypes) && job.employmentTypes.length > 0
+        ? job.employmentTypes.map((t: string) => t.charAt(0).toUpperCase() + t.slice(1)).join(", ")
+        : "Full-time";
+      empEl.textContent = empType;
+    }
+
+    // Experience
+    const expEl = document.getElementById("details-experience");
+    if (expEl) {
+      expEl.textContent = job.experienceLevel ? `${job.experienceLevel} years` : "Mid-Senior Level";
+    }
+
+    // Date
+    const dateEl = document.getElementById("details-date");
+    if (dateEl) {
+      const dateInfo = formatJobDate(job.published);
+      dateEl.textContent = `${dateInfo.fullDate} (${dateInfo.relative})`;
+    }
+
+    // Skills
+    const skillsList = document.getElementById("details-skills-list");
+    const skillsSec = document.getElementById("details-skills-section");
+    if (skillsList && skillsSec) {
+      const skillsArr = Array.isArray(job.skills) ? job.skills : [];
+      if (skillsArr.length > 0) {
+        skillsSec.classList.remove("hidden");
+        skillsList.innerHTML = skillsArr.map((s: string) => `
+          <span class="px-2.5 py-1 rounded-md bg-slate-100 border border-slate-200 text-slate-700 text-xs font-medium">
+            ${s}
+          </span>
+        `).join("");
+      } else {
+        skillsSec.classList.add("hidden");
+      }
+    }
+
+    // Full description
+    const descEl = document.getElementById("details-description");
+    if (descEl) {
+      const fullDesc = job.descriptionFull || job.descriptionExcerpt || "";
+      descEl.innerHTML = formatJobDescription(fullDesc);
+    }
+
+    // AI Apply Button
+    const applyBtn = document.getElementById("details-btn-apply") as HTMLAnchorElement;
+    if (applyBtn) {
+      const hasHttp = job.applicationUrl && job.applicationUrl.startsWith("http");
+      applyBtn.href = hasHttp ? job.applicationUrl : "#";
+      applyBtn.setAttribute("data-job-id", job.id || "");
+      applyBtn.setAttribute("data-url", job.applicationUrl || "#");
+    }
+
+    // Update bookmark state in drawer
+    updateDrawerSaveButtonState();
+
+    drawer.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeJobDetailsDrawer() {
+    const drawer = document.getElementById("job-details-drawer");
+    drawer?.classList.add("hidden");
+    document.body.style.overflow = "";
+    activeDetailsJob = null;
+  }
+
+  function updateDrawerSaveButtonState() {
+    if (!activeDetailsJob || !activeDetailsJob.id) return;
+    const savedIds = getSavedJobIds();
+    const isSaved = savedIds.includes(activeDetailsJob.id);
+    const saveBtn = document.getElementById("details-btn-save");
+    const label = document.getElementById("details-save-label");
+    if (saveBtn && label) {
+      if (isSaved) {
+        saveBtn.classList.add("bg-blue-50", "border-blue-300", "text-blue-600");
+        saveBtn.classList.remove("bg-white", "border-slate-300", "text-slate-700");
+        label.textContent = "Saved";
+      } else {
+        saveBtn.classList.remove("bg-blue-50", "border-blue-300", "text-blue-600");
+        saveBtn.classList.add("bg-white", "border-slate-300", "text-slate-700");
+        label.textContent = "Save";
+      }
+    }
   }
 
   // Company Jobs Drawer
@@ -2213,7 +2561,10 @@ function formatTimeAgo(iso: string): string {
               rel="noopener noreferrer"
               class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-colors"
             >
-              <span>Apply Directly</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-sky-300">
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+              </svg>
+              <span>AI Apply</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                 <polyline points="15 3 21 3 21 9"></polyline>
@@ -2295,7 +2646,12 @@ function formatTimeAgo(iso: string): string {
               <div class="text-xs text-slate-500">${locStr}</div>
               <div class="pt-2 flex items-center justify-between border-t border-slate-100">
                 <span class="text-xs font-bold text-emerald-600">${j.salary?.max ? `${j.salary.currency || "$"}${j.salary.max.toLocaleString()}` : "Direct ATS"}</span>
-                <a href="${j.applicationUrl && j.applicationUrl.startsWith('http') ? j.applicationUrl : '#'}" ${j.applicationUrl && j.applicationUrl.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''} class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-colors">Apply Directly</a>
+                <a href="${j.applicationUrl && j.applicationUrl.startsWith('http') ? j.applicationUrl : '#'}" ${j.applicationUrl && j.applicationUrl.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''} class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-sky-300">
+                    <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                  </svg>
+                  <span>AI Apply</span>
+                </a>
               </div>
             </div>
           `;
@@ -2592,6 +2948,93 @@ function formatTimeAgo(iso: string): string {
   });
   document.getElementById("company-drawer-backdrop")?.addEventListener("click", () => {
     document.getElementById("company-drawer")?.classList.add("hidden");
+  });
+
+  // Job Details Drawer Listeners
+  document.getElementById("btn-close-job-details")?.addEventListener("click", closeJobDetailsDrawer);
+  document.getElementById("job-details-drawer-backdrop")?.addEventListener("click", closeJobDetailsDrawer);
+
+  document.getElementById("details-btn-save")?.addEventListener("click", () => {
+    if (!activeDetailsJob || !activeDetailsJob.id) return;
+    const { isLoggedIn } = getAuthState();
+    if (!isLoggedIn) {
+      openAuthGateModal("Sign in or create a free account to bookmark jobs to your personal tracker.");
+      return;
+    }
+
+    const jId = activeDetailsJob.id;
+    let saved: string[] = getSavedJobIds();
+    const cache = getSavedJobsCache();
+
+    if (saved.includes(jId)) {
+      saved = saved.filter(id => id !== jId);
+      delete cache[jId];
+      localStorage.setItem("ch_saved_job_ids", JSON.stringify(saved));
+      localStorage.setItem("ch_saved_jobs_cache", JSON.stringify(cache));
+      showToast("Job removed from bookmarks", false);
+      if (isSavedMode) renderSavedJobsView();
+    } else {
+      saved.push(jId);
+      cache[jId] = activeDetailsJob;
+      localStorage.setItem("ch_saved_job_ids", JSON.stringify(saved));
+      localStorage.setItem("ch_saved_jobs_cache", JSON.stringify(cache));
+      showToast("Job saved to your bookmarks!", true, "/account#saved", "View in Account");
+    }
+    updateAllBookmarkIcons();
+    updateDrawerSaveButtonState();
+  });
+
+  document.getElementById("details-btn-share")?.addEventListener("click", async () => {
+    if (!activeDetailsJob) return;
+    const jobUrl = activeDetailsJob.applicationUrl?.startsWith("http") ? activeDetailsJob.applicationUrl : window.location.href;
+    const shareData = {
+      title: `${activeDetailsJob.title} at ${activeDetailsJob.company?.name || 'Direct Employer'}`,
+      text: `Check out this verified opening: ${activeDetailsJob.title}`,
+      url: jobUrl,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (err) {}
+    }
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(jobUrl);
+      showToast("Job link copied to clipboard!", false);
+    }
+  });
+
+  document.getElementById("details-btn-apply")?.addEventListener("click", (e) => {
+    if (!activeDetailsJob) return;
+    const target = e.currentTarget as HTMLAnchorElement;
+    const { isLoggedIn } = getAuthState();
+    const appUrl = activeDetailsJob.applicationUrl || target.getAttribute("href");
+
+    if (!isLoggedIn && (!appUrl || appUrl === "#" || !appUrl.startsWith("http"))) {
+      e.preventDefault();
+      openAuthGateModal("Sign in or create a free account to access direct ATS application links.");
+      return;
+    }
+
+    if (!appUrl || appUrl === "#" || !appUrl.startsWith("http")) {
+      e.preventDefault();
+      showToast("Direct application link is currently undergoing live verification.", false);
+      return;
+    }
+
+    const jId = activeDetailsJob.id;
+    if (jId) {
+      const cache = getSavedJobsCache();
+      cache[jId] = activeDetailsJob;
+      localStorage.setItem("ch_saved_jobs_cache", JSON.stringify(cache));
+
+      let applied: string[] = JSON.parse(localStorage.getItem("ch_applied_job_ids") || "[]");
+      if (!applied.includes(jId)) {
+        applied.unshift(jId);
+        localStorage.setItem("ch_applied_job_ids", JSON.stringify(applied));
+      }
+      showToast("Application tracked to your account!", true, "/account#applications", "View Applications");
+    }
   });
 
   // Report Modal

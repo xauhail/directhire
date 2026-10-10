@@ -1118,8 +1118,11 @@ import Layout from "../layouts/Layout.astro";
             <button type="button" class="btn-remove-saved text-xs font-semibold px-3.5 py-2 rounded-full border border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-600 transition-colors cursor-pointer" data-job-id="${id}">
               Remove
             </button>
-            <a href="${appUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-colors">
-              Apply Directly →
+            <a href="${appUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-colors inline-flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-sky-200">
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+              </svg>
+              <span>AI Apply →</span>
             </a>
           </div>
         </article>
