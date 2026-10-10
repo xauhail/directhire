@@ -143,7 +143,9 @@ function mapRowToJobItem(row: any): JobItem {
       slug: row.company_slug || 'company',
       name: row.company_name,
       industry: row.company_industry || 'Technology',
-      logo: row.company_logo || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=128&q=80',
+      logo: (!row.company_logo || row.company_logo.includes('clearbit.com') || row.company_logo.includes('images.unsplash.com'))
+        ? `https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${(row.company_slug || row.company_name || 'company').toLowerCase().replace(/[^a-z0-9-]/g, '')}.com&size=128`
+        : row.company_logo,
       websiteUrl: row.company_website || undefined
     },
     descriptionExcerpt: row.description_excerpt,

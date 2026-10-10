@@ -13,6 +13,13 @@ function mapRowToJobItem(row: any) {
     ? row.skills
     : (typeof row.skills === 'string' ? JSON.parse(row.skills) : []);
 
+  let logo = row.company_logo;
+  if (!logo || logo.includes('clearbit.com') || logo.includes('images.unsplash.com')) {
+    const cleanSlug = (row.company_slug || row.company_name || 'company').toLowerCase().replace(/[^a-z0-9-]/g, '');
+    const domain = cleanSlug.includes('.') ? cleanSlug : `${cleanSlug}.com`;
+    logo = `https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${domain}&size=128`;
+  }
+
   return {
     id: row.id,
     title: row.title,
@@ -20,7 +27,7 @@ function mapRowToJobItem(row: any) {
       slug: row.company_slug || 'company',
       name: row.company_name,
       industry: row.company_industry || 'Technology',
-      logo: row.company_logo || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=128&q=80',
+      logo: logo,
       websiteUrl: row.company_website || undefined
     },
     descriptionExcerpt: row.description_excerpt,
